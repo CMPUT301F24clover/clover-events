@@ -15,7 +15,6 @@ import java.util.Random;
 public class Lottery {
     private List<Entrant> entrants;
     private List<Entrant> winners;
-    private List<Entrant> losers;
     private int sampleSize;
 
     public Lottery(List<Entrant> entrants, int sampleSize) {
@@ -39,9 +38,6 @@ public class Lottery {
         return winners;
     }
 
-    public List<Entrant> getLosers() {
-        return losers;
-    }
 
     /**
      * Sets the winners list to be the entrants from position 0 to position sampleSize of the
@@ -56,10 +52,10 @@ public class Lottery {
         if (sampleSize <= size) {
             List<Entrant> shuffledList = getShuffledList();
             winners = new ArrayList<Entrant>(shuffledList.subList(0, sampleSize));
-            losers = new ArrayList<Entrant>(shuffledList.subList(sampleSize, size));
+            entrants = new ArrayList<Entrant>(shuffledList.subList(sampleSize, size));
         } else {
             winners = new ArrayList<Entrant>(entrants);
-            losers = new ArrayList<Entrant>();
+            entrants = new ArrayList<Entrant>();
         }
     }
 
