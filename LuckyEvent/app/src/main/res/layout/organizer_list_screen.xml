@@ -29,6 +29,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout_topBar" >
 
+        <include
+            android:id="@+id/customListView"
+            layout="@layout/custom_listview"
+            />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -41,7 +46,7 @@
 
         <include
             android:id="@+id/bottomNavigationViewOrganizer"
-            layout="@layout/bottom_bar_organizer" />
+            layout="@layout/organizer_bottom_bar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
