@@ -39,8 +39,8 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <include
-            android:id="@+id/bottomNavigationViewOrganizer"
-            layout="@layout/bottom_bar_organizer" />
+            android:id="@+id/bottomNavigationViewEntrant"
+            layout="@layout/bottom_bar_entrant" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
