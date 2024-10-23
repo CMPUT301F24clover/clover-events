@@ -23,6 +23,7 @@
         android:id="@+id/constraintLayout_body"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/background"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout_bottomBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,8 +40,8 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <include
-            android:id="@+id/bottomNavigationViewEntrant"
-            layout="@layout/bottom_bar_entrant" />
+            android:id="@+id/bottomNavigationViewOrganizer"
+            layout="@layout/organizer_bottom_bar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -26,6 +26,10 @@ public class WaitingList {
         this.limit = limit;
     }
 
+    public List<Entrant> getEntrants() {
+        return entrants;
+    }
+
     public void addEntrant(Entrant entrant) {
         if ( (limit == -1) || (entrants.size() < limit) ) {
             entrants.add(entrant);

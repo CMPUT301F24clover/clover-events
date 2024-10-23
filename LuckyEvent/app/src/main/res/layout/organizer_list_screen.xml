@@ -23,10 +23,16 @@
         android:id="@+id/constraintLayout_body"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/background"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout_bottomBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout_topBar" >
+
+        <include
+            android:id="@+id/customListView"
+            layout="@layout/custom_listview"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -40,7 +46,7 @@
 
         <include
             android:id="@+id/bottomNavigationViewOrganizer"
-            layout="@layout/bottom_bar_organizer" />
+            layout="@layout/organizer_bottom_bar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
