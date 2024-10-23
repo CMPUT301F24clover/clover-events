@@ -4,9 +4,7 @@ import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity {
     private boolean loggedIn;
@@ -19,7 +17,9 @@ public class MainActivity extends AppCompatActivity {
         if (!loggedIn) {
             setContentView(R.layout.activity_login);
         } else {
-            setContentView(R.layout.activity_main);
+            setContentView(R.layout.screen_template_entrant);
+            Toolbar toolbar = findViewById(R.id.topBar);
+            toolbar.setTitle("Home");
         }
     }
 }
