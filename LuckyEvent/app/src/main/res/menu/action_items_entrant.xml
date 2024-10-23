@@ -9,7 +9,11 @@
       android:icon="@drawable/baseline_account_circle_24"
       android:title="Profile" />
   <item
-      android:id="@+id/events_item"
+      android:id="@+id/camera_item"
+      android:icon="@drawable/baseline_photo_camera_24"
+      android:title="Get QR Code" />
+  <item
+      android:id="@+id/waiting_list_item"
       android:icon="@drawable/outline_assignment_24"
       android:title="Waiting Lists" />
   <item
