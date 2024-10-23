@@ -19,6 +19,7 @@ public class Lottery {
 
     public Lottery(List<Entrant> entrants, int sampleSize) {
         this.entrants = entrants;
+        this.winners = new ArrayList<Entrant>();
         this.sampleSize = sampleSize;
     }
 
@@ -38,6 +39,9 @@ public class Lottery {
         return winners;
     }
 
+    public List<Entrant> getEntrants() {
+        return entrants;
+    }
 
     /**
      * Sets the winners list to be the entrants from position 0 to position sampleSize of the
