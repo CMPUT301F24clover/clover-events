@@ -10,8 +10,8 @@
       android:title="Profile" />
   <item
       android:id="@+id/events_item"
-      android:icon="@drawable/baseline_event_24"
-      android:title="Events" />
+      android:icon="@drawable/outline_assignment_24"
+      android:title="Waiting Lists" />
   <item
       android:id="@+id/notification_item"
       android:icon="@drawable/baseline_circle_notifications_24"
