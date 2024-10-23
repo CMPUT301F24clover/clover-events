@@ -11,6 +11,7 @@
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".MainActivity">
+
     <TextView
         android:id="@+id/rmk761e4yfi"
         android:textColor="#FFFFFF"
@@ -19,7 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="Login"
-        />
+        android:fontFamily="@font/roboto_medium"/>
+
     <EditText
         android:id="@+id/r63rrjogjw1l"
         android:textColor="#605E5E"
@@ -32,7 +34,8 @@
         android:textColorHint="#605E5E"
         android:maxLines="1"
         android:singleLine="true"
-        android:inputType="text"/>
+        android:inputType="text"
+        android:fontFamily="@font/roboto_medium"/>
 
     <LinearLayout
         android:id="@+id/ru8d3tqq1an"
@@ -41,8 +44,7 @@
         android:background="#605E5E"
         android:layout_marginBottom="28dp"
         android:layout_marginHorizontal="59dp"
-        android:orientation="vertical">
-    </LinearLayout>
+        android:orientation="vertical"/>
 
     <EditText
         android:id="@+id/rcapbbz7gdul"
@@ -56,7 +58,8 @@
         android:textSize="20sp"
         android:maxLines="1"
         android:singleLine="true"
-        android:inputType="textWebPassword"/>
+        android:inputType="textWebPassword"
+        android:fontFamily="@font/roboto_medium"/>
 
     <LinearLayout
         android:id="@+id/rnqs3w0ypapk"
@@ -65,8 +68,8 @@
         android:background="#605E5E"
         android:layout_marginBottom="81dp"
         android:layout_marginHorizontal="59dp"
-        android:orientation="vertical">
-    </LinearLayout>
+        android:orientation="vertical"/>
+
     <LinearLayout
         android:id="@+id/r04nwgdi2lflr"
         android:layout_width="match_parent"
@@ -75,6 +78,7 @@
         android:layout_marginBottom="39dp"
         android:layout_marginHorizontal="42dp"
         android:orientation="horizontal">
+
         <LinearLayout
             android:id="@+id/ro3l6zckuuxc"
             android:layout_width="125dp"
@@ -90,7 +94,8 @@
                 android:paddingVertical="18dp"
                 android:text="Sign in"
                 android:textColor="@color/black"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_medium"/>
 
         </LinearLayout>
 
@@ -115,11 +120,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingVertical="18dp"
-                android:elevation="4dp" />
+                android:elevation="4dp"
+                android:fontFamily="@font/roboto_medium"/>
 
         </LinearLayout>
 
     </LinearLayout>
+
     <TextView
         android:id="@+id/rd03ys6q17jt"
         android:textColor="#DDDDDD"
@@ -128,7 +135,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="Or"
-        />
+        android:fontFamily="@font/roboto_medium"/>
 
     <TextView
         android:id="@+id/risuxof0rqa"
@@ -137,17 +144,19 @@
         android:layout_marginBottom="24dp"
         android:text="Sign in as guest"
         android:textColor="#DDDDDD"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:fontFamily="@font/roboto_medium"/>
+
     <TextView
         android:id="@+id/rmqwyrag0qwk"
         android:textColor="#DDDDDD"
         android:textSize="20sp"
         android:layout_marginBottom="24dp"
-
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="Or"
-        />
+        android:fontFamily="@font/roboto_medium"/>
+
     <TextView
         android:id="@+id/organizer"
         android:textColor="#DDDDDD"
@@ -155,5 +164,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="Sign in/Sign up as Organizer"
-        />
+        android:fontFamily="@font/roboto_medium"/>
+
 </LinearLayout>
+
