@@ -28,7 +28,7 @@ public class CustomListAdapter extends ArrayAdapter<Entrant> {
         View view = convertView;
 
         if (view == null) {
-            view = LayoutInflater.from(context).inflate(R.layout.list_item_content, parent, false);
+            view = LayoutInflater.from(context).inflate(R.layout.box_content, parent, false);
         }
 
         Entrant entrant = entrants.get(position);
