@@ -20,7 +20,7 @@
             android:layout_height="39dp"
             android:layout_marginStart="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back Button"
+            android:contentDescription="Back Button picture"
             android:src="@drawable/arrow_back"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
