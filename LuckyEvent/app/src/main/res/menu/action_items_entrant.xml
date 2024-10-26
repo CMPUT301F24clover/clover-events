@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item
+      android:id="@+id/home_item"
+      android:icon="@drawable/baseline_home_24"
+      android:title="Home" />
+  <item
+      android:id="@+id/profile_item"
+      android:icon="@drawable/baseline_account_circle_24"
+      android:title="Profile" />
+  <item
+      android:id="@+id/camera_item"
+      android:icon="@drawable/baseline_photo_camera_24"
+      android:title="Get QR Code" />
+  <item
+      android:id="@+id/waiting_list_item"
+      android:icon="@drawable/outline_assignment_24"
+      android:title="Waiting Lists" />
+  <item
+      android:id="@+id/notification_item"
+      android:icon="@drawable/baseline_circle_notifications_24"
+      android:title="Notifications" />
+</menu>
