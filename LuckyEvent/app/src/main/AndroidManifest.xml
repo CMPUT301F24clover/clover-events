@@ -22,6 +22,9 @@
 
         <activity android:name=".activities.HomePageActivity" />
         <activity android:name=".activities.EntrantSignUpActivity" />
+        <activity android:name=".activities.RegisterDeviceActivity" />
+        <activity android:name=".activities.OrganizerSignInActivity"/>
+        <activity android:name=".activities.OrganizerSignUpActivity"/>
 
         <meta-data
             android:name="preloaded_fonts"

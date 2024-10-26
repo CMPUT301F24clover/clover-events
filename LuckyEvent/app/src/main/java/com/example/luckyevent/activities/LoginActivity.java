@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -17,6 +18,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;
     private FirebaseDB firebaseDB;
+    private TextView registerText;
+    private TextView organizerText;
     private androidx.appcompat.widget.AppCompatButton signInButton;
     private androidx.appcompat.widget.AppCompatButton signUpButton;
 
@@ -34,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                {
+
                     String userInput = username.getText().toString().trim();
                     String passwordInput = password.getText().toString().trim();
 
@@ -50,8 +53,8 @@ public class LoginActivity extends AppCompatActivity {
                             public void onFailure(String errorMessage) {
                                 Toast.makeText(LoginActivity.this, "Sign-in failed: " + errorMessage, Toast.LENGTH_SHORT).show();
                             }
-                        });
-                }
+                        },true);
+
             }
         });
 
@@ -64,6 +67,28 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         });
+
+        registerText = findViewById(R.id.RegisterText);
+        registerText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, RegisterDeviceActivity.class);
+                startActivity(intent);
+                finish(); // Optional
+            }
+        });
+
+        organizerText = findViewById(R.id.OrganizerText);
+        organizerText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, OrganizerSignInActivity.class);
+                startActivity(intent);
+                finish(); // Optional
+            }
+        });
+
+
 
     }
 }

@@ -11,15 +11,15 @@
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".MainActivity">
+
     <TextView
         android:id="@+id/rmk761e4yfi"
-        android:textColor="#FFFFFF"
-        android:textSize="48sp"
-        android:layout_marginBottom="70dp"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="Login"
-        />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="70dp"
+        android:text="Organizer Login"
+        android:textColor="#FFFFFF"
+        android:textSize="48sp" />
     <EditText
         android:id="@+id/usernameInput"
         android:textColor="#605E5E"
@@ -121,44 +121,5 @@
         </LinearLayout>
 
     </LinearLayout>
-    <TextView
-        android:id="@+id/rd03ys6q17jt"
-        android:textColor="#DDDDDD"
-        android:textSize="20sp"
-        android:layout_marginBottom="25dp"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Or"
-        />
 
-    <TextView
-        android:id="@+id/RegisterText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:text="Sign in as guest"
-        android:textColor="#DDDDDD"
-        android:textSize="20sp"
-        android:clickable="true"
-        android:focusable="true"/>
-    <TextView
-        android:id="@+id/rmqwyrag0qwk"
-        android:textColor="#DDDDDD"
-        android:textSize="20sp"
-        android:layout_marginBottom="24dp"
-
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Or"
-        />
-    <TextView
-        android:id="@+id/OrganizerText"
-        android:textColor="#DDDDDD"
-        android:textSize="20sp"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Sign in/Sign up as Organizer"
-        android:clickable="true"
-        android:focusable="true"
-        />
 </LinearLayout>

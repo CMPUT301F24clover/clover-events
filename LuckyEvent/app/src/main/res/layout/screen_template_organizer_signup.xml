@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
         android:fontFamily="@font/inter_bold"
-        android:text="Sign Up"
+        android:text="Organizer Sign up"
         android:textColor="#FFFFFF"
         android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-             />
+            />
 
     </androidx.cardview.widget.CardView>
 
@@ -54,7 +54,6 @@
         android:textColorHint="#605E5E"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
@@ -82,7 +81,7 @@
         android:textColorHint="#605E5E"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/SignUpUsernameInput" />
 
@@ -109,10 +108,18 @@
         android:textColorHint="#605E5E"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/SignUpPasswordBar" />
 
+    <LinearLayout
+        android:id="@+id/SignUpFirstNameBar"
+        android:layout_width="242dp"
+        android:layout_height="5dp"
+        android:background="#605E5E"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SignUpFirstNameInput" />
 
     <EditText
         android:id="@+id/SignUpLastNameInput"
@@ -126,9 +133,9 @@
         android:textColorHint="#605E5E"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SignUpFirstNameInput" />
+        app:layout_constraintTop_toBottomOf="@+id/SignUpFirstNameBar" />
 
     <LinearLayout
         android:id="@+id/SignUpLastNameBar"
@@ -140,11 +147,63 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/SignUpLastNameInput" />
 
+    <EditText
+        android:id="@+id/SignUpOrganizationNameInput"
+        android:layout_width="242dp"
+        android:layout_height="wrap_content"
+        android:hint="Organization Name"
+        android:inputType="text"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="#605E5E"
+        android:textColorHint="#605E5E"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SignUpLastNameBar" />
+
+    <LinearLayout
+        android:id="@+id/SignUpOrganizationNameBar"
+        android:layout_width="242dp"
+        android:layout_height="5dp"
+        android:background="#605E5E"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SignUpOrganizationNameInput" />
+
+    <EditText
+        android:id="@+id/SignUpFacilityCodeInput"
+        android:layout_width="242dp"
+        android:layout_height="wrap_content"
+        android:hint="Facility Code"
+        android:inputType="text"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="#605E5E"
+        android:textColorHint="#605E5E"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SignUpOrganizationNameInput" />
+
+    <LinearLayout
+        android:id="@+id/SignUpFacilityCodeBar"
+        android:layout_width="242dp"
+        android:layout_height="5dp"
+        android:background="#605E5E"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SignUpFacilityCodeInput" />
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/SignUpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="28dp"
         android:background="@drawable/round_button"
         android:paddingVertical="18dp"
         android:text="Sign Up"
@@ -154,7 +213,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SignUpLastNameBar" />
+        app:layout_constraintTop_toBottomOf="@+id/SignUpFacilityCodeBar" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

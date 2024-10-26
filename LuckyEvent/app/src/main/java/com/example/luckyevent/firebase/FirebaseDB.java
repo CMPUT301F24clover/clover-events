@@ -1,6 +1,7 @@
 package com.example.luckyevent.firebase;
 
 import android.content.Context;
+import android.provider.Settings;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,6 +21,7 @@ public class FirebaseDB {
     private FirebaseUser firebaseUser;
     private Context context;
     private final String emailPlaceholder = "@clover.com";
+    private String errorMessage;
 
     public interface SignInCallback {
         void onSuccess();
@@ -33,8 +35,8 @@ public class FirebaseDB {
         this.context = context;
     }
 
-    public void entrantSignUp(String userName, String password, String firstName, String lastName) {
-        db.collection("loginEntrantProfile").whereEqualTo("userName", userName).get()
+    public void signUp(String userName, String password, String firstName, String lastName, String role, String organizationName, String facilityCode , SignInCallback callback) {
+        db.collection("loginProfile").whereEqualTo("userName", userName).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult().isEmpty()) {
                         String loginEmail = userName + emailPlaceholder;
@@ -46,36 +48,96 @@ public class FirebaseDB {
                                         String userId = firebaseUser.getUid();
 
                                         Map<String, Object> loginMap = new HashMap<>();
-                                        loginMap.put("userName", userName);
-                                        loginMap.put("firstName",firstName);
-                                        loginMap.put("lastName", lastName);
-                                        loginMap.put("userId", userId);// I stored the userId generated from the firebaseAuth
-                                        loginMap.put("hasEventProfile", false);
+                                        if("entrant".equals(role)){
+                                            loginMap.put("userName", userName);
+                                            loginMap.put("firstName",firstName);
+                                            loginMap.put("lastName", lastName);
+                                            loginMap.put("userId", userId);// I stored the userId generated from the firebaseAuth
+                                            loginMap.put("role", role);// The only work around for firebase's lack of enums
+                                            loginMap.put("hasUserProfile", false);
+                                        }
+                                        else{loginMap.put("userName", userName);
+                                            loginMap.put("firstName",firstName);
+                                            loginMap.put("lastName", lastName);
+                                            loginMap.put("userId", userId);
+                                            loginMap.put("role", role);
+                                            loginMap.put("organizationName", organizationName);
+                                            loginMap.put("facilityCode",facilityCode);
+                                            loginMap.put("hasEventProfile", false);}
 
-                                        db.collection("loginEntrantProfile").document(userId).set(loginMap)
+
+                                        db.collection("loginProfile").document(userId).set(loginMap)
                                                 .addOnCompleteListener(dbTask -> {
                                                     if (dbTask.isSuccessful()) {
-                                                        Toast.makeText(context, "Successfully registered!", Toast.LENGTH_SHORT).show();
+                                                        callback.onSuccess();
                                                     } else {
-                                                        Toast.makeText(context, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                        errorMessage = dbTask.getException() != null
+                                                                ? dbTask.getException().getMessage()
+                                                                : "Unknown error occurred";
+                                                        callback.onFailure("Registration failed: " + errorMessage);
                                                     }
                                                 });
                                     } else {
-                                        Toast.makeText(context, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                        errorMessage = authTask.getException() != null
+                                                ? authTask.getException().getMessage()
+                                                : "Unknown error occurred";
+                                        callback.onFailure("Registration failed: " + errorMessage);
                                     }
                                 });
                     } else {
-                        Toast.makeText(context, "Username already taken", Toast.LENGTH_SHORT).show();
+                        errorMessage = task.getException() != null
+                                ? task.getException().getMessage()
+                                : "Unknown error occurred";
+                        callback.onFailure("Username Is already taken: " + errorMessage);
                     }
                 });
     }
 
-    public void signIn(String userName, String password,SignInCallback callback) {
-        db.collection("loginEntrantProfile").whereEqualTo("userName", userName).get()
+    public void signIn(String userName, String password,SignInCallback callback, Boolean signInOnMain) {
+        db.collection("loginProfile").whereEqualTo("userName", userName).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
                         DocumentSnapshot document = task.getResult().getDocuments().get(0);
+                        String role = document.getString("role");
+
                         String loginEmail = userName.toLowerCase() + emailPlaceholder;
+                        if((("entrant".equals(role) || "admin".equals(role)) && signInOnMain == true) || "organizer".equals(role) && signInOnMain == false){
+                            firebaseAuth.signInWithEmailAndPassword(loginEmail, password)
+                                    .addOnCompleteListener(authTask -> {
+                                        if (authTask.isSuccessful()) {
+                                            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                                            callback.onSuccess();
+                                        } else {
+                                            callback.onFailure("Password is incorrect: " + authTask.getException().getMessage());
+                                        }
+                                    });
+                        }
+                        else{
+                            if(signInOnMain == true){
+                                callback.onFailure("Admin or entrant role is required to sign in");
+                            }
+                            else{
+                                callback.onFailure("Organizer role is required to sign in");
+                            }
+                        }
+                    } else {
+                        callback.onFailure("Username not found");
+                    }
+                });
+    }
+
+    public void deviceSignIn(SignInCallback callback){
+        String deviceID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        //these are fake emails and passwords to user firebase auth
+        String loginEmail = deviceID + emailPlaceholder;
+        String password = deviceID + "clover";
+
+        db.collection("loginProfile").whereEqualTo("userName", deviceID).get()
+                .addOnCompleteListener(task -> {
+                    //check if the device is already registered
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        DocumentSnapshot document = task.getResult().getDocuments().get(0);
 
                         firebaseAuth.signInWithEmailAndPassword(loginEmail, password)
                                 .addOnCompleteListener(authTask -> {
@@ -83,21 +145,16 @@ public class FirebaseDB {
                                         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                                         callback.onSuccess();
                                     } else {
-                                        callback.onFailure("Password is incorrect: " + authTask.getException().getMessage());
+                                        String errorMessage = authTask.getException() != null
+                                                ? authTask.getException().getMessage()
+                                                : "Password is incorrect";
+                                        callback.onFailure("Device registration failed: " + errorMessage);
                                     }
                                 });
-                    } else {
-                        callback.onFailure("Username not found");
+
                     }
-                });
-    }
-
-    public void oragnizerSignUp(String userName, String password, String firstName, String lastName,String organizationName, int facilityCode) {
-        db.collection("loginOranizerProfile").whereEqualTo("userName", userName).get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult().isEmpty()) {
-                        String loginEmail = userName + emailPlaceholder;
-
+                    else{
+                        //creates a new user if the user is not in the user base
                         firebaseAuth.createUserWithEmailAndPassword(loginEmail, password)
                                 .addOnCompleteListener(authTask -> {
                                     if (authTask.isSuccessful()) {
@@ -105,31 +162,43 @@ public class FirebaseDB {
                                         String userId = firebaseUser.getUid();
 
                                         Map<String, Object> loginMap = new HashMap<>();
-                                        loginMap.put("userName", userName);
-                                        loginMap.put("firstName",firstName);
-                                        loginMap.put("lastName", lastName);
-                                        loginMap.put("oragnizationName", organizationName);
-                                        loginMap.put("facilityCode",facilityCode);
+                                        loginMap.put("userName", deviceID);//I used the deviceID as the username
+                                        loginMap.put("firstName",null);
+                                        loginMap.put("lastName", null);
                                         loginMap.put("userId", userId);// I stored the userId generated from the firebaseAuth
-                                        loginMap.put("hasFacilityProfile", false);
-
-                                        db.collection("loginEntrantProfile").document(userId).set(loginMap)
+                                        loginMap.put("role", "entrant");
+                                        loginMap.put("hasUserProfile", false);
+                                        callback.onSuccess();
+                                        db.collection("loginProfile").document(userId).set(loginMap)
                                                 .addOnCompleteListener(dbTask -> {
                                                     if (dbTask.isSuccessful()) {
-                                                        Toast.makeText(context, "Successfully registered!", Toast.LENGTH_SHORT).show();
+                                                        callback.onSuccess();
                                                     } else {
-                                                        Toast.makeText(context, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                        errorMessage = dbTask.getException() != null
+                                                                ? dbTask.getException().getMessage()
+                                                                : "Unknown error occurred";
+                                                        callback.onFailure("Device registration failed: " + errorMessage);
                                                     }
                                                 });
-                                    } else {
-                                        Toast.makeText(context, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                     }
-                                });
-                    } else {
-                        Toast.makeText(context, "Username already taken", Toast.LENGTH_SHORT).show();
+                                    else{
+                                        errorMessage = authTask.getException() != null
+                                                ? authTask.getException().getMessage()
+                                                : "Unknown error occurred";
+                                        callback.onFailure("Device registration failed: " + errorMessage);
+                                    }
+                                        });
+
                     }
                 });
+
+
     }
+
+    public void autoSignin (){
+        //how do I implement this lol
+    }
+
 
 
 
