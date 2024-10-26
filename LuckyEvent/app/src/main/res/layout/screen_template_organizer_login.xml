@@ -10,7 +10,7 @@
     android:elevation="4dp"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".activities.OrganizerSignInActivity">
 
     <TextView
         android:id="@+id/rmk761e4yfi"
