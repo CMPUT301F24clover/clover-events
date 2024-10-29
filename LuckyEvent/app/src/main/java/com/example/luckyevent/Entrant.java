@@ -3,13 +3,13 @@ package com.example.luckyevent;
 public class Entrant {
     private String firstName;
     private String lastName;
-    private String email;
+    private String username;
     private String phoneNumber;
 
-    public Entrant(String firstName, String lastName, String email) {
+    public Entrant(String firstName, String lastName, String username) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
+        this.username = username;
         this.phoneNumber = "";
     }
 
@@ -30,11 +30,11 @@ public class Entrant {
     }
 
     public String getEmail() {
-        return email;
+        return username;
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.username = email;
     }
 
     public String getPhoneNumber() {

@@ -134,7 +134,7 @@
     <TextView
         android:id="@+id/RegisterText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_marginBottom="24dp"
         android:text="Sign in as guest"
         android:textColor="#DDDDDD"
@@ -155,7 +155,7 @@
         android:id="@+id/OrganizerText"
         android:textColor="#DDDDDD"
         android:textSize="20sp"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_width="wrap_content"
         android:text="Sign in/Sign up as Organizer"
         android:clickable="true"
