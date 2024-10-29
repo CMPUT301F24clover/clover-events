@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
@@ -18,7 +19,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create Event"
+            android:text="@string/create_event"
             android:textColor="@color/white"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -81,7 +82,7 @@
                         android:id="@+id/label_eventName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Event Name"
+                        android:text="@string/event_name"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
@@ -96,6 +97,7 @@
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
+                            android:hint="@string/swimming_judo_karate_etc"
                             android:layout_height="wrap_content"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -105,7 +107,7 @@
                         android:id="@+id/label_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Date"
+                        android:text="@string/date"
                         android:textStyle="bold"
                         android:layout_marginTop="16dp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -122,6 +124,7 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:hint="@string/enter_the_deadline_to_join"
                             android:inputType="none"
                             android:focusable="false"/>
 
@@ -150,6 +153,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:minLines="3"
+                            android:hint="@string/add_a_suitable_description_for_the_event"
                             android:gravity="top"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -159,7 +163,7 @@
                         android:id="@+id/button_uploadPoster"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Upload Event Poster"
+                        android:text="@string/upload_event_poster"
                         android:layout_marginTop="16dp"
                         app:backgroundTint="@color/blue"
                         app:layout_constraintTop_toBottomOf="@id/input_description"/>
@@ -171,13 +175,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                        android:hint="Waiting List size"
+                        android:hint="@string/waiting_list_size"
                         app:layout_constraintTop_toBottomOf="@id/button_uploadPoster">
-
-                        <AutoCompleteTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="none"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -188,13 +187,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                        android:hint="Sample size"
+                        android:hint="@string/sample_size"
                         app:layout_constraintTop_toBottomOf="@id/input_waitingListSize">
 
-                        <AutoCompleteTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="none"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -203,7 +198,7 @@
                         android:id="@+id/checkbox_geolocation"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Enable Geolocation"
+                        android:text="@string/enable_geolocation"
                         android:layout_marginTop="16dp"
                         app:layout_constraintTop_toBottomOf="@id/input_sampleSize"
                         app:layout_constraintStart_toStartOf="parent"/>
@@ -213,7 +208,7 @@
                         android:id="@+id/button_createEvent"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Create Event"
+                        android:text="@string/create_event"
                         android:layout_marginTop="16dp"
                         android:padding="12dp"
                         app:cornerRadius="8dp"

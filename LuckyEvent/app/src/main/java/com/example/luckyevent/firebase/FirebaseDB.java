@@ -199,7 +199,9 @@ public class FirebaseDB {
         //how do I implement this lol
     }
 
+    public void joinWaitlist(){
 
+    }
 
 
 
