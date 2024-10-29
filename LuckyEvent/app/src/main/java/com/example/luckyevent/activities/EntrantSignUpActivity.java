@@ -10,7 +10,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
+import com.example.luckyevent.UserSession;
 import com.example.luckyevent.firebase.FirebaseDB;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class EntrantSignUpActivity extends AppCompatActivity {
     private androidx.appcompat.widget.AppCompatButton signUpButton;
@@ -44,6 +47,11 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                     firebaseDB.signUp(userNameInput, passwordInput, firstNameInput, lastNameInput, "entrant", null, null, new FirebaseDB.SignInCallback() {
                         @Override
                         public void onSuccess() {
+                            //gets the currently signed in user
+                            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                            String userId = firebaseUser.getUid();
+                            UserSession.getInstance().setUserId(userId);
+
                             Intent intent = new Intent(EntrantSignUpActivity.this, HomePageActivity.class);
                             startActivity(intent);
                             finish(); // Optional
