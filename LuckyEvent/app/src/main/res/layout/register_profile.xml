@@ -161,7 +161,7 @@
             android:paddingBottom="10dp"/>
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/RegisterButton"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:backgroundTint="#34C759"
