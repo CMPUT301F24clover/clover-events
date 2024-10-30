@@ -195,11 +195,21 @@ public class FirebaseDB {
 
     }
 
-    public void autoSignin (){
-        //how do I implement this lol
+    public void autoSignin (SignInCallback callback){
+
+        //We can use the firebaseAuth to check if user is signed in into this device and get their device id
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+        if (firebaseUser != null) {
+            callback.onSuccess();
+        } else {
+            callback.onFailure("No user is currently signed in.");
+        }
     }
 
+    public void joinWaitlist(){
 
+    }
 
 
 
