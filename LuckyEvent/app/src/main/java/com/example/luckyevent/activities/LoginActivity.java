@@ -11,7 +11,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.luckyevent.MainActivity;
 import com.example.luckyevent.R;
 import com.example.luckyevent.UserSession;
 import com.example.luckyevent.firebase.FirebaseDB;
