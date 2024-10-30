@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         if (!loggedIn) {
             setContentView(R.layout.activity_login);
         } else {
-            setContentView(R.layout.screen_template_entrant);
+            setContentView(R.layout.entrant_screen_template);
             Toolbar toolbar = findViewById(R.id.topBar);
             toolbar.setTitle("Home");
             editTextDescription = findViewById(R.id.editTextDescription);
