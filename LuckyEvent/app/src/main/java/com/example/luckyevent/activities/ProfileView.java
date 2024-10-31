@@ -1,5 +1,6 @@
 package com.example.luckyevent.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 public class ProfileView extends AppCompatActivity {
     private EditText nameEditText;
@@ -45,7 +47,15 @@ public class ProfileView extends AppCompatActivity {
         String firstName = firstLastName[0];
         String lastName = firstLastName[1];
 
-        profileController.registerProfile(firstName,lastName,email,phoneNumber);
+        profileController.registerProfile(firstName, lastName, email, phoneNumber, new OnSuccessListener<String>() {
+            @Override
+            public void onSuccess(String documentID) {
+                Intent intent = new Intent(ProfileView.this, ViewProfileActivity.class);
+                intent.putExtra("profileID",documentID);
+                startActivity(intent);
+
+            }
+        });
 
     }
     public void loadProfileItems(ProfileSetup profile){

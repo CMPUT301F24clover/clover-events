@@ -21,7 +21,7 @@ public class HomePageActivity extends AppCompatActivity {
         profileTestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomePageActivity.this, ProfileView.class);
+                Intent intent = new Intent(HomePageActivity.this, RegisterProfileActivity.class);
                 startActivity(intent);
             }
         });

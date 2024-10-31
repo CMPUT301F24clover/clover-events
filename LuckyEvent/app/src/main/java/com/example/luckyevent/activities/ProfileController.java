@@ -17,55 +17,17 @@ import java.util.Map;
 
 public class ProfileController {
     private ProfileSetup model;
-    private ProfileView view;
+
     private FirebaseFirestore db;
     private String TAG = "Profile Controller";
 
 
     public ProfileController(ProfileSetup model, ProfileView view){
         this.model = model;
-        this.view = view;
+
         this.db = FirebaseFirestore.getInstance();
     }
-    public void registerProfile(String firstName, String lastName, String email, String  phoneNumber){
-        model.setName(firstName +" "+ lastName);
-        model.setEmail(email);
-        model.setPhoneNumber(phoneNumber);
-
-        db.collection("loginProfile")
-                .whereEqualTo("firstName",firstName)
-                .whereEqualTo("lastName",lastName)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()){
-                            if (!task.getResult().isEmpty()){
-                                Log.d(TAG,"Profile under this account already registered");
-                            }
-                            else{
-                                HashMap<String, Object> data = new HashMap<>();
-                                data.put("firstName", firstName);
-                                data.put("lastName", lastName);
-                                data.put("Email", email);
-                                data.put("Phone Number", phoneNumber);
-                                data.put("hasUserProfile",true);
-
-                                db.collection("Profiles").add(data)
-                                        .addOnSuccessListener(documentReference -> {
-                                            String docID = documentReference.getId();
-                                            loadProfile(docID);
-                                        });
-                            }
-                        } else{
-                            Log.d(TAG,"Unable to find document matching this name",task.getException());
-                        }
-                    }
-                });
-
-    }
-
-    public void editProfile(String firstName, String lastName, String email, String  phoneNumber){
+    public void registerProfile(String firstName, String lastName, String email, String  phoneNumber,OnSuccessListener<String> onSuccessListener){
         model.setName(firstName +" "+ lastName);
         model.setEmail(email);
         model.setPhoneNumber(phoneNumber);
@@ -79,19 +41,47 @@ public class ProfileController {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()){
                             DocumentReference profileRef = task.getResult().getDocuments().get(0).getReference();
-                            HashMap<String, Object> updateData = new HashMap<>();
-                            updateData.put("email", email);
-                            updateData.put("phoneNumber", phoneNumber);
-                            profileRef.update(updateData);
 
-                        }
-                        else{
+                            HashMap<String, Object> data = new HashMap<>();
+                            data.put("Email", email);
+                            data.put("Phone Number", phoneNumber);
+                            data.put("hasUserProfile",true);
+
+                            profileRef.update(data)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            Log.d(TAG,"Profile updates with email and phone number");
+                                            onSuccessListener.onSuccess(profileRef.getId());
+                                        }
+                                    });
+
+                        } else{
                             Log.d(TAG,"Unable to find document matching this name",task.getException());
                         }
                     }
                 });
+
     }
-    public void loadProfile(String docID){
+
+    public void editProfile(String docID, String firstName, String lastName, String email, String  phoneNumber){
+        model.setName(firstName +" "+ lastName);
+        model.setEmail(email);
+        model.setPhoneNumber(phoneNumber);
+
+        DocumentReference profileRef = db.collection("loginProfile").document(docID);
+
+        HashMap<String, Object> updateData = new HashMap<>();
+        updateData.put("firstName", firstName);
+        updateData.put("lastName", lastName);
+        updateData.put("Email", email);
+        updateData.put("Phone Number", phoneNumber);
+        profileRef.update(updateData);
+
+
+
+    }
+    public void loadProfile(String docID, OnSuccessListener<ProfileSetup> onSuccessListener){
         DocumentReference profileIDRef = db.collection("loginProfile").document(docID);
         profileIDRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -101,14 +91,16 @@ public class ProfileController {
                     if (doc.exists()){
                         String firstName = doc.getString("firstName");
                         String lastName = doc.getString("lastName");
-                        String email = doc.getString("email");
-                        String phoneNumber = doc.getString("phoneNumber");
+                        String email = doc.getString("Email");
+                        String phoneNumber = doc.getString("Phone Number");
 
                         model.setName(firstName + " " + lastName);
                         model.setEmail(email);
                         model.setPhoneNumber(phoneNumber);
 
-                        view.loadProfileItems(model);
+                        onSuccessListener.onSuccess(model);
+
+
                     }
                 }
                 else{
@@ -116,5 +108,9 @@ public class ProfileController {
                 }
             }
         });
+    }
+    public interface ProfileRegisteredListener{
+        void onProfileRegistered(String documentID);
+
     }
 }
