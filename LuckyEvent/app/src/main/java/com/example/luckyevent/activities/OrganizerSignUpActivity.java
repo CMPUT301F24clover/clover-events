@@ -49,24 +49,38 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
                 String organizerNameInput = organizerName.getText().toString().trim();
                 String facilityCodeInput = facilityCode.getText().toString().trim();
 
-                firebaseDB.signUp(userNameInput, passwordInput, firstNameInput, lastNameInput, "organizer", organizerNameInput, facilityCodeInput, new FirebaseDB.SignInCallback() {
-                    @Override
-                    public void onSuccess() {
-                        //gets the currently signed in user
-                        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                        String userId = firebaseUser.getUid();
-                        UserSession.getInstance().setUserId(userId);
-                        
-                        Intent intent = new Intent(OrganizerSignUpActivity.this, HomePageActivity.class);
-                        startActivity(intent);
-                        finish(); // Optional
-                    }
 
-                    @Override
-                    public void onFailure(String errorMessage) {
-                        Toast.makeText(OrganizerSignUpActivity.this, "Sign-in failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+                if (userNameInput.isEmpty() || passwordInput.isEmpty()) {
+                    if(userNameInput.isEmpty() && passwordInput.isEmpty()){
+                        Toast.makeText(OrganizerSignUpActivity.this, "Username field and password field are required", Toast.LENGTH_SHORT).show();
                     }
-                });
+                    else if(userNameInput.isEmpty()) {
+                        Toast.makeText(OrganizerSignUpActivity.this, "Username field is required", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(OrganizerSignUpActivity.this, "Password field is required", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    firebaseDB.signUp(userNameInput, passwordInput, firstNameInput, lastNameInput, "organizer", organizerNameInput, facilityCodeInput, new FirebaseDB.SignInCallback() {
+                        @Override
+                        public void onSuccess() {
+                            //gets the currently signed in user
+                            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                            String userId = firebaseUser.getUid();
+                            UserSession.getInstance().setUserId(userId);
+
+                            Intent intent = new Intent(OrganizerSignUpActivity.this, HomePageActivity.class);
+                            startActivity(intent);
+                            finish(); // Optional
+                        }
+
+                        @Override
+                        public void onFailure(String errorMessage) {
+                            Toast.makeText(OrganizerSignUpActivity.this, "Sign-in failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
             }
         });
     }

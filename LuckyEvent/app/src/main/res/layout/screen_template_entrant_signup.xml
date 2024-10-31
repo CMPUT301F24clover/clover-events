@@ -113,6 +113,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/SignUpPasswordBar" />
 
+    <LinearLayout
+        android:id="@+id/SignUpFirstNameBar"
+        android:layout_width="242dp"
+        android:layout_height="5dp"
+        android:background="#605E5E"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SignUpFirstNameInput" />
+
 
     <EditText
         android:id="@+id/SignUpLastNameInput"
@@ -128,7 +138,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SignUpFirstNameInput" />
+        app:layout_constraintTop_toBottomOf="@+id/SignUpFirstNameBar" />
 
     <LinearLayout
         android:id="@+id/SignUpLastNameBar"
@@ -142,9 +152,9 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/SignUpButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
+        android:layout_width="110dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="80dp"
         android:background="@drawable/round_button"
         android:paddingVertical="18dp"
         android:text="Sign Up"
