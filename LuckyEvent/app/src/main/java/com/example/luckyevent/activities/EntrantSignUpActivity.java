@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -22,6 +23,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
     private EditText firstName;
     private EditText lastName;
     private FirebaseDB firebaseDB;
+    private ImageView gobackButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,6 +34,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
         password = findViewById(R.id.SignUpPasswordInput);
         firstName = findViewById(R.id.SignUpFirstNameInput);
         lastName = findViewById(R.id.SignUpLastNameInput);
+        gobackButton = findViewById(R.id.previousIcon);
 
         signUpButton = findViewById(R.id.SignUpButton);
         signUpButton.setOnClickListener(new View.OnClickListener() {
@@ -77,6 +80,15 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                     }
 
                 }
+            }
+        });
+
+        gobackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EntrantSignUpActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish(); // Optional
             }
         });
     }

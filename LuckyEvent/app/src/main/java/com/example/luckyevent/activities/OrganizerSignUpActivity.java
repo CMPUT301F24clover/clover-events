@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -24,6 +25,7 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
     private EditText organizerName;
     private EditText facilityCode;
     private FirebaseDB firebaseDB;
+    private ImageView gobackButton;
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +37,7 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
         lastName = findViewById(R.id.SignUpLastNameInput);
         organizerName = findViewById(R.id.SignUpOrganizationNameInput);
         facilityCode = findViewById(R.id.SignUpFacilityCodeInput);
+        gobackButton = findViewById(R.id.previousIcon);
 
         firebaseDB = new FirebaseDB(this);
 
@@ -81,6 +84,15 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
                     });
                 }
 
+            }
+        });
+
+        gobackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OrganizerSignUpActivity.this, OrganizerSignInActivity.class);
+                startActivity(intent);
+                finish(); // Optional
             }
         });
     }

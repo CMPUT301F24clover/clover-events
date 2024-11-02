@@ -1,29 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/constraintLayout_body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/login_gradient">
+
+        <ImageView
+            android:id="@+id/previousIcon"
+            android:layout_width="45dp"
+            android:layout_height="47dp"
+            android:layout_marginTop="16dp"
+            android:clickable="true"
+            android:contentDescription=""
+            android:focusable="true"
+            android:src="@drawable/arrow_back"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.071"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/constraintLayout_body" />
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="70dp"
             android:fontFamily="@font/inter_bold"
             android:text="Organizer Sign up"
             android:textColor="#FFFFFF"
             android:textSize="34sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@id/previousIcon" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
@@ -49,7 +63,7 @@
             android:id="@+id/SignUpUsernameInput"
             android:layout_width="242dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="72dp"
             android:hint="Username"
             android:inputType="text"
             android:maxLines="1"
@@ -58,7 +72,7 @@
             android:textColorHint="#605E5E"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintHorizontal_bias="0.502"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
@@ -207,7 +221,7 @@
             android:id="@+id/SignUpButton"
             android:layout_width="110dp"
             android:layout_height="60dp"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="68dp"
             android:background="@drawable/round_button"
             android:paddingVertical="18dp"
             android:text="Sign Up"
