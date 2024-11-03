@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ public class OrganizerSignInActivity extends AppCompatActivity {
     private TextView registerText;
     private androidx.appcompat.widget.AppCompatButton signInButton;
     private androidx.appcompat.widget.AppCompatButton signUpButton;
+    private ImageView gobackButton;
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +36,7 @@ public class OrganizerSignInActivity extends AppCompatActivity {
         firebaseDB = new FirebaseDB(this);
 
         signInButton = findViewById(R.id.SignInButton);
+        gobackButton = findViewById(R.id.previousIcon);
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,5 +75,14 @@ public class OrganizerSignInActivity extends AppCompatActivity {
             }
 
         });
+        gobackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OrganizerSignInActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish(); // Optional
+            }
+        });
+
     }
 }
