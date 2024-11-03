@@ -10,7 +10,9 @@ import com.example.luckyevent.R;
 public class HomePageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.screen_template_homepage);
+        setContentView(R.layout.entrant_homepage);
     }
 }
