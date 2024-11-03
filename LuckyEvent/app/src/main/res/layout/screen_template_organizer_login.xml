@@ -1,4 +1,4 @@
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -12,69 +12,93 @@
     android:orientation="vertical"
     tools:context=".activities.OrganizerSignInActivity">
 
+    <ImageView
+        android:id="@+id/previousIcon"
+        android:layout_width="45dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:contentDescription=""
+        android:focusable="true"
+        android:src="@drawable/arrow_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.071"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/rmk761e4yfi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="70dp"
+        android:layout_marginTop="176dp"
         android:text="Organizer Login"
         android:textColor="#FFFFFF"
-        android:textSize="48sp" />
+        android:textSize="48sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <EditText
         android:id="@+id/usernameInput"
-        android:textColor="#605E5E"
-        android:textSize="20sp"
-        android:layout_marginLeft="59dp"
-        android:layout_marginRight="59dp"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="59dp"
+        android:layout_marginTop="76dp"
         android:hint="Username"
-        android:textColorHint="#605E5E"
+        android:inputType="text"
         android:maxLines="1"
         android:singleLine="true"
-        android:inputType="text"/>
+        android:textColor="#605E5E"
+        android:textColorHint="#605E5E"
+        android:textSize="20sp"
+        app:layout_constraintTop_toBottomOf="@+id/rmk761e4yfi"
+        tools:layout_editor_absoluteX="59dp" />
 
     <LinearLayout
         android:id="@+id/SignUpUsernameBar"
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="#605E5E"
-        android:layout_marginBottom="28dp"
         android:layout_marginHorizontal="59dp"
-        android:orientation="vertical">
-    </LinearLayout>
+        android:background="#605E5E"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/usernameInput"/>
 
     <EditText
         android:id="@+id/passwordInput"
-        android:layout_marginLeft="59dp"
-        android:layout_marginRight="59dp"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:textColorHint="#605E5E"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
         android:hint="Password"
-        android:textColor="#605E5E"
-        android:textSize="20sp"
+        android:inputType="textWebPassword"
         android:maxLines="1"
         android:singleLine="true"
-        android:inputType="textWebPassword"/>
+        android:layout_marginHorizontal="59dp"
+        android:textColor="#605E5E"
+        android:textColorHint="#605E5E"
+        android:textSize="20sp"
+        app:layout_constraintTop_toBottomOf="@+id/SignUpUsernameBar"
+        tools:layout_editor_absoluteX="0dp" />
 
     <LinearLayout
         android:id="@+id/rnqs3w0ypapk"
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="#605E5E"
-        android:layout_marginBottom="81dp"
         android:layout_marginHorizontal="59dp"
-        android:orientation="vertical">
-    </LinearLayout>
+        android:background="#605E5E"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/passwordInput"></LinearLayout>
+
     <LinearLayout
         android:id="@+id/r04nwgdi2lflr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="39dp"
         android:layout_marginHorizontal="42dp"
-        android:orientation="horizontal">
+        android:layout_marginTop="100dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/rnqs3w0ypapk"
+        tools:layout_editor_absoluteX="42dp">
+
         <LinearLayout
             android:id="@+id/ro3l6zckuuxc"
             android:layout_width="125dp"
@@ -122,4 +146,4 @@
 
     </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
