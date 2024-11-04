@@ -69,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                                 String userId = firebaseUser.getUid();
                                 UserSession.getInstance().setUserId(userId);
 
-                                Intent intent = new Intent(LoginActivity.this, HomePageActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
                                 startActivity(intent);
                                 finish(); // Optional
                             }

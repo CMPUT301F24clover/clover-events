@@ -35,6 +35,7 @@
         <activity android:name=".activities.OrganizerSignInActivity"/>
         <activity android:name=".activities.OrganizerSignUpActivity"/>
         <activity android:name=".activities.EntrantJoinWaitlistActivity"/>
+        <activity android:name=".activities.MenuActivity"/>
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

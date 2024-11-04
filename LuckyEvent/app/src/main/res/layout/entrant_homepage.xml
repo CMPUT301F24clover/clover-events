@@ -87,7 +87,8 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="16dp"
+                >
 
                 <ImageView
                     android:id="@+id/eventsIcon"
@@ -108,6 +109,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/scanQrButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_row="0"
@@ -299,15 +301,5 @@
 
     </LinearLayout>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#000000"
-        app:menu="@menu/action_items_entrant"
-        app:itemIconSize="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

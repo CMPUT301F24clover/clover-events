@@ -14,5 +14,6 @@ public class HomePageActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.entrant_homepage);
+
     }
 }
