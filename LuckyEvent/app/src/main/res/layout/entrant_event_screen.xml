@@ -69,7 +69,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="411dp"
+                android:layout_height="409dp"
                 android:padding="16dp">
 
                 <!-- Event Title -->
