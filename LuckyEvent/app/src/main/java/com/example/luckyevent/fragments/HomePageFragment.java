@@ -49,7 +49,7 @@ public class HomePageFragment extends Fragment {
         }
 
         else{
-            String welcomeMessage = "Welcome guy";
+            String welcomeMessage = "Welcome!";
             welcomeTextView.setText(welcomeMessage);
 
         }
