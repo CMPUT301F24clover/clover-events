@@ -36,6 +36,11 @@
         <activity android:name=".activities.OrganizerSignUpActivity"/>
         <activity android:name=".activities.EntrantJoinWaitlistActivity"/>
         <activity android:name=".activities.MenuActivity"/>
+        <activity android:name=".activities.ProfileView" />
+        <activity android:name=".activities.EditProfileActivity" />
+        <activity android:name=".activities.ViewProfileActivity" />
+        <activity android:name=".activities.RegisterProfileActivity" />
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

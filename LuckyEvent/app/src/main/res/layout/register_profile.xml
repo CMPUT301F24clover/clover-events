@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/background"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#007AFF"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/TopText"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:layout_marginStart="40dp"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:text="Register Your Device"
+        android:textColor="@color/white"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar3"
+        app:layout_constraintStart_toStartOf="@+id/toolbar3"
+        app:layout_constraintTop_toTopOf="@+id/toolbar3"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <LinearLayout
+        android:id="@+id/LinearLayout"
+        android:layout_width="360dp"
+        android:layout_height="50dp"
+        android:orientation="vertical"
+        android:background="#3A84D5"
+        android:padding="5dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar3"
+        app:layout_constraintVertical_bias="0.5">
+
+        <TextView
+            android:id="@+id/RegisterPopUp"
+            android:layout_width="348dp"
+            android:layout_height="55dp"
+            android:layout_weight="1"
+            android:background="#B1D6FF"
+            android:padding="5dp"
+
+            android:gravity="center_vertical"
+            android:text="This information will be associated with your device for easy login in the future. You can update it anytime in your profile settings."
+
+            android:textSize="9sp"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.523"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar3"
+            app:layout_constraintVertical_bias="0.28"
+            tools:ignore="TextSizeCheck" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="365dp"
+        android:layout_height="523dp"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:padding="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/toolbar4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar3">
+        <TextView
+            android:id="@+id/SetUpText"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:text="Set Up Your Profile"
+
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/toolbar3"
+            app:layout_constraintTop_toTopOf="@+id/toolbar3" />
+        <TextView
+            android:id="@+id/nameField"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:text="Name"
+            android:gravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/toolbar3"
+            app:layout_constraintTop_toTopOf="@+id/toolbar3" />
+
+        <EditText
+            android:id="@+id/nameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:hint="First Last Name"
+            android:padding="5dp" />
+        <TextView
+            android:id="@+id/emailField"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:text="Email"
+            android:gravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/toolbar3"
+            app:layout_constraintTop_toTopOf="@+id/toolbar3" />
+
+        <EditText
+            android:id="@+id/emailEditText"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:hint="your.email@example.com" />
+        <TextView
+            android:id="@+id/phoneField"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:text="Phone (optional)"
+            android:gravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/toolbar3"
+            app:layout_constraintTop_toTopOf="@+id/toolbar3" />
+
+        <EditText
+            android:id="@+id/phoneEditText"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:hint="(123) 456-7890"
+            android:paddingBottom="10dp"/>
+
+        <Button
+            android:id="@+id/RegisterButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:backgroundTint="#34C759"
+
+            android:padding="10dp"
+
+            android:text="Register Device and Create Profile"
+            android:textColor="@color/white"
+            android:layout_marginTop="20dp"
+            />
+
+
+
+    </LinearLayout>
+    <include
+        android:id="@+id/bottomNavigationViewEntrant"
+        layout="@layout/entrant_bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/toolbar4"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
