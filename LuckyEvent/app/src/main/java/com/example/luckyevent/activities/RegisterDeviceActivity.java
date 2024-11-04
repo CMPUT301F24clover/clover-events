@@ -11,7 +11,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
+import com.example.luckyevent.UserSession;
 import com.example.luckyevent.firebase.FirebaseDB;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class RegisterDeviceActivity extends AppCompatActivity {
     private androidx.appcompat.widget.AppCompatButton registerButton;
@@ -32,7 +35,12 @@ public class RegisterDeviceActivity extends AppCompatActivity {
                 firebaseDB.deviceSignIn(new FirebaseDB.SignInCallback(){
                     @Override
                     public void onSuccess() {
-                        Intent intent = new Intent(RegisterDeviceActivity.this, HomePageActivity.class);
+                        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                        String userId = firebaseUser.getUid();
+                        UserSession.getInstance().setUserId(userId);
+                        UserSession.getInstance().setFisrtName(null);
+
+                        Intent intent = new Intent(RegisterDeviceActivity.this, MenuActivity.class);
                         startActivity(intent);
                         finish(); // Optional
                     }

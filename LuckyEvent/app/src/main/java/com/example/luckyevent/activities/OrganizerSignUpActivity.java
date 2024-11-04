@@ -2,6 +2,7 @@ package com.example.luckyevent.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -15,6 +16,8 @@ import com.example.luckyevent.UserSession;
 import com.example.luckyevent.firebase.FirebaseDB;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class OrganizerSignUpActivity extends AppCompatActivity {
     private androidx.appcompat.widget.AppCompatButton signUpButton;
@@ -26,9 +29,11 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
     private EditText facilityCode;
     private FirebaseDB firebaseDB;
     private ImageView gobackButton;
+    private FirebaseFirestore db;
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = FirebaseFirestore.getInstance();
         setContentView(R.layout.screen_template_organizer_signup);
 
         userName = findViewById(R.id.SignUpUsernameInput);
@@ -72,9 +77,26 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
                             String userId = firebaseUser.getUid();
                             UserSession.getInstance().setUserId(userId);
 
-                            Intent intent = new Intent(OrganizerSignUpActivity.this, HomePageActivity.class);
-                            startActivity(intent);
-                            finish(); // Optional
+                            db.collection("loginProfile")
+                                    .whereEqualTo("userId", userId)
+                                    .get()
+                                    .addOnCompleteListener(task -> {
+                                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                                            DocumentSnapshot document = task.getResult().getDocuments().get(0);
+                                            String firstName = document.getString("firstName");
+                                            Log.d("LoginActivity", "firstName: " + firstName);
+                                            UserSession.getInstance().setFisrtName(firstName);
+
+
+                                            Intent intent = new Intent(OrganizerSignUpActivity.this, MenuActivity.class);
+                                            startActivity(intent);
+                                            finish();
+
+                                        } else {
+                                            Log.e("LoginActivity", "Failed to retrieve user profile data.");
+                                        }
+
+                                    });
                         }
 
                         @Override
