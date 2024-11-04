@@ -4,6 +4,9 @@ public class UserSession {
     private static UserSession instance;
     //Additional values can be added
     private String userId;
+    private String fisrtName;
+    private String lastName;
+    private String userName;
 
     private UserSession() {}
 
@@ -20,6 +23,14 @@ public class UserSession {
 
     public String getUserId() {
         return userId;
+    }
+
+    public void setFisrtName(String fisrtName) {
+        this.fisrtName = fisrtName;
+    }
+
+    public String getFisrtName() {
+        return fisrtName;
     }
 
     //The userId can be accessed by any activity like this:
