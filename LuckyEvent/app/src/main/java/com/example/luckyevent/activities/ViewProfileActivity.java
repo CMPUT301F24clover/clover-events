@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ import com.example.luckyevent.R;
 public class ViewProfileActivity extends AppCompatActivity {
     private TextView nameText, emailText, phoneText;
     private Button editButton;
+    private ImageButton backButton;
     private ProfileController profileController;
     private ProfileSetup profileSetup;
 
@@ -26,9 +28,10 @@ public class ViewProfileActivity extends AppCompatActivity {
         emailText = findViewById(R.id.emailField);
         phoneText = findViewById(R.id.phoneField);
         editButton = findViewById(R.id.editButton);
+        backButton = findViewById(R.id.imageButton);
 
         profileSetup = new ProfileSetup();
-        profileController = new ProfileController(profileSetup, null);
+        profileController = new ProfileController(profileSetup, this);
         String documentID = getIntent().getStringExtra("profileID");
 
         profileController.loadProfile(documentID, profile ->{
@@ -44,6 +47,5 @@ public class ViewProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 }

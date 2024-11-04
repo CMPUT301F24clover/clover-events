@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,7 +18,7 @@ public class RegisterProfileActivity extends AppCompatActivity {
     private Button registerButton;
     private ProfileController profileController;
     private ProfileSetup profileSetup;
-    private String TAG = "RegisterProfile";
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,8 +31,8 @@ public class RegisterProfileActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.RegisterButton);
 
         profileSetup = new ProfileSetup();
-        profileController = new ProfileController(profileSetup, null);
-        Log.d(TAG, "Activity created and ProfileController initialized");
+        profileController = new ProfileController(profileSetup, this);
+
 
 
         registerButton.setOnClickListener(new View.OnClickListener() {
@@ -40,24 +41,35 @@ public class RegisterProfileActivity extends AppCompatActivity {
                 String name = nameEditText.getText().toString();
                 String email = emailEditText.getText().toString();
                 String phoneNumber = phoneEditText.getText().toString();
-                Log.d(TAG, "Register button clicked. Name: " + name + ", Email: " + email + ", Phone: " + phoneNumber);
 
-                if (name.isEmpty() || email.isEmpty() || phoneNumber.isEmpty()) {
-                    Log.e(TAG, "Error: One or more fields are empty.");
+                if (name.isEmpty() || email.isEmpty()){
+                    Toast.makeText(RegisterProfileActivity.this,"Name and email fields are required",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (name.split(" ").length < 2 || name.split(" ").length > 2){
+                    Toast.makeText(RegisterProfileActivity.this,"Please enter both first and last name (omit middle names)",Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 String[] firstLastName = name.split(" ");
                 String firstName = firstLastName[0];
                 String lastName = firstLastName[1];
-                Log.d(TAG, "Extracted First Name: " + firstName + ", Last Name: " + lastName);
+
+                if(phoneNumber.isEmpty()){
+                    phoneNumber = "";
+                }
+
 
 
                 profileController.registerProfile(firstName,lastName,email,phoneNumber,documentID ->{
-                    Log.d(TAG, "Profile registered with document ID: " + documentID);
-                    Intent intent = new Intent(RegisterProfileActivity.this,ViewProfileActivity.class);
-                    intent.putExtra("profileID",documentID);
-                    startActivity(intent);
+                    Toast.makeText(RegisterProfileActivity.this,"Profile Registered successfully.",Toast.LENGTH_SHORT).show();
+                    try {
+                        Intent intent = new Intent(RegisterProfileActivity.this, ViewProfileActivity.class);
+                        intent.putExtra("profileID", documentID);
+                        startActivity(intent);
+                    } catch (Exception e){
+                        Toast.makeText(RegisterProfileActivity.this, "Error navigating to View Profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
                 });
             }
         });

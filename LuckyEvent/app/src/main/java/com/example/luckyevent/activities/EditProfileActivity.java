@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class EditProfileActivity extends AppCompatActivity {
     private EditText nameEdit, emailEdit, phoneEdit;
     private Button saveButton;
+    private ImageButton backButton;
     private ProfileController profileController;
     private ProfileSetup profileSetup;
     private String documentID;
@@ -30,17 +33,24 @@ public class EditProfileActivity extends AppCompatActivity {
         emailEdit = findViewById(R.id.emailEditText);
         phoneEdit = findViewById(R.id.phoneEditText);
         saveButton = findViewById(R.id.saveButton);
+        backButton = findViewById(R.id.imageButton);
         documentID = getIntent().getStringExtra("profileID");
 
         profileSetup = new ProfileSetup();
-        profileController = new ProfileController(profileSetup, null);
+        profileController = new ProfileController(profileSetup, this);
 
         profileController.loadProfile(documentID, new OnSuccessListener<ProfileSetup>() {
             @Override
             public void onSuccess(ProfileSetup profile) {
-                nameEdit.setText(profile.getName());
-                emailEdit.setText(profile.getEmail());
-                phoneEdit.setText(profile.getPhoneNumber());
+                if (profile != null) {
+                    nameEdit.setText(profile.getName());
+                    emailEdit.setText(profile.getEmail());
+                    phoneEdit.setText(profile.getPhoneNumber());
+                    Toast.makeText(EditProfileActivity.this,"Profile loaded successfully",Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(EditProfileActivity.this,"Unable to load profile",Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -48,10 +58,18 @@ public class EditProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 saveProfileEdit();
+
                 Intent intent = new Intent(EditProfileActivity.this,ViewProfileActivity.class);
                 intent.putExtra("profileID",documentID);
                 startActivity(intent);
 
+            }
+        });
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(EditProfileActivity.this,ViewProfileActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -63,6 +81,9 @@ public class EditProfileActivity extends AppCompatActivity {
         String email = emailEdit.getText().toString();
         String phoneNumber = phoneEdit.getText().toString();
         profileController.editProfile(documentID,firstName,lastName,email,phoneNumber);
+        Toast.makeText(EditProfileActivity.this,"Profile saved successfully",Toast.LENGTH_SHORT).show();
 
     }
+
+
 }

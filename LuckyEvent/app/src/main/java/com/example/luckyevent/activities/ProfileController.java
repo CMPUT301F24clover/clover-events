@@ -1,10 +1,13 @@
 package com.example.luckyevent.activities;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -17,15 +20,13 @@ import java.util.Map;
 
 public class ProfileController {
     private ProfileSetup model;
-
     private FirebaseFirestore db;
-    private String TAG = "Profile Controller";
+    private Context context;
 
-
-    public ProfileController(ProfileSetup model, ProfileView view){
+    public ProfileController(ProfileSetup model, Context context){
         this.model = model;
-
         this.db = FirebaseFirestore.getInstance();
+        this.context = context;
     }
     public void registerProfile(String firstName, String lastName, String email, String  phoneNumber,OnSuccessListener<String> onSuccessListener){
         model.setName(firstName +" "+ lastName);
@@ -44,20 +45,27 @@ public class ProfileController {
 
                             HashMap<String, Object> data = new HashMap<>();
                             data.put("Email", email);
-                            data.put("Phone Number", phoneNumber);
+                            data.put("Phone Number", phoneNumber.isEmpty() ? "":phoneNumber);
                             data.put("hasUserProfile",true);
 
                             profileRef.update(data)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void unused) {
-                                            Log.d(TAG,"Profile updates with email and phone number");
+                                            Toast.makeText(context,"Profile registered successfully",Toast.LENGTH_SHORT).show();
                                             onSuccessListener.onSuccess(profileRef.getId());
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(context,"Unable to register Profile",Toast.LENGTH_SHORT).show();
                                         }
                                     });
 
+
                         } else{
-                            Log.d(TAG,"Unable to find document matching this name",task.getException());
+                            Toast.makeText(context,"No profile matches this name",Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -76,10 +84,20 @@ public class ProfileController {
         updateData.put("lastName", lastName);
         updateData.put("Email", email);
         updateData.put("Phone Number", phoneNumber);
-        profileRef.update(updateData);
 
-
-
+        profileRef.update(updateData)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(context,"Profile updated successfully",Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(context,"Failed to update profile",Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
     public void loadProfile(String docID, OnSuccessListener<ProfileSetup> onSuccessListener){
         DocumentReference profileIDRef = db.collection("loginProfile").document(docID);
@@ -99,18 +117,17 @@ public class ProfileController {
                         model.setPhoneNumber(phoneNumber);
 
                         onSuccessListener.onSuccess(model);
-
-
+                        Toast.makeText(context,"Profile loaded",Toast.LENGTH_SHORT).show();
+                    } else{
+                        Toast.makeText(context,"Profile not found",Toast.LENGTH_SHORT).show();
                     }
                 }
                 else{
-                    Log.d(TAG,"Unable to find document matching this name",task.getException());
+                    Toast.makeText(context,"Unable to load profile",Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
     }
-    public interface ProfileRegisteredListener{
-        void onProfileRegistered(String documentID);
 
-    }
 }
