@@ -12,11 +12,19 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
-public class CustomListAdapter extends ArrayAdapter<Entrant> {
+/**
+ * A class implementing the list adapter for an event's list of entrants.
+ *
+ * @author Mmelve
+ * @see Entrant
+ * @version 2
+ * @since 1
+ */
+public class EntrantListAdapter extends ArrayAdapter<Entrant> {
     private List<Entrant> entrants;
     private Context context;
 
-    public CustomListAdapter(@NonNull Context context, List<Entrant> entrants) {
+    public EntrantListAdapter(@NonNull Context context, List<Entrant> entrants) {
         super(context, 0, entrants);
         this.entrants = entrants;
         this.context = context;
@@ -33,10 +41,11 @@ public class CustomListAdapter extends ArrayAdapter<Entrant> {
 
         Entrant entrant = entrants.get(position);
 
-        TextView entrantName = view.findViewById(R.id.text_name);
+        TextView textViewTitle = view.findViewById(R.id.text_title);
+        textViewTitle.setVisibility(View.GONE);
+        TextView textViewContent = view.findViewById(R.id.text_content);
         String entrantFullName = entrant.getFirstName() + " " + entrant.getLastName();
-
-        entrantName.setText(entrantFullName);
+        textViewContent.setText(entrantFullName);
 
         return view;
     }
