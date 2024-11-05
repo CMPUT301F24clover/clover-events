@@ -85,7 +85,7 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
                                             DocumentSnapshot document = task.getResult().getDocuments().get(0);
                                             String firstName = document.getString("firstName");
                                             Log.d("LoginActivity", "firstName: " + firstName);
-                                            UserSession.getInstance().setFisrtName(firstName);
+                                            UserSession.getInstance().setFirstName(firstName);
 
 
                                             Intent intent = new Intent(OrganizerSignUpActivity.this, MenuActivity.class);
