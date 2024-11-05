@@ -38,7 +38,7 @@ public class RegisterDeviceActivity extends AppCompatActivity {
                         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                         String userId = firebaseUser.getUid();
                         UserSession.getInstance().setUserId(userId);
-                        UserSession.getInstance().setFisrtName(null);
+                        UserSession.getInstance().setFirstName(null);
 
                         Intent intent = new Intent(RegisterDeviceActivity.this, MenuActivity.class);
                         startActivity(intent);
