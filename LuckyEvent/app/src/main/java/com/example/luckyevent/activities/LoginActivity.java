@@ -63,46 +63,59 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                String userInput = username.getText().toString().trim();
-                String passwordInput = password.getText().toString().trim();
-
-                firebaseDB.signIn(userInput, passwordInput, new FirebaseDB.SignInCallback() {
-                    @Override
-                    public void onSuccess() {
-                        //gets the currently signed in user
-                        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                        String userId = firebaseUser.getUid();
-                        Log.d("LoginActivity", "User ID: " + userId);
-                        UserSession.getInstance().setUserId(userId);
-
-                        db.collection("loginProfile")
-                                .whereEqualTo("userId", userId)
-                                .get()
-                                .addOnCompleteListener(task -> {
-                                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                                        DocumentSnapshot document = task.getResult().getDocuments().get(0);
-                                        String firstName = document.getString("firstName");
-                                        Log.d("LoginActivity", "firstName: " + firstName);
-                                        UserSession.getInstance().setFirstName(firstName);
+                    String userInput = username.getText().toString().trim();
+                    String passwordInput = password.getText().toString().trim();
 
 
-                                        Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
-                                        startActivity(intent);
-                                        finish();
-
-                                    } else {
-                                        Log.e("LoginActivity", "Failed to retrieve user profile data.");
-                                    }
-
-                                });
-
+                if (userInput.isEmpty() || passwordInput.isEmpty()) {
+                    if (userInput.isEmpty() && passwordInput.isEmpty()) {
+                        Toast.makeText(LoginActivity.this, "Username and password are required", Toast.LENGTH_SHORT).show();
+                    } else if (userInput.isEmpty()) {
+                        Toast.makeText(LoginActivity.this, "Username is required", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Password is required", Toast.LENGTH_SHORT).show();
                     }
+                }
+                else {
+                    firebaseDB.signIn(userInput, passwordInput, new FirebaseDB.SignInCallback() {
+                        @Override
+                        public void onSuccess() {
+                            //gets the currently signed in user
+                            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                            String userId = firebaseUser.getUid();
+                            Log.d("LoginActivity", "User ID: " + userId);
+                            UserSession.getInstance().setUserId(userId);
 
-                    @Override
-                    public void onFailure(String errorMessage) {
-                        Toast.makeText(LoginActivity.this, "Sign-in failed: " + errorMessage, Toast.LENGTH_SHORT).show();
-                    }
-                },true);
+                            db.collection("loginProfile")
+                                    .whereEqualTo("userId", userId)
+                                    .get()
+                                    .addOnCompleteListener(task -> {
+                                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                                            DocumentSnapshot document = task.getResult().getDocuments().get(0);
+                                            String firstName = document.getString("firstName");
+                                            Log.d("LoginActivity", "firstName: " + firstName);
+                                            UserSession.getInstance().setFisrtName(firstName);
+
+
+                                            Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
+                                            startActivity(intent);
+                                            finish();
+
+                                        } else {
+                                            Log.e("LoginActivity", "Failed to retrieve user profile data.");
+                                        }
+
+                                    });
+
+                        }
+
+                        @Override
+                        public void onFailure(String errorMessage) {
+                            Toast.makeText(LoginActivity.this, "Sign-in failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+                            Log.e("TAG", "Sign-in failed: " + errorMessage);
+                        }
+                    }, true);
+                }
 
             }
         });
