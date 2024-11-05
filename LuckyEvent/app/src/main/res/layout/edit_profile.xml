@@ -85,14 +85,6 @@
                 android:layout_marginStart="10dp"
                 app:srcCompat="@drawable/baseline_account_circle_24" />
 
-            <Button
-                android:id="@+id/button"
-                android:layout_width="153dp"
-                android:layout_marginStart="20dp"
-
-                android:backgroundTint="#007AFF"
-                android:layout_height="wrap_content"
-                android:text="Change Photo" />
 
         </LinearLayout>
 
