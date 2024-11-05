@@ -85,6 +85,11 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         android:elevation="4dp">
 
+        <Button
+            android:id="@+id/profileTestButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Test Profile" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
