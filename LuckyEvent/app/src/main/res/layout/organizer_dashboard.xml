@@ -217,8 +217,8 @@
     </LinearLayout>
 
     <include
-        android:id="@+id/bottomNavigationViewEntrant"
-        layout="@layout/entrant_bottom_bar"
+        android:id="@+id/bottomNavigationViewOrganizer"
+        layout="@layout/organizer_bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"/>

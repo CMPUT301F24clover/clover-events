@@ -38,7 +38,7 @@ public class HomePageFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.entrant_homepage, container, false);
-        String firstName = UserSession.getInstance().getFisrtName();
+        String firstName = UserSession.getInstance().getFirstName();
         Log.d("HomePageFragment", " My FirstName: " + firstName);
         TextView welcomeTextView = view.findViewById(R.id.welcomeMessage);
 

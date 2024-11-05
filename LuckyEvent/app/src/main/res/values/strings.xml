@@ -19,5 +19,6 @@
     <string name="date">Date</string>
     <string name="upload_event_poster">Upload Event Poster</string>
     <string name="event_name">Event Name</string>
+    <string name="chosen_list">List of Chosen Entrants</string>
     <string name="welcome_message">Welcome, %1$s!</string>
 </resources>
