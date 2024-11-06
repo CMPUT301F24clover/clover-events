@@ -166,10 +166,10 @@
             app:layout_constraintTop_toBottomOf="@+id/SignUpLastNameInput" />
 
         <EditText
-            android:id="@+id/SignUpOrganizationNameInput"
+            android:id="@+id/SignUpFacilityNameInput"
             android:layout_width="242dp"
             android:layout_height="wrap_content"
-            android:hint="Organization Name"
+            android:hint="Facility Name"
             android:inputType="text"
             android:maxLines="1"
             android:singleLine="true"
@@ -189,7 +189,7 @@
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/SignUpOrganizationNameInput" />
+            app:layout_constraintTop_toBottomOf="@+id/SignUpFacilityNameInput" />
 
         <EditText
             android:id="@+id/SignUpFacilityCodeInput"
