@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,9 +38,14 @@ public class ViewProfileActivity extends AppCompatActivity {
         String documentID = getIntent().getStringExtra("profileID");
 
         profileController.loadProfile(documentID, profile ->{
-            nameText.setText(profile.getName());
-            emailText.setText(profile.getEmail());
-            phoneText.setText(profile.getPhoneNumber());
+            if (profile != null) {
+                nameText.setText(profile.getName());
+                emailText.setText(profile.getEmail());
+                phoneText.setText(profile.getPhoneNumber());
+                Toast.makeText(ViewProfileActivity.this,"Profile loaded",Toast.LENGTH_SHORT).show();
+            } else{
+                Toast.makeText(ViewProfileActivity.this,"Unable to load profile",Toast.LENGTH_SHORT).show();
+            }
         });
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override

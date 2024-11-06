@@ -162,7 +162,10 @@
     <include
         android:id="@+id/bottomNavigationViewEntrant"
         layout="@layout/entrant_bottom_bar"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/toolbar4"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
