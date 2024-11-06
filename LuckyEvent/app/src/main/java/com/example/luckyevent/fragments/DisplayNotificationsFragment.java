@@ -1,17 +1,21 @@
-package com.example.luckyevent.activities;
+package com.example.luckyevent.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 import com.example.luckyevent.Notification;
 import com.example.luckyevent.NotificationListAdapter;
 import com.example.luckyevent.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -29,33 +33,36 @@ import java.util.List;
  * @version 1
  * @since 1
  */
-public class DisplayNotificationsActivity extends AppCompatActivity {
+public class DisplayNotificationsFragment extends Fragment {
     private List<Notification> notifsList;
     private NotificationListAdapter listAdapter;
     private CollectionReference notifRef;
     private ListenerRegistration reg;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.entrant_list_screen);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.entrant_list_screen, container, false);
 
-        Intent intent = getIntent();
-        String entrantId = intent.getStringExtra("entrantId");
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            String entrantId = firebaseUser.getUid();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            notifRef = db.collection("loginProfile").document(entrantId).collection("notifications");
 
-        ListView listview = findViewById(R.id.customListView);
-        notifsList = new ArrayList<>();
-        listAdapter = new NotificationListAdapter(this, notifsList);
-        listview.setAdapter(listAdapter);
+            ListView listview = view.findViewById(R.id.customListView);
+            notifsList = new ArrayList<>();
+            listAdapter = new NotificationListAdapter(getContext(), notifsList);
+            listview.setAdapter(listAdapter);
 
-        Toolbar toolbar = findViewById(R.id.topBar);
-        toolbar.setTitle("Notifications");
+            Toolbar toolbar = view.findViewById(R.id.topBar);
+            toolbar.setTitle("Notifications");
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        notifRef = db.collection("loginProfile").document(entrantId).collection("notifications");
+            getNotifsList();
 
-        getNotifsList();
+        }
+
+        return view;
     }
 
     /**
@@ -75,18 +82,17 @@ public class DisplayNotificationsActivity extends AppCompatActivity {
                     String content = notifSnapshot.getString("content");
                     Notification notif = new Notification(title, content);
                     notifsList.add(notif);
-                    listAdapter.notifyDataSetChanged();
                 }
+                listAdapter.notifyDataSetChanged();
             }
-
         });
     }
 
     /**
-     * Removes listener once activity stops.
+     * Removes listener once fragment stops.
      */
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         if (reg != null) {
             reg.remove();
