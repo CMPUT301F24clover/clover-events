@@ -31,36 +31,6 @@ public class ProfileView extends AppCompatActivity {
         ProfileSetup profileSetup = new ProfileSetup();
         profileController = new ProfileController(profileSetup, this);
 
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                registerProfile();
-            }
-        });
     }
-    private void registerProfile(){
-        String name = nameEditText.getText().toString();
-        String email = emailEditText.getText().toString();
-        String phoneNumber = phoneNumberEditText.getText().toString();
 
-        String[] firstLastName = name.split(" ");
-        String firstName = firstLastName[0];
-        String lastName = firstLastName[1];
-
-        profileController.registerProfile(firstName, lastName, email, phoneNumber, new OnSuccessListener<String>() {
-            @Override
-            public void onSuccess(String documentID) {
-                Intent intent = new Intent(ProfileView.this, ViewProfileActivity.class);
-                intent.putExtra("profileID",documentID);
-                startActivity(intent);
-
-            }
-        });
-
-    }
-    public void loadProfileItems(ProfileSetup profile){
-        nameEditText.setText(profile.getName());
-        emailEditText.setText(profile.getEmail());
-        phoneNumberEditText.setText(profile.getPhoneNumber());
-    }
 }

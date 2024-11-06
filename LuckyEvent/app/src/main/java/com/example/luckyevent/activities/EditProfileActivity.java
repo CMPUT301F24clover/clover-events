@@ -59,9 +59,7 @@ public class EditProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
                 saveProfileEdit();
 
-                Intent intent = new Intent(EditProfileActivity.this,ViewProfileActivity.class);
-                intent.putExtra("profileID",documentID);
-                startActivity(intent);
+
 
             }
         });
@@ -76,14 +74,21 @@ public class EditProfileActivity extends AppCompatActivity {
     private void saveProfileEdit() {
         String name = nameEdit.getText().toString();
         String[] fullName = name.split(" ");
-        String firstName = fullName[0];
-        String lastName = fullName[1];
-        String email = emailEdit.getText().toString();
-        String phoneNumber = phoneEdit.getText().toString();
-        profileController.editProfile(documentID,firstName,lastName,email,phoneNumber);
-        Toast.makeText(EditProfileActivity.this,"Profile saved successfully",Toast.LENGTH_SHORT).show();
+        if (fullName.length != 2) {
+            Toast.makeText(EditProfileActivity.this, "Please only enter first and last name", Toast.LENGTH_SHORT).show();
+        } else{
+            String firstName = fullName[0];
+            String lastName = fullName[1];
+            String email = emailEdit.getText().toString();
+            String phoneNumber = phoneEdit.getText().toString();
+            profileController.editProfile(documentID, firstName, lastName, email, phoneNumber);
+            Toast.makeText(EditProfileActivity.this, "Profile saved successfully", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(EditProfileActivity.this,ViewProfileActivity.class);
+            intent.putExtra("profileID",documentID);
+            startActivity(intent);
+        }
 
     }
-
 
 }
