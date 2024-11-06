@@ -53,6 +53,8 @@ dependencies {
     implementation(libs.barcode.scanning.common)
     implementation(libs.play.services.code.scanner)
     implementation(libs.firebase.firestore)
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
