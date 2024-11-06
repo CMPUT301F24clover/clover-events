@@ -10,6 +10,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -29,45 +31,53 @@ public class ProfileController {
         this.context = context;
     }
     public void registerProfile(String firstName, String lastName, String email, String  phoneNumber,OnSuccessListener<String> onSuccessListener){
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String userID = user.getUid();
         model.setName(firstName +" "+ lastName);
         model.setEmail(email);
         model.setPhoneNumber(phoneNumber);
 
         db.collection("loginProfile")
-                .whereEqualTo("firstName",firstName)
-                .whereEqualTo("lastName",lastName)
+                .document(userID)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                .addOnCompleteListener(task ->  {
                         if (task.isSuccessful()){
-                            DocumentReference profileRef = task.getResult().getDocuments().get(0).getReference();
+                            DocumentSnapshot doc = task.getResult();
+                            if (doc != null && doc.exists()) {
+                                String dbfirstName = doc.getString("firstName");
+                                String dblastName = doc.getString("lastName");
+                                if (firstName.equals(dbfirstName) && lastName.equals(dblastName)) {
+                                    HashMap<String, Object> data = new HashMap<>();
+                                    data.put("Email", email);
+                                    data.put("Phone Number", phoneNumber.isEmpty() ? "" : phoneNumber);
+                                    data.put("hasUserProfile", true);
+                                    doc.getReference().update(data)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    Toast.makeText(context, "Profile registered successfully", Toast.LENGTH_SHORT).show();
+                                                    onSuccessListener.onSuccess(doc.getId());
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Toast.makeText(context, "Unable to register Profile", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                } else {
+                                    Toast.makeText(context,"The entered name does not match the one on your login profile. Please use that one",Toast.LENGTH_SHORT).show();
+                                }
 
-                            HashMap<String, Object> data = new HashMap<>();
-                            data.put("Email", email);
-                            data.put("Phone Number", phoneNumber.isEmpty() ? "":phoneNumber);
-                            data.put("hasUserProfile",true);
-
-                            profileRef.update(data)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void unused) {
-                                            Toast.makeText(context,"Profile registered successfully",Toast.LENGTH_SHORT).show();
-                                            onSuccessListener.onSuccess(profileRef.getId());
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Toast.makeText(context,"Unable to register Profile",Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-
+                            }else{
+                                Toast.makeText(context,"No profile match this name",Toast.LENGTH_SHORT).show();
+                            }
 
                         } else{
-                            Toast.makeText(context,"No profile matches this name",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context,"Unable to find profile name",Toast.LENGTH_SHORT).show();
                         }
-                    }
+
                 });
 
     }
