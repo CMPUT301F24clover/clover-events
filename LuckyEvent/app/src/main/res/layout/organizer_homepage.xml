@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#D3E1F1">
+    android:background="#D3E1F1"
+    tools:context=".activities.OrganizerHomePageActivity">
 
     <LinearLayout
         android:id="@+id/mainContentCard"
@@ -19,6 +20,15 @@
         app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <TextView
+            android:id="@+id/welcomeMessage_org"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_semibold"
+            android:text="@string/welcome_message"
+            android:textColor="#000000"
+            android:textSize="24sp" />
 
         <GridLayout
             android:layout_width="match_parent"
@@ -216,11 +226,6 @@
             android:textSize="20sp" />
     </LinearLayout>
 
-    <include
-        android:id="@+id/bottomNavigationViewOrganizer"
-        layout="@layout/organizer_bottom_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

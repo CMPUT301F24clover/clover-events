@@ -1,18 +1,20 @@
-package com.example.luckyevent.activities;
+package com.example.luckyevent.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 import com.example.luckyevent.Entrant;
-import com.example.luckyevent.R;
 import com.example.luckyevent.EntrantListAdapter;
+import com.example.luckyevent.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -33,7 +35,7 @@ import java.util.List;
  * @version 1
  * @since 1
  */
-public class DisplayEntrantsActivity extends AppCompatActivity {
+public class DisplayEntrantsFragment extends Fragment {
     private List<String> entrantsIdList;
     private List<Entrant> entrantsList;
     private String listName;
@@ -42,33 +44,35 @@ public class DisplayEntrantsActivity extends AppCompatActivity {
     private DocumentReference eventRef;
     private ListenerRegistration reg;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.organizer_list_screen);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.organizer_list_screen, container, false);
 
-        Intent intent = getIntent();
-        String screenTitle = intent.getStringExtra("screenTitle");
-        String eventId = intent.getStringExtra("eventId");
-        listName = intent.getStringExtra("listName");
+        if (getArguments() != null) {
+            String screenTitle = getArguments().getString("screenTitle");
+            String eventId = getArguments().getString("eventId");
+            listName = getArguments().getString("listName");
 
-        ListView listview = findViewById(R.id.customListView);
-        entrantsList = new ArrayList<>();
-        listAdapter = new EntrantListAdapter(this, entrantsList);
-        listview.setAdapter(listAdapter);
+            ListView listview = view.findViewById(R.id.customListView);
+            entrantsList = new ArrayList<>();
+            listAdapter = new EntrantListAdapter(getContext(), entrantsList);
+            listview.setAdapter(listAdapter);
 
-        Toolbar toolbar = findViewById(R.id.topBar);
-        toolbar.setTitle(screenTitle);
+            Toolbar toolbar = view.findViewById(R.id.topBar);
+            toolbar.setTitle(screenTitle);
 
-        db = FirebaseFirestore.getInstance();
-        eventRef = db.collection("events").document(eventId);
+            db = FirebaseFirestore.getInstance();
+            eventRef = db.collection("events").document(eventId);
 
-        getIdsList();
+            getIdsList();
 
-        // create notification button
-        FloatingActionButton notification_button = findViewById(R.id.create_notification_fab);
-        notification_button.setOnClickListener(view -> Toast.makeText(DisplayEntrantsActivity.this, "Notification fragment not yet implemented", Toast.LENGTH_SHORT).show());
+            // create notification button
+            FloatingActionButton notification_button = view.findViewById(R.id.create_notification_fab);
+            notification_button.setOnClickListener(v -> Toast.makeText(getContext(), "Notification fragment not yet implemented", Toast.LENGTH_SHORT).show());
+        }
+
+        return view;
     }
 
     /**
@@ -81,9 +85,9 @@ public class DisplayEntrantsActivity extends AppCompatActivity {
             }
             if (snapshot != null && snapshot.exists()) {
                 entrantsIdList = (List<String>) snapshot.get(listName);
-                    if (entrantsIdList != null) {
-                        getEntrantsList();
-                    }
+                if (entrantsIdList != null) {
+                    getEntrantsList();
+                }
             }
         });
     }
@@ -109,10 +113,10 @@ public class DisplayEntrantsActivity extends AppCompatActivity {
     }
 
     /**
-     * Removes listener once activity stops.
+     * Removes listener once fragment stops.
      */
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         if (reg != null) {
             reg.remove();

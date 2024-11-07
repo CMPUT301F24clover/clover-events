@@ -5,21 +5,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MenuActivity">
+    tools:context=".activities.OrganizerMenuActivity">
 
     <FrameLayout
-        android:id="@+id/MenuFragment"
+        android:id="@+id/OrganizerMenuFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationViewEntrant"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationViewOrganizer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
     <include
-        android:id="@+id/bottomNavigationViewEntrant"
-        layout="@layout/entrant_bottom_bar"
+        android:id="@+id/bottomNavigationViewOrganizer"
+        layout="@layout/organizer_bottom_bar"
         />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -61,7 +61,7 @@ public class FirebaseDB {
                                             loginMap.put("lastName", lastName);
                                             loginMap.put("userId", userId);
                                             loginMap.put("role", role);
-                                            loginMap.put("organizationName", organizationName);
+                                            loginMap.put("facilityName", organizationName);
                                             loginMap.put("facilityCode",facilityCode);
                                             loginMap.put("hasEventProfile", false);}
 

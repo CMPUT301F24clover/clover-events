@@ -4,20 +4,11 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.luckyevent.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -34,9 +25,8 @@ public class GenerateQrActivity extends AppCompatActivity {
     private TextInputEditText eventName;
     private TextInputEditText date;
     private TextInputEditText description;
-    private TextInputEditText waitListSize;
-    private TextInputEditText sampleSize;
     MaterialButton createEventButton;
+    CheckBox geolocation;
     private FirebaseStorage firebaseStorage;
     private FirebaseFirestore firestore;
 
@@ -49,8 +39,7 @@ public class GenerateQrActivity extends AppCompatActivity {
         date = findViewById(R.id.input_date);
         description = findViewById(R.id.input_description);
         createEventButton = findViewById(R.id.button_createEvent);
-        waitListSize = findViewById(R.id.input_waitingListSize);
-        sampleSize = findViewById(R.id.input_sampleSize);
+        geolocation = findViewById(R.id.checkbox_geolocation);
 
         // Initialize Firebase
         firebaseStorage = FirebaseStorage.getInstance();
@@ -68,16 +57,13 @@ public class GenerateQrActivity extends AppCompatActivity {
         String name = eventName.getText().toString();
         String eventDate = date.getText().toString();
         String eventDescription = description.getText().toString();
-        String waitingList = waitListSize.getText().toString();
-        String samplingSize = sampleSize.getText().toString();
+        String geoLocation = geolocation.isChecked() ? "Geolocation enabled" : "Geolocation disabled";
 
         // Concatenate the input values
         String qrText = "Event Name: " + name + "\n" +
                 "Date: " + eventDate + "\n" +
                 "Description: " + eventDescription + "\n" +
-                "Sample Size: " + samplingSize + "\n" +
-                "Waiting List Size: " + waitingList;
-
+                geoLocation;
 
         if (!qrText.isEmpty()) {
             try {
@@ -111,57 +97,22 @@ public class GenerateQrActivity extends AppCompatActivity {
     }
 
     private void saveQRCodeInfoToFirestore(String qrCodeUrl) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String userID = user.getUid();
         // Create a map to store event information
         Map<String, Object> eventInfo = new HashMap<>();
         eventInfo.put("eventName", eventName.getText().toString());
         eventInfo.put("date", date.getText().toString());
         eventInfo.put("description", description.getText().toString());
-        eventInfo.put("sampleSize", sampleSize.getText().toString());
-        eventInfo.put("waitListSize", waitListSize.getText().toString());
+        eventInfo.put("geolocation", geolocation.isChecked());
         eventInfo.put("qrCodeUrl", qrCodeUrl);
-        eventInfo.put("userID", userID);
-
-
-
-
 
         // Save the event information to Firestore
-        firestore.collection("events")
-                .add(eventInfo)
+        firestore.collection("events").add(eventInfo)
                 .addOnSuccessListener(documentReference -> {
                     // Document added successfully
-                    String eventID = documentReference.getId();
-                    addEventToProfile(userID, eventID);
                 })
                 .addOnFailureListener(e -> {
                     // Handle the error
                     e.printStackTrace();
-                });
-    }
-
-    private void addEventToProfile(String userID, String eventID) {
-        Map<String, Object> eventIDMap = new HashMap<>();
-        eventIDMap.put("eventID",eventID);
-
-        firestore.collection("loginProfile")
-                .document(userID)
-                .collection("myEvents")
-                .document(eventID)
-                .set(eventIDMap)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        // Event ID added to loginProfile
-                        Toast.makeText(GenerateQrActivity.this,"Added event ID to profile",Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(GenerateQrActivity.this,"Error adding event ID to login profile",Toast.LENGTH_SHORT).show();
-                    }
                 });
     }
 }

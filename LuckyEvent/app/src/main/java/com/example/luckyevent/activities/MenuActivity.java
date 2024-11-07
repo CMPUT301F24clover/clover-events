@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.luckyevent.R;
+import com.example.luckyevent.fragments.DisplayNotificationsFragment;
 import com.example.luckyevent.fragments.HomePageFragment;
 import com.example.luckyevent.fragments.ScanQrFragment;
 import com.example.luckyevent.fragments.TestFragment;
@@ -27,7 +28,7 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.menu_activity_layout);
 
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView = findViewById(R.id.bottomNavigationViewEntrant);
         db = FirebaseFirestore.getInstance();
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -38,15 +39,23 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
                         .commit();
                 return true;
             }
-            else if(item.getItemId() == R.id.profile_item){
+            else if (item.getItemId() == R.id.profile_item) {
                 findProfile();
                 return true;
             }
 
-            else if(item.getItemId() == R.id.camera_item){
+            else if (item.getItemId() == R.id.camera_item) {
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.MenuFragment, new ScanQrFragment())
+                        .commit();
+                return true;
+            }
+
+            else if (item.getItemId() == R.id.notification_item) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.MenuFragment, new DisplayNotificationsFragment())
                         .commit();
                 return true;
             }
