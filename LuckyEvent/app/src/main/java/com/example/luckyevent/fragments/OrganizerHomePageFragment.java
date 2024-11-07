@@ -49,7 +49,7 @@ public class OrganizerHomePageFragment extends Fragment {
         // Set facility name
         String facilityName = OrganizerSession.getInstance().getFacilityName();
         Log.d("OrganizerHomePageFragment", "Facility Name: " + facilityName);
-        TextView welcomeTextView = view.findViewById(R.id.welcomeMessage_org);
+        TextView welcomeTextView = view.findViewById(R.id.welcomeMessage);
 
         if (facilityName != null) {
             String welcomeMessage = getString(R.string.welcome_message, facilityName);

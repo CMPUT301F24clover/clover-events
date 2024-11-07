@@ -161,14 +161,7 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Upload Event Poster Button -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button_uploadPoster"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/upload_event_poster"
-                        android:layout_marginTop="16dp"
-                        app:backgroundTint="@color/blue"
-                        app:layout_constraintTop_toBottomOf="@id/input_description"/>
+
 
                     <!-- Waiting List Size Dropdown -->
                     <com.google.android.material.textfield.TextInputLayout
@@ -178,7 +171,8 @@
                         android:layout_marginTop="16dp"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:hint="@string/waiting_list_size"
-                        app:layout_constraintTop_toBottomOf="@id/button_uploadPoster">
+                        app:layout_constraintTop_toBottomOf="@id/input_description">
+
                         <AutoCompleteTextView
                             android:id="@+id/waitingListSizeDropdown"
                             android:layout_width="match_parent"

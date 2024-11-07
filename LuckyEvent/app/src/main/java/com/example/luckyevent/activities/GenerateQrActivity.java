@@ -3,6 +3,7 @@ package com.example.luckyevent.activities;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
@@ -27,7 +28,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GenerateQrActivity extends AppCompatActivity {
@@ -40,6 +43,8 @@ public class GenerateQrActivity extends AppCompatActivity {
     MaterialButton createEventButton;
     private FirebaseStorage firebaseStorage;
     private FirebaseFirestore firestore;
+    private int selectedWaitListSize;
+    private int selectedSampleSize;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,19 +63,34 @@ public class GenerateQrActivity extends AppCompatActivity {
         TextInputLayout descriptionLayout = findViewById(R.id.input_description);
         description = (TextInputEditText) descriptionLayout.getEditText();
 
+        List<Integer> waitingListChoices = Arrays.asList(20,40,60,80,100);
+        List<Integer> sampleListChoices = Arrays.asList(10,30,50,70,90);
 
 
-
-        ArrayAdapter<CharSequence> waitingListAdapter = ArrayAdapter.createFromResource(
-                this, R.array.waiting_list_sizes, android.R.layout.simple_dropdown_item_1line
+        ArrayAdapter<Integer> waitingListAdapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_dropdown_item_1line, waitingListChoices
         );
-        ArrayAdapter<CharSequence> sampleSizeAdapter = ArrayAdapter.createFromResource(
-                this, R.array.sample_sizes, android.R.layout.simple_dropdown_item_1line
+
+        ArrayAdapter<Integer> sampleSizeAdapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_dropdown_item_1line,sampleListChoices
         );
 
 
         waitListSize.setAdapter(waitingListAdapter);
         sampleSize.setAdapter(sampleSizeAdapter);
+
+        waitListSize.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedWaitListSize = waitingListChoices.get(i);
+            }
+        });
+        sampleSize.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedSampleSize = sampleListChoices.get(i);
+            }
+        });
 
         // Initialize createEventButton
         createEventButton = findViewById(R.id.button_createEvent);
@@ -149,8 +169,8 @@ public class GenerateQrActivity extends AppCompatActivity {
         eventInfo.put("eventName", eventName.getText().toString());
         eventInfo.put("date", date.getText().toString());
         eventInfo.put("description", description.getText().toString());
-        eventInfo.put("WaitListSize", waitListSize.getText().toString());
-        eventInfo.put("sampleSize", sampleSize.getText().toString());
+        eventInfo.put("WaitListSize", waitListSize);
+        eventInfo.put("sampleSize", sampleSize);
         //eventInfo.put("qrCodeUrl", qrCodeUrl);
         eventInfo.put("userID", userID);
 
