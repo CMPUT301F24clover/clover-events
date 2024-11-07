@@ -18,6 +18,8 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.uiautomator.UiDevice;
 
 import com.example.luckyevent.activities.EditProfileActivity;
 import com.example.luckyevent.activities.LoginActivity;
@@ -25,13 +27,29 @@ import com.example.luckyevent.activities.MenuActivity;
 import com.example.luckyevent.activities.OrganizerSignInActivity;
 import com.example.luckyevent.activities.ViewProfileActivity;
 
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
+
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class ProfileActivityTest {
+
+    @BeforeClass
+    public static void disableAnimations() {
+        try {
+            UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+            device.executeShellCommand("settings put global window_animation_scale 0");
+            device.executeShellCommand("settings put global transition_animation_scale 0");
+            device.executeShellCommand("settings put global animator_duration_scale 0");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Rule
     public ActivityScenarioRule<LoginActivity> scenario = new ActivityScenarioRule<>(LoginActivity.class);
 
@@ -55,8 +73,7 @@ public class ProfileActivityTest {
         });
 
         //try to make edits with and invalid name
-        Thread.sleep(2000);
-        onView(withId(R.id.nameEditText)).perform(replaceText("Johnathan Doeler"), closeSoftKeyboard());
+        onView(withId(R.id.nameEditText)).perform(replaceText("Johnathan"), closeSoftKeyboard());
         onView(withId(R.id.emailEditText)).perform(replaceText("Johhny@gmail.com"), closeSoftKeyboard());
         onView(withId(R.id.saveButton)).perform(click());
         editProfileScenario.onActivity(activity -> {
@@ -65,6 +82,7 @@ public class ProfileActivityTest {
 
 
         //try to make edits and see if they have
+        Thread.sleep(10000);
         onView(withId(R.id.nameEditText)).perform(replaceText("Johnathan Doeler"), closeSoftKeyboard());
         onView(withId(R.id.emailEditText)).perform(replaceText("Johhny@gmail.com"), closeSoftKeyboard());
         onView(withId(R.id.saveButton)).perform(click());
