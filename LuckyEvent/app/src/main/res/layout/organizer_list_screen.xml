@@ -29,7 +29,7 @@
             android:id="@+id/create_notification_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/create_notification_desc"
+
             android:layout_marginBottom="20dp"
             android:layout_marginEnd="20dp"
             android:src="@drawable/round_notification_add_24"
