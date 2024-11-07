@@ -12,5 +12,6 @@ public class DisplayQrActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.entrant_event_screen);
+
     }
 }

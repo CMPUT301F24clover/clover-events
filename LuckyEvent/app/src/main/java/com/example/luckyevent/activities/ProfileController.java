@@ -110,11 +110,6 @@ public class ProfileController {
                 });
     }
     public void loadProfile(String docID, OnSuccessListener<ProfileSetup> onSuccessListener){
-        if (docID == null) {
-            Toast.makeText(context, "Document ID is null", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         DocumentReference profileIDRef = db.collection("loginProfile").document(docID);
         profileIDRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override

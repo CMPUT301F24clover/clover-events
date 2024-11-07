@@ -66,9 +66,8 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                                 String userId = firebaseUser.getUid();
                                 UserSession.getInstance().setUserId(userId);
-                                UserSession.getInstance().setFirstName(firstNameInput);
 
-                                Intent intent = new Intent(EntrantSignUpActivity.this, MenuActivity.class);
+                                Intent intent = new Intent(EntrantSignUpActivity.this, HomePageActivity.class);
                                 startActivity(intent);
                                 finish(); // Optional
                             }
