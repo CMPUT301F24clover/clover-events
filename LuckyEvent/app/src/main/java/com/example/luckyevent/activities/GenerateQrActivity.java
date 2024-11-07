@@ -169,8 +169,8 @@ public class GenerateQrActivity extends AppCompatActivity {
         eventInfo.put("eventName", eventName.getText().toString());
         eventInfo.put("date", date.getText().toString());
         eventInfo.put("description", description.getText().toString());
-        eventInfo.put("WaitListSize", waitListSize);
-        eventInfo.put("sampleSize", sampleSize);
+        eventInfo.put("WaitListSize", selectedWaitListSize);
+        eventInfo.put("sampleSize", selectedSampleSize);
         //eventInfo.put("qrCodeUrl", qrCodeUrl);
         eventInfo.put("userID", userID);
 
