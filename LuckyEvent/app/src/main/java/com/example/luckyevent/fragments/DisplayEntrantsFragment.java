@@ -67,15 +67,9 @@ public class DisplayEntrantsFragment extends Fragment {
 
             getEntrantIdsList();
 
-            if (entrantsIdList != null) {
-                createEntrantsList();
-            } else {
-                Toast.makeText(getContext(), "List does not exist.", Toast.LENGTH_SHORT).show();
-            }
-
             // create notification button
             FloatingActionButton notification_button = view.findViewById(R.id.create_notification_fab);
-            notification_button.setOnClickListener(v -> Toast.makeText(getContext(), "Notification fragment not yet implemented", Toast.LENGTH_SHORT).show());
+            notification_button.setOnClickListener(v -> Toast.makeText(getContext(), "Manual notification fragment not yet implemented", Toast.LENGTH_SHORT).show());
         }
 
         return view;
@@ -91,6 +85,11 @@ public class DisplayEntrantsFragment extends Fragment {
             }
             if (snapshot != null && snapshot.exists()) {
                 entrantsIdList = (List<String>) snapshot.get(listName);
+                if (entrantsIdList != null) {
+                    createEntrantsList();
+                } else {
+                    Toast.makeText(getContext(), "List does not exist.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -108,11 +107,11 @@ public class DisplayEntrantsFragment extends Fragment {
                     if (snapshot.exists()) {
                         Entrant entrant = new Entrant((String) snapshot.get("firstName"), (String) snapshot.get("lastName"), (String) snapshot.get("userName"));
                         entrantsList.add(entrant);
+                        listAdapter.notifyDataSetChanged();
                     }
                 }
             });
         }
-        listAdapter.notifyDataSetChanged();
     }
 
     /**

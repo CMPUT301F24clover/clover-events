@@ -39,21 +39,11 @@ public class LotteryService extends Service {
         Log.d(TAG, "Service started");
 
         String eventId = intent.getStringExtra("eventId");
-        sampleSize = intent.getIntExtra("sampleSize", 0);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         docRef = db.collection("events").document(eventId);
 
         getWaitingList();
-
-        if (waitingList != null) {
-            lottery = new Lottery(waitingList, sampleSize);
-            lottery.selectWinners();
-            setResult();
-        } else {
-            Toast.makeText(this, "Waiting list does not exist. Cannot initiate lottery.", Toast.LENGTH_SHORT).show();
-            stopSelf();
-        }
 
         return START_NOT_STICKY;
     }
@@ -77,8 +67,17 @@ public class LotteryService extends Service {
             if (task.isSuccessful()) {
                 DocumentSnapshot snapshot = task.getResult();
                 if (snapshot.exists()) {
-                    eventName = (String) snapshot.get("eventTitle");
+                    eventName = (String) snapshot.get("eventName");
+                    sampleSize = Math.toIntExact((long) snapshot.get("sampleSize"));
                     waitingList = (List<String>) snapshot.get("waitingList");
+                    if (waitingList != null) {
+                        lottery = new Lottery(waitingList, sampleSize);
+                        lottery.selectWinners();
+                        setResult();
+                    } else {
+                        Toast.makeText(this, "Waiting list does not exist. Cannot initiate lottery.", Toast.LENGTH_SHORT).show();
+                        stopSelf();
+                    }
                 } else {
                     stopSelf();
                 }
