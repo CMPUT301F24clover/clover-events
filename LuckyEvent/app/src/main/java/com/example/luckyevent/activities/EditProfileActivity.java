@@ -67,6 +67,7 @@ public class EditProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(EditProfileActivity.this,ViewProfileActivity.class);
+                intent.putExtra("profileID", documentID);
                 startActivity(intent);
             }
         });
