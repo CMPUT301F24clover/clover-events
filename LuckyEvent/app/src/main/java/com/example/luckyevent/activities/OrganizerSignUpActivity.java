@@ -25,7 +25,7 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
     private EditText password;
     private EditText firstName;
     private EditText lastName;
-    private EditText organizerName;
+    private EditText facilityName;
     private EditText facilityCode;
     private FirebaseDB firebaseDB;
     private ImageView gobackButton;
@@ -40,7 +40,7 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
         password = findViewById(R.id.SignUpPasswordInput);
         firstName = findViewById(R.id.SignUpFirstNameInput);
         lastName = findViewById(R.id.SignUpLastNameInput);
-        organizerName = findViewById(R.id.SignUpOrganizationNameInput);
+        facilityName = findViewById(R.id.SignUpFacilityNameInput);
         facilityCode = findViewById(R.id.SignUpFacilityCodeInput);
         gobackButton = findViewById(R.id.previousIcon);
 
@@ -54,7 +54,7 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
                 String passwordInput = password.getText().toString().trim();
                 String firstNameInput = firstName.getText().toString().trim();
                 String lastNameInput = lastName.getText().toString().trim();
-                String organizerNameInput = organizerName.getText().toString().trim();
+                String organizerNameInput = facilityName.getText().toString().trim();
                 String facilityCodeInput = facilityCode.getText().toString().trim();
 
 
