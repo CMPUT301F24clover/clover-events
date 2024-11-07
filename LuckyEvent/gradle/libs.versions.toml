@@ -7,15 +7,11 @@ appcompat = "1.7.0"
 material = "1.12.0"
 activity = "1.9.3"
 constraintlayout = "2.1.4"
-navigationFragment = "2.6.0"
-navigationUi = "2.6.0"
 barcodeScanningCommon = "17.0.0"
 playServicesCodeScanner = "16.1.0"
 firebaseFirestore = "25.1.1"
 firebaseAuth = "23.0.0"
 firebaseDatabase = "21.0.0"
-rules = "1.6.1"
-junitJupiter = "5.8.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -30,10 +26,6 @@ play-services-code-scanner = { group = "com.google.android.gms", name = "play-se
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
-navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
-rules = { group = "androidx.test", name = "rules", version.ref = "rules" }
-junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -21,7 +21,7 @@ import java.util.List;
  * @since 1
  */
 public class LotteryService extends Service {
-    private static final String TAG = "LotteryService";
+    private static final String TAG = "LotteryActivity";
     private String eventName;
     private List<String> waitingList;
     private int sampleSize;

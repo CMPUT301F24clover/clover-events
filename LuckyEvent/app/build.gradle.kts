@@ -34,8 +34,6 @@ android {
 }
 
 dependencies {
-    testImplementation(libs.junit.jupiter)
-    androidTestImplementation ("androidx.test.uiautomator:uiautomator:2.2.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -48,10 +46,6 @@ dependencies {
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
     implementation("com.google.firebase:firebase-storage:20.2.0")
     implementation("com.google.firebase:firebase-firestore:24.5.0")
-    testImplementation("androidx.test:runner:1.6.2")
-    androidTestImplementation("androidx.test:core:1.6.1")
-    androidTestImplementation("androidx.test:runner:1.6.2")
-    androidTestImplementation("androidx.test:rules:1.6.1")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -59,10 +53,7 @@ dependencies {
     implementation(libs.barcode.scanning.common)
     implementation(libs.play.services.code.scanner)
     implementation(libs.firebase.firestore)
-    implementation(libs.navigation.fragment)
-    implementation(libs.navigation.ui)
     testImplementation(libs.junit)
-    testImplementation(libs.ext.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 }

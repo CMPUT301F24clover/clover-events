@@ -153,7 +153,7 @@ public class GenerateQrActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        // Event name added to loginProfile
+                        // Event ID added to loginProfile
                         Toast.makeText(GenerateQrActivity.this,"Added event ID to profile",Toast.LENGTH_SHORT).show();
                     }
                 })
