@@ -3,6 +3,8 @@ package com.example.luckyevent.activities;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
@@ -14,6 +16,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
@@ -32,8 +35,8 @@ public class GenerateQrActivity extends AppCompatActivity {
     private TextInputEditText eventName;
     private TextInputEditText date;
     private TextInputEditText description;
-    private TextInputEditText waitListSize;
-    private TextInputEditText sampleSize;
+    private AutoCompleteTextView waitListSize;
+    private AutoCompleteTextView sampleSize;
     MaterialButton createEventButton;
     private FirebaseStorage firebaseStorage;
     private FirebaseFirestore firestore;
@@ -43,12 +46,34 @@ public class GenerateQrActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_event);
 
-        eventName = findViewById(R.id.input_eventName);
-        date = findViewById(R.id.input_date);
-        description = findViewById(R.id.input_description);
+        waitListSize = findViewById(R.id.waitingListSizeDropdown);
+        sampleSize = findViewById(R.id.sampleSizeDropdown);
+
+        TextInputLayout eventNameLayout = findViewById(R.id.input_eventName);
+        eventName = (TextInputEditText) eventNameLayout.getEditText();
+
+        TextInputLayout dateLayout = findViewById(R.id.input_date);
+        date = (TextInputEditText) dateLayout.getEditText();
+
+        TextInputLayout descriptionLayout = findViewById(R.id.input_description);
+        description = (TextInputEditText) descriptionLayout.getEditText();
+
+
+
+
+        ArrayAdapter<CharSequence> waitingListAdapter = ArrayAdapter.createFromResource(
+                this, R.array.waiting_list_sizes, android.R.layout.simple_dropdown_item_1line
+        );
+        ArrayAdapter<CharSequence> sampleSizeAdapter = ArrayAdapter.createFromResource(
+                this, R.array.sample_sizes, android.R.layout.simple_dropdown_item_1line
+        );
+
+
+        waitListSize.setAdapter(waitingListAdapter);
+        sampleSize.setAdapter(sampleSizeAdapter);
+
+        // Initialize createEventButton
         createEventButton = findViewById(R.id.button_createEvent);
-        waitListSize = findViewById(R.id.input_waitingListSize);
-        sampleSize = findViewById(R.id.input_sampleSize);
 
         // Initialize Firebase
         firebaseStorage = FirebaseStorage.getInstance();
@@ -57,24 +82,28 @@ public class GenerateQrActivity extends AppCompatActivity {
         createEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                generateQRCode();
+                saveEventInfoToFirestore();
             }
         });
     }
-
+    /*
     private void generateQRCode() {
+        if (eventName == null || date == null || description == null || waitListSize == null || sampleSize == null) { // CHANGED: Added null checks
+            Toast.makeText(this, "One or more input fields are not initialized properly", Toast.LENGTH_SHORT).show();
+            return;
+        }
         String name = eventName.getText().toString();
         String eventDate = date.getText().toString();
         String eventDescription = description.getText().toString();
-        String waitingListSize = waitListSize.getText().toString();
-        String samplingSize = sampleSize.getText().toString();
+        String waitingListSizeValue = waitListSize.getText().toString();
+        String samplingSizeValue = sampleSize.getText().toString();
 
         // Concatenate the input values
         String qrText = "Event Name: " + name + "\n" +
                 "Date: " + eventDate + "\n" +
                 "Description: " + eventDescription + "\n" +
-                "Wait List: " + waitingListSize + "\n" +
-                "Sample Size: " + samplingSize;
+                "Wait List: " + waitingListSizeValue + "\n" +
+                "Sample Size: " + samplingSizeValue;
 
 
         if (!qrText.isEmpty()) {
@@ -107,9 +136,13 @@ public class GenerateQrActivity extends AppCompatActivity {
             exception.printStackTrace();
         });
     }
-
-    private void saveQRCodeInfoToFirestore(String qrCodeUrl) {
+    */
+    private void saveEventInfoToFirestore() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) { // CHANGED: Added null check for FirebaseUser
+            Toast.makeText(this, "User not authenticated. Please log in again.", Toast.LENGTH_SHORT).show();
+            return;
+        }
         String userID = user.getUid();
         // Create a map to store event information
         Map<String, Object> eventInfo = new HashMap<>();
@@ -118,7 +151,7 @@ public class GenerateQrActivity extends AppCompatActivity {
         eventInfo.put("description", description.getText().toString());
         eventInfo.put("WaitListSize", waitListSize.getText().toString());
         eventInfo.put("sampleSize", sampleSize.getText().toString());
-        eventInfo.put("qrCodeUrl", qrCodeUrl);
+        //eventInfo.put("qrCodeUrl", qrCodeUrl);
         eventInfo.put("userID", userID);
 
 

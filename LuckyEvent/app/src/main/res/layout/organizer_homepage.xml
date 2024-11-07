@@ -224,6 +224,12 @@
             android:text="Events Overview"
             android:textColor="#000000"
             android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/testCreateEvent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button" />
     </LinearLayout>
 
 

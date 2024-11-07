@@ -1,11 +1,13 @@
 package com.example.luckyevent.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +18,7 @@ import androidx.cardview.widget.CardView;
 import com.example.luckyevent.OrganizerSession;
 import com.example.luckyevent.R;
 import com.example.luckyevent.UserSession;
+import com.example.luckyevent.activities.GenerateQrActivity;
 
 public class OrganizerHomePageFragment extends Fragment {
 
@@ -54,6 +57,15 @@ public class OrganizerHomePageFragment extends Fragment {
         } else {
             welcomeTextView.setText("Welcome!");
         }
+
+        Button testCreate = view.findViewById(R.id.testCreateEvent);
+        testCreate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), GenerateQrActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // Set up navigation card clicks
         //CardView createEventCard = view.findViewById(R.id.createEventCard);
