@@ -79,6 +79,8 @@ public class GenerateQrActivity extends AppCompatActivity {
         waitListSize.setAdapter(waitingListAdapter);
         sampleSize.setAdapter(sampleSizeAdapter);
 
+
+        //get the item the user clicked on for the waitlist and sample size
         waitListSize.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
