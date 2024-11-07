@@ -16,15 +16,43 @@ import androidx.fragment.app.Fragment;
 
 import com.example.luckyevent.LotteryService;
 import com.example.luckyevent.R;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class EventDetailsFragment extends Fragment {
+    private FirebaseFirestore db;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.organizer_event_details, container, false);
+        db = FirebaseFirestore.getInstance();
 
         if (getArguments() != null) {
             String eventId = getArguments().getString("eventId");
+            db.collection("events")
+                    .document(eventId)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                TextView eventTitle = view.findViewById(R.id.textView_eventTitle2);
+                                eventTitle.setText(document.getString("eventName"));
+
+                                TextView eventDescription = view.findViewById(R.id.textView_description2);
+                                eventDescription.setText(document.getString("description"));
+
+                                TextView eventDate = view.findViewById(R.id.textView_dateTime2);
+                                eventDate.setText(document.getString("date"));
+
+                                TextView eventSize = view.findViewById(R.id.textView_capacity2);
+                                eventSize.setText(document.getString("WaitListSize") + " Entrants in Waiting List:");
+                            }
+                        } else {
+                            Log.e("EventDetailsFragment", "Error getting document", task.getException());
+                        }
+                    });
 
             TextView sampleEntrants = view.findViewById(R.id.sample_entrant);
             sampleEntrants.setOnClickListener(new View.OnClickListener() {
