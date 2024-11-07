@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/organizer_navigation"
+    app:startDestination="@id/displayEntrantsFragment">
+
+    <fragment
+        android:id="@+id/displayEntrantsFragment"
+        android:name="com.example.luckyevent.fragments.DisplayEntrantsFragment"
+        android:label="DisplayEntrantsFragment" />
+    <fragment
+        android:id="@+id/displayOrganizerEventsFragment"
+        android:name="com.example.luckyevent.fragments.DisplayOrganizerEventsFragment"
+        android:label="DisplayOrganizerEventsFragment" />
+</navigation>

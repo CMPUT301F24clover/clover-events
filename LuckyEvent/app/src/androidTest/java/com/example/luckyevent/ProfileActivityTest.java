@@ -59,7 +59,7 @@ public class ProfileActivityTest {
         onView(withId(R.id.passwordInput)).perform(replaceText("123456"), closeSoftKeyboard());
         onView(withId(R.id.SignInButton)).perform(click());
         Thread.sleep(2000);
-        onView(withId(R.id.bottomNavigationView)).check(matches(isDisplayed()));
+        onView(withId(R.id.bottomNavigationViewEntrant)).check(matches(isDisplayed()));
         onView(withId(R.id.profile_item)).perform(click());
 
         //navigate to the editprofile activity and test edits with empty strings

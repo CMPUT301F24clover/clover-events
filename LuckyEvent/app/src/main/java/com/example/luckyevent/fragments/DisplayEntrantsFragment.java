@@ -65,11 +65,11 @@ public class DisplayEntrantsFragment extends Fragment {
             db = FirebaseFirestore.getInstance();
             eventRef = db.collection("events").document(eventId);
 
-            getIdsList();
+            getEntrantIdsList();
 
             // create notification button
             FloatingActionButton notification_button = view.findViewById(R.id.create_notification_fab);
-            notification_button.setOnClickListener(v -> Toast.makeText(getContext(), "Notification fragment not yet implemented", Toast.LENGTH_SHORT).show());
+            notification_button.setOnClickListener(v -> Toast.makeText(getContext(), "Manual notification fragment not yet implemented", Toast.LENGTH_SHORT).show());
         }
 
         return view;
@@ -78,7 +78,7 @@ public class DisplayEntrantsFragment extends Fragment {
     /**
      * Retrieves the desired list of entrant userIds from the document of the given event.
      */
-    private void getIdsList() {
+    private void getEntrantIdsList() {
         reg = eventRef.addSnapshotListener((snapshot, error) -> {
             if (error != null) {
                 return;
@@ -86,7 +86,9 @@ public class DisplayEntrantsFragment extends Fragment {
             if (snapshot != null && snapshot.exists()) {
                 entrantsIdList = (List<String>) snapshot.get(listName);
                 if (entrantsIdList != null) {
-                    getEntrantsList();
+                    createEntrantsList();
+                } else {
+                    Toast.makeText(getContext(), "List does not exist.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -96,7 +98,7 @@ public class DisplayEntrantsFragment extends Fragment {
      * Uses the list of userIds to access each entrant's information in the database. This
      * information is used to create a list of Entrant objects.
      */
-    private void getEntrantsList() {
+    private void createEntrantsList() {
         entrantsList.clear();
         for (String id: entrantsIdList) {
             db.collection("loginProfile").document(id).get().addOnCompleteListener(task -> {

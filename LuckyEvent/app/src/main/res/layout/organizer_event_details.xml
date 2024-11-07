@@ -37,7 +37,7 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/title_bar"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigationViewEntrant">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -89,6 +89,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="Sample Entrants "
+                        android:onClick="onClick"
+                        android:clickable="true"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.09"
                         app:layout_constraintStart_toStartOf="parent"
@@ -239,13 +241,5 @@
 
 
     </ScrollView>
-
-    <!-- Bottom Navigation -->
-    <include
-        android:id="@+id/bottomNavigationViewEntrant"
-        layout="@layout/entrant_bottom_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

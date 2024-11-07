@@ -1,9 +1,13 @@
 package com.example.luckyevent.activities;
 
 import android.os.Bundle;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.luckyevent.R;
 import com.example.luckyevent.fragments.CreateEventFragment;
+import com.example.luckyevent.fragments.DisplayNotificationsFragment;
+import com.example.luckyevent.fragments.DisplayOrganizerEventsFragment;
 import com.example.luckyevent.fragments.OrganizerHomePageFragment;
 //import com.example.luckyevent.fragments.CreateEventFragment;
 //import com.example.luckyevent.fragments.MyEventsFragment;
@@ -30,18 +34,22 @@ public class OrganizerMenuActivity extends AppCompatActivity implements Organize
                         .commit();
                 return true;
             }
-            /*
-            else if (item.getItemId() == R.id.my_events_item) {
+
+            else if (item.getItemId() == R.id.events_item) {
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.OrganizerMenuFragment, new MyEventsFragment())
+                        .replace(R.id.OrganizerMenuFragment, new DisplayOrganizerEventsFragment())
                         .commit();
                 return true;
             }
 
-             */
+            else if (item.getItemId() == R.id.profile_item) {
+                Toast.makeText(this, "Profile fragment not yet implemented.", Toast.LENGTH_SHORT).show();
+            }
 
-
+            else if (item.getItemId() == R.id.settings_item) {
+                Toast.makeText(this, "Settings fragment not yet implemented.", Toast.LENGTH_SHORT).show();
+            }
             return false;
         });
 
