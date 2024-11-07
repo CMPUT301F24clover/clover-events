@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -54,7 +55,7 @@ public class HomePageFragment extends Fragment {
 
         }
 
-        LinearLayout scanQrButton = view.findViewById(R.id.scanQrButton);
+        Button scanQrButton = view.findViewById(R.id.scanQrButton);
         scanQrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
