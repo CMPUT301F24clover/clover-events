@@ -68,15 +68,24 @@ public class LotteryService extends Service {
                 DocumentSnapshot snapshot = task.getResult();
                 if (snapshot.exists()) {
                     eventName = (String) snapshot.get("eventName");
-                    sampleSize = Math.toIntExact((long) snapshot.get("sampleSize"));
+                    try {
+                        sampleSize = (int) snapshot.get("sampleSize");
+                    } catch (Exception e1) {
+                        try {
+                            sampleSize = Math.toIntExact((long) snapshot.get("sampleSize"));
+                        } catch (Exception e2) {
+                            Toast.makeText(this, "sampleSize type is invalid", Toast.LENGTH_SHORT).show();
+                            stopSelf();
+                        }
+                    }
                     waitingList = (List<String>) snapshot.get("waitingList");
-                    if (waitingList != null) {
+                    if (waitingList == null || waitingList.isEmpty()) {
+                        Toast.makeText(this, "Waiting list is not available. Cannot initiate lottery.", Toast.LENGTH_SHORT).show();
+                        stopSelf();
+                    } else {
                         lottery = new Lottery(waitingList, sampleSize);
                         lottery.selectWinners();
                         setResult();
-                    } else {
-                        Toast.makeText(this, "Waiting list does not exist. Cannot initiate lottery.", Toast.LENGTH_SHORT).show();
-                        stopSelf();
                     }
                 } else {
                     stopSelf();
