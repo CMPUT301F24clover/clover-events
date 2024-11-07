@@ -46,6 +46,15 @@ public class LotteryService extends Service {
 
         getWaitingList();
 
+        if (waitingList != null) {
+            lottery = new Lottery(waitingList, sampleSize);
+            lottery.selectWinners();
+            setResult();
+        } else {
+            Toast.makeText(this, "Waiting list does not exist. Cannot initiate lottery.", Toast.LENGTH_SHORT).show();
+            stopSelf();
+        }
+
         return START_NOT_STICKY;
     }
 
@@ -70,14 +79,6 @@ public class LotteryService extends Service {
                 if (snapshot.exists()) {
                     eventName = (String) snapshot.get("eventTitle");
                     waitingList = (List<String>) snapshot.get("waitingList");
-                    if (waitingList != null) {
-                        lottery = new Lottery(waitingList, sampleSize);
-                        lottery.selectWinners();
-                        setResult();
-                    } else {
-                        Toast.makeText(this, "Waiting list is empty. Cannot initiate lottery.", Toast.LENGTH_SHORT).show();
-                        stopSelf();
-                    }
                 } else {
                     stopSelf();
                 }
