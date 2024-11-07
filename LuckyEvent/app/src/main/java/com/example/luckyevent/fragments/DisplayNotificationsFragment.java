@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Displays the list of user notifications for a given user.
+ * Displays a list of the current user's notifications.
  *
  * @author Mmelve
  * @see Notification
