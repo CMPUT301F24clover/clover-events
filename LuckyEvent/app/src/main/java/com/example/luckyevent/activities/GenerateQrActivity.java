@@ -132,7 +132,8 @@ public class GenerateQrActivity extends AppCompatActivity {
                 .add(eventInfo)
                 .addOnSuccessListener(documentReference -> {
                     // Document added successfully
-                    addEventToProfile(userID,eventInfo.get("eventName").toString());
+                    String eventID = documentReference.getId();
+                    addEventToProfile(userID, eventID);
                 })
                 .addOnFailureListener(e -> {
                     // Handle the error
@@ -140,26 +141,26 @@ public class GenerateQrActivity extends AppCompatActivity {
                 });
     }
 
-    private void addEventToProfile(String userID, String eventName) {
-        Map<String, Object> eventNameMap = new HashMap<>();
-        eventNameMap.put("eventName",eventName);
+    private void addEventToProfile(String userID, String eventID) {
+        Map<String, Object> eventIDMap = new HashMap<>();
+        eventIDMap.put("eventID",eventID);
 
         firestore.collection("loginProfile")
                 .document(userID)
                 .collection("myEvents")
-                .document(eventName)
-                .set(eventNameMap)
+                .document(eventID)
+                .set(eventIDMap)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
                         // Event name added to loginProfile
-                        Toast.makeText(GenerateQrActivity.this,"Added event name to profile",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GenerateQrActivity.this,"Added event ID to profile",Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(GenerateQrActivity.this,"Error adding event name to login profile",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GenerateQrActivity.this,"Error adding event ID to login profile",Toast.LENGTH_SHORT).show();
                     }
                 });
     }
