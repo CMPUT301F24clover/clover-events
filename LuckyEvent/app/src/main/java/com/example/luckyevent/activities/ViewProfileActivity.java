@@ -10,9 +10,12 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.luckyevent.R;
 
+/**
+ * Implements the view profile functionality. displays the users information, such as name, email, and phone number.
+ * Allows users to logout, go back to the home page, or edit their information
+ */
 public class ViewProfileActivity extends AppCompatActivity {
     private TextView nameText, emailText, phoneText;
     private Button editButton;
@@ -21,6 +24,10 @@ public class ViewProfileActivity extends AppCompatActivity {
     private ProfileSetup profileSetup;
     private Button logOutButton;
 
+    /**
+     * Loads the profile information, implements logout, edit and back button functionality
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,10 +42,13 @@ public class ViewProfileActivity extends AppCompatActivity {
 
         profileSetup = new ProfileSetup();
         profileController = new ProfileController(profileSetup, this);
+
+        // get the document if to load the profile information
         String documentID = getIntent().getStringExtra("profileID");
 
         profileController.loadProfile(documentID, profile ->{
             if (profile != null) {
+                // add the information to the textViews
                 nameText.setText(profile.getName());
                 emailText.setText(profile.getEmail());
                 phoneText.setText(profile.getPhoneNumber());
@@ -47,6 +57,8 @@ public class ViewProfileActivity extends AppCompatActivity {
                 Toast.makeText(ViewProfileActivity.this,"Unable to load profile",Toast.LENGTH_SHORT).show();
             }
         });
+
+        // set listener for the edit button that brings users from view profile to the edit page
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,6 +67,7 @@ public class ViewProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        // set listener for the back button that brings users from view profile to the home/menu page
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,6 +75,7 @@ public class ViewProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        // set listener for the logout button that brings users from view profile to the login/sign up page
         logOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
