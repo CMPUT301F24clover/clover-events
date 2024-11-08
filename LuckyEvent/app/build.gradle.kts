@@ -35,6 +35,9 @@ android {
 
 dependencies {
     testImplementation(libs.junit.jupiter)
+    testImplementation(libs.core)
+    implementation("androidx.navigation:navigation-fragment-ktx:2.6.0")
+    implementation("androidx.navigation:navigation-ui-ktx:2.6.0")
     androidTestImplementation ("androidx.test.uiautomator:uiautomator:2.2.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     testImplementation("junit:junit:4.13.2")

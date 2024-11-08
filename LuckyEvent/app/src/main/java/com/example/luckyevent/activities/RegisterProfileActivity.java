@@ -14,6 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
 
+/**
+ * @author Amna
+ * This is for registering a users profile
+ */
 public class RegisterProfileActivity extends AppCompatActivity {
     private EditText nameEditText, emailEditText, phoneEditText;
     private Button registerButton;
@@ -21,7 +25,10 @@ public class RegisterProfileActivity extends AppCompatActivity {
     private ProfileSetup profileSetup;
     private ImageButton backButton;
 
-
+    /**
+     * here we get the users input for the name, email, and phone fields and call the registerProfile function from the profile controller to add it to the db
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,11 +40,12 @@ public class RegisterProfileActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.RegisterButton);
         backButton = findViewById(R.id.imageButton);
 
+        // Initialize the profile setup and profile controller
         profileSetup = new ProfileSetup();
         profileController = new ProfileController(profileSetup, this);
 
 
-
+        // set a listener for the register button
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -45,28 +53,33 @@ public class RegisterProfileActivity extends AppCompatActivity {
                 String email = emailEditText.getText().toString();
                 String phoneNumber = phoneEditText.getText().toString();
 
+                // make sure the name and email fields arent empty (mandatory)
                 if (name.isEmpty() || email.isEmpty()){
                     Toast.makeText(RegisterProfileActivity.this,"Name and email fields are required",Toast.LENGTH_SHORT).show();
                     return;
                 }
 
+                // ensure they user provides exactly 2 names, first and last both.
                 if (name.split(" ").length < 2 || name.split(" ").length > 2){
                     Toast.makeText(RegisterProfileActivity.this,"Please enter both first and last name (omit middle names)",Toast.LENGTH_SHORT).show();
                     return;
                 }
 
+                // since the user enters the first and last name together we split the string after the array and create string variables for first and last name
                 String[] firstLastName = name.split(" ");
                 String firstName = firstLastName[0];
                 String lastName = firstLastName[1];
 
+                // if no phone number is provided enter it into the db as an empty string
                 if(phoneNumber.isEmpty()){
                     phoneNumber = "";
                 }
 
-
-
+                //call registerProfile from the profile controller to add the users input into the db
                 profileController.registerProfile(firstName,lastName,email,phoneNumber,documentID ->{
                     Toast.makeText(RegisterProfileActivity.this,"Profile Registered successfully.",Toast.LENGTH_SHORT).show();
+
+                    //in case theres errors going from this activity to the viewProfileActivity use toast messages to prevent the app from crashing
                     try {
                         Intent intent = new Intent(RegisterProfileActivity.this, ViewProfileActivity.class);
                         intent.putExtra("profileID", documentID);
@@ -77,6 +90,8 @@ public class RegisterProfileActivity extends AppCompatActivity {
                 });
             }
         });
+
+        // set listener for the back button
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

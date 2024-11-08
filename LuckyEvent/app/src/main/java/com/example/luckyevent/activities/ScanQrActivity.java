@@ -10,11 +10,22 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
+import com.example.luckyevent.firebase.FirebaseDB;
 import com.google.android.material.button.MaterialButton;
 import com.journeyapps.barcodescanner.CaptureActivity;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+/**
+ * Displays a screen that allows the user to scan generated QR codes. On successfully scanning the QR code the user
+ * is redirected to a screen containing the event details. The Scan QR feature was made possible using
+ * Journeyapp's barcodescanner api.
+ *
+ * @author Aagam, Tola
+ * @see DisplayQrActivity
+ * @version 1
+ * @since 1
+ */
 public class ScanQrActivity extends AppCompatActivity {
     MaterialButton scanButton;
 
@@ -29,6 +40,10 @@ public class ScanQrActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Sets the scan options needed to scan the QR and calls the DisplayQrActivity if the contents of the QR code
+     * has been successfully scanned
+     */
     private void scanCode(){
         ScanOptions options = new ScanOptions();
         options.setPrompt("Volume up to flash on");

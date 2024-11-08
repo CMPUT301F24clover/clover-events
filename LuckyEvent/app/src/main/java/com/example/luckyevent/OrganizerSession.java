@@ -1,5 +1,12 @@
 package com.example.luckyevent;
 
+/**
+ * A class used to store the details of the currently signed in organizer
+ *
+ * @author Tola
+ * @version 1
+ * @since 1
+ */
 public class OrganizerSession {
     private static OrganizerSession instance;
 

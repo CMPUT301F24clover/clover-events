@@ -24,4 +24,5 @@
     <string name="create_notification_desc">Create notification</string>
     <string name="notification_title">Notification Title</string>
     <string name="notification_description">Notification description</string>
+    <string name="organizer_dashboard">Organizer Dashboard</string>
 </resources>

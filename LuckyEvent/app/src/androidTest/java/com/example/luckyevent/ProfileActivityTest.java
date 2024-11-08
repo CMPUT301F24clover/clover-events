@@ -38,18 +38,6 @@ import java.io.IOException;
 @LargeTest
 public class ProfileActivityTest {
 
-    @BeforeClass
-    public static void disableAnimations() {
-        try {
-            UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-            device.executeShellCommand("settings put global window_animation_scale 0");
-            device.executeShellCommand("settings put global transition_animation_scale 0");
-            device.executeShellCommand("settings put global animator_duration_scale 0");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Rule
     public ActivityScenarioRule<LoginActivity> scenario = new ActivityScenarioRule<>(LoginActivity.class);
 
