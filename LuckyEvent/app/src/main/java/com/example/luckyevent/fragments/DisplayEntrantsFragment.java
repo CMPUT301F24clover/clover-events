@@ -68,15 +68,12 @@ public class DisplayEntrantsFragment extends Fragment {
 
             // create notification button
             FloatingActionButton notification_button = view.findViewById(R.id.create_notification_fab);
-            notification_button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putStringArrayList("entrantIdsList", entrantIdsList);
-                    CreateNotificationFragment createNotificationFragment = new CreateNotificationFragment();
-                    createNotificationFragment.setArguments(bundle);
-                    createNotificationFragment.show(getParentFragmentManager(), "dialog");
-                }
+            notification_button.setOnClickListener(v -> {
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("entrantIdsList", entrantIdsList);
+                CreateNotificationFragment createNotificationFragment = new CreateNotificationFragment();
+                createNotificationFragment.setArguments(bundle);
+                createNotificationFragment.show(getParentFragmentManager(), "dialog");
             });
         }
 
@@ -94,7 +91,11 @@ public class DisplayEntrantsFragment extends Fragment {
             if (snapshot != null && snapshot.exists()) {
                 entrantIdsList = (ArrayList<String>) snapshot.get(listName);
                 if (entrantIdsList != null) {
-                    createEntrantsList();
+                    if (entrantIdsList.isEmpty()) {
+                        Toast.makeText(getContext(), "List is empty.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        createEntrantsList();
+                    }
                 } else {
                     Toast.makeText(getContext(), "List does not exist.", Toast.LENGTH_SHORT).show();
                 }

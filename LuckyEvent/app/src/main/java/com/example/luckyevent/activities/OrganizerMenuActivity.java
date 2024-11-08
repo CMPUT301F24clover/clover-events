@@ -42,7 +42,7 @@ public class OrganizerMenuActivity extends AppCompatActivity implements Organize
         bottomNavigationView = findViewById(R.id.bottomNavigationViewOrganizer);
 
         /**
-         *When an element of the this bottomNavigationView is clicked, it navigates to it csorresponding
+         *When an element of the this bottomNavigationView is clicked, it navigates to it corresponding
          * fragment
          */
         bottomNavigationView.setOnItemSelectedListener(item -> {

@@ -2,6 +2,7 @@ package com.example.luckyevent;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
@@ -77,8 +78,14 @@ public class NotificationService extends Service {
             notif.put("content", description);
             profilesRef.document(id).collection("notifications").document(notifId)
                     .set(notif)
-                    .addOnSuccessListener(unused -> Log.d(TAG, "Notification successfully written"))
-                    .addOnFailureListener(e -> Log.w(TAG, "Error writing notification", e));
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "Notification successfully written!");
+                        showToast("Notification sent!");
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.w(TAG, "Error writing notification", e);
+                        showToast("Couldn't send notification.");
+                    });
         }
     }
 
@@ -90,5 +97,14 @@ public class NotificationService extends Service {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale.CANADA);
         Date currentTime = Calendar.getInstance().getTime();
         return sdf.format(currentTime);
+    }
+
+    /**
+     * Displays a toast message to the user about whether or not the notification sent.
+     * @param message The message shown to the user.
+     */
+    private void showToast(String message) {
+        Handler main = new Handler(getMainLooper());
+        main.post(() -> Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show());
     }
 }

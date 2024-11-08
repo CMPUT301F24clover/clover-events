@@ -103,7 +103,11 @@ public class EventDetailsFragment extends Fragment {
             enrolledEntrantsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), "Display list of enrolled entrants not yet implemented.", Toast.LENGTH_SHORT).show();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("screenTitle", "List of Enrolled Entrants");
+                    bundle.putString("eventId", eventId);
+                    bundle.putString("listName", "enrolledEntrants");
+                    goToList(bundle);
                 }
             });
 
@@ -111,7 +115,11 @@ public class EventDetailsFragment extends Fragment {
             cancelledEntrantsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), "Display list of cancelled entrants not yet implemented.", Toast.LENGTH_SHORT).show();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("screenTitle", "List of Cancelled Entrants");
+                    bundle.putString("eventId", eventId);
+                    bundle.putString("listName", "cancelledEntrants");
+                    goToList(bundle);
                 }
             });
         }

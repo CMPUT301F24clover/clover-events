@@ -19,6 +19,17 @@ import com.example.luckyevent.R;
 
 import java.util.ArrayList;
 
+/**
+ * A dialog fragment that inquires the user (organizer) for the information needed to create a
+ * notification: a notification title and a notification description. Once the user inputs the
+ * required information, NotificationService class is called to send the notification to the
+ * desired list of entrants.
+ *
+ * @author Mmelve
+ * @see NotificationService
+ * @version 1
+ * @since 1
+ */
 public class CreateNotificationFragment extends DialogFragment {
     ArrayList<String> entrantIdsList;
 
@@ -63,6 +74,7 @@ public class CreateNotificationFragment extends DialogFragment {
                 }
 
                 if (!entrantIdsList.isEmpty()) {
+                    Toast.makeText(getContext(), "Sending notification...", Toast.LENGTH_SHORT).show();
                     addNotif(entrantIdsList, title, description);
                 } else {
                     Toast.makeText(getContext(), "No one to send notification to.", Toast.LENGTH_SHORT).show();
@@ -74,6 +86,13 @@ public class CreateNotificationFragment extends DialogFragment {
         return dialog;
     }
 
+    /**
+     * Passes all the necessary data to the NotificationService class so that it can send
+     * the notification to the desired list of entrants.
+     * @param entrantIdsList A list of the ids of entrants that will receive the notification.
+     * @param title The title of the notification.
+     * @param description The description of the notification.
+     */
     private void addNotif(ArrayList<String> entrantIdsList, String title, String description) {
         Intent serviceIntent = new Intent(getContext(), NotificationService.class);
         serviceIntent.putStringArrayListExtra("entrants", entrantIdsList);
