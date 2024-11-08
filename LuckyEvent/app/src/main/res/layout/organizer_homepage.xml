@@ -22,7 +22,7 @@
         android:id="@+id/toolbarTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Organizer Dashboard"
+        android:text="@string/organizer_dashboard"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
         android:fontFamily="@font/inter_bold"
@@ -70,7 +70,7 @@
                 android:backgroundTint="#38CE5E"
                 android:drawableTop="@drawable/upload_icon"
                 android:drawablePadding="8dp"
-                android:text="Create Event"
+                android:text="@string/create_event"
                 android:textAlignment="center"
                 android:textColor="#FFFFFF"
                 android:padding="16dp" />
@@ -181,15 +181,5 @@
             android:textSize="14sp" />
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/testCreateEvent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
