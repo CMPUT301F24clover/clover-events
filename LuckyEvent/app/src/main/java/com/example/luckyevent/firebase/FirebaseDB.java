@@ -4,6 +4,8 @@ import android.content.Context;
 import android.provider.Settings;
 import android.widget.Toast;
 
+import com.example.luckyevent.ScanQR;
+import com.example.luckyevent.fragments.ScanQrFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -14,6 +16,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *This class deals with the login section of the app. It works directly with firestore to store the
+ * credentials of entrants and organizers
+ *
+ * @author seyi
+ * @version 1
+ * @since 1
+ */
 public class FirebaseDB {
     public final String logTag = getClass().getSimpleName();
     private FirebaseAuth firebaseAuth;
@@ -35,6 +45,10 @@ public class FirebaseDB {
         this.context = context;
     }
 
+    /**
+     * This function deals with the entrant and organizer sign up functionality. New documents are
+     * created in the loginProfile collection for each entrant and organizer
+     */
     public void signUp(String userName, String password, String firstName, String lastName, String role, String organizationName, String facilityCode , SignInCallback callback) {
         db.collection("loginProfile").whereEqualTo("userName", userName).get()
                 .addOnCompleteListener(task -> {
@@ -93,6 +107,11 @@ public class FirebaseDB {
                 });
     }
 
+    /**
+     *This function deals with the signing in functionality of the app
+     * It uses the login profile collection to check if the user is registered before attempting
+     * to sign in via firebase auth
+     */
     public void signIn(String userName, String password,SignInCallback callback, Boolean signInOnMain) {
         db.collection("loginProfile").whereEqualTo("userName", userName).get()
                 .addOnCompleteListener(task -> {
@@ -126,6 +145,12 @@ public class FirebaseDB {
                 });
     }
 
+    /**
+     *This function allows the entrant to sign in via device id
+     * A new firebase auth account is created if the device id is not present in the loginProfile
+     * collection
+     *
+     */
     public void deviceSignIn(SignInCallback callback){
         String deviceID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -195,6 +220,10 @@ public class FirebaseDB {
 
     }
 
+    /**
+     *This function add the auto sign in feature
+     * It was implemented using firebaseAuth's getCurrentUser function
+     */
     public void autoSignin (SignInCallback callback){
 
         //We can use the firebaseAuth to check if user is signed in into this device and get their device id

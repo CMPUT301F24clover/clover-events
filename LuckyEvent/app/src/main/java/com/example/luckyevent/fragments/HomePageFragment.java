@@ -14,9 +14,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.luckyevent.Entrant;
 import com.example.luckyevent.R;
 import com.example.luckyevent.UserSession;
+import com.example.luckyevent.activities.MenuActivity;
 
+/**
+ * Displays a welcome message, brief details of upcoming events and it also gives the entrant the ability
+ * to access other fragments via buttons. This is the first fragment the entrant will see upon successfully
+ * signing in
+ *
+ * @author Amna, Seyi,
+ * @see MenuActivity
+ * @version 1
+ * @since 1
+ */
 public class HomePageFragment extends Fragment {
 
     private OnNavigateListener navigateListener;

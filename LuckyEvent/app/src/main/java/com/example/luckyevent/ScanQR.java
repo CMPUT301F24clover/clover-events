@@ -11,6 +11,14 @@ import com.google.mlkit.vision.codescanner.GmsBarcodeScanner;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 
+/**
+ * A class used to install the files needed for the external barcode to work. This class can only begin the scan
+ * once all the necessary files are installed
+ *
+ * @author Aagam, Tola
+ * @version 1
+ * @since 1
+ */
 public class ScanQR {
     private static GmsBarcodeScanner scanner;
     private static boolean isScannerInstalled = false;
@@ -22,7 +30,9 @@ public class ScanQR {
                 .build();
         scanner = GmsBarcodeScanning.getClient(activity, options);
     }
-
+    /**
+     * Installs the resources needed for the external barcode scanner to work
+     */
     public static void installScanner(Activity activity, InstallScannerCallback callback) {
         ModuleInstallClient moduleInstall = ModuleInstall.getClient(activity);
         ModuleInstallRequest moduleInstallRequest = new ModuleInstallRequest.Builder()
@@ -41,6 +51,9 @@ public class ScanQR {
                 });
     }
 
+    /**
+     * Initiates the barcode scan when all the needed resources are installed
+     */
     public static void startScan(Activity activity, ScanCallback callback) {
         if (!isScannerInstalled) {
             Toast.makeText(activity, "Scanner not installed", Toast.LENGTH_SHORT).show();

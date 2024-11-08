@@ -11,11 +11,23 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
+import com.example.luckyevent.ScanQR;
 import com.example.luckyevent.UserSession;
 import com.example.luckyevent.firebase.FirebaseDB;
+import com.example.luckyevent.fragments.ScanQrFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * Displays the fields needed to sign up as an entrant. This activity navigates to the MenuActivity if the user successfully
+ * sign ups as an entrant
+ *
+ * @author Seyi
+ * @see FirebaseDB
+ * @see UserSession
+ * @version 1
+ * @since 1
+ */
 public class EntrantSignUpActivity extends AppCompatActivity {
     private androidx.appcompat.widget.AppCompatButton signUpButton;
     private EditText userName;
