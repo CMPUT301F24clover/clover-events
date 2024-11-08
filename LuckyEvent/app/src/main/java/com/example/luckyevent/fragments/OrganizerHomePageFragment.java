@@ -19,7 +19,19 @@ import com.example.luckyevent.OrganizerSession;
 import com.example.luckyevent.R;
 import com.example.luckyevent.UserSession;
 import com.example.luckyevent.activities.GenerateQrActivity;
+import com.example.luckyevent.activities.MenuActivity;
+import com.example.luckyevent.activities.OrganizerMenuActivity;
 
+/**
+ * Displays a welcome message, brief details of organizer owned events and it also gives the organizer the ability
+ * to access other fragments via buttons. This is the first fragment the organizer will see upon successfully
+ * signing in
+ *
+ * @author Tola
+ * @see OrganizerMenuActivity
+ * @version 1
+ * @since 1
+ */
 public class OrganizerHomePageFragment extends Fragment {
 
     private OnOrganizerNavigateListener navigateListener;

@@ -4,7 +4,11 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.luckyevent.OrganizerSession;
 import com.example.luckyevent.R;
+import com.example.luckyevent.UserSession;
+import com.example.luckyevent.firebase.FirebaseDB;
 import com.example.luckyevent.fragments.CreateEventFragment;
 import com.example.luckyevent.fragments.DisplayNotificationsFragment;
 import com.example.luckyevent.fragments.DisplayOrganizerEventsFragment;
@@ -15,6 +19,17 @@ import com.example.luckyevent.fragments.OrganizerHomePageFragment;
 //import com.example.luckyevent.fragments.EventSettingsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+/**
+ *Displays the fragments needed for the organizer to interact with their events and the entrants. It contains
+ * the bottom navigation bar needed to navigate between fragments and activities. These fragments and
+ * activities are the organizer home page, events owned by the organizer, events settings and the create profile
+ * section
+ *
+ * @author Tola
+ * @see OrganizerSession
+ * @version 1
+ * @since 1
+ */
 public class OrganizerMenuActivity extends AppCompatActivity implements OrganizerHomePageFragment.OnOrganizerNavigateListener {
 
     BottomNavigationView bottomNavigationView;
@@ -26,6 +41,10 @@ public class OrganizerMenuActivity extends AppCompatActivity implements Organize
 
         bottomNavigationView = findViewById(R.id.bottomNavigationViewOrganizer);
 
+        /**
+         *When an element of the this bottomNavigationView is clicked, it navigates to it csorresponding
+         * fragment
+         */
         bottomNavigationView.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.home_item) {
                 getSupportFragmentManager()
