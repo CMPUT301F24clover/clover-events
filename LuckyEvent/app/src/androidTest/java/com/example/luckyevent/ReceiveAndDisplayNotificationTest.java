@@ -28,6 +28,8 @@ import java.util.Locale;
 /**
  * Tests if a user's notifications are displayed and regularly updated. Uses the following classes:
  * NotificationService and DisplayNotificationsFragment.
+ *
+ * IMPORTANT: test passes only if emulator loads fast enough
  */
 public class ReceiveAndDisplayNotificationTest {
 
