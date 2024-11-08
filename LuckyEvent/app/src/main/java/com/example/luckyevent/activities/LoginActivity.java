@@ -20,6 +20,17 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * Displays the fields and buttons needed to sign in as an entrant or administrator. The user also
+ * has the option to sign up as entrant, sign in or sign up as organizer or, sign in with their
+ * device id
+ * @author Seyi
+ * @see com.example.luckyevent.UserSession
+ * @see FirebaseDB
+
+ * @version 2
+ * @since 1
+ */
 public class LoginActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;

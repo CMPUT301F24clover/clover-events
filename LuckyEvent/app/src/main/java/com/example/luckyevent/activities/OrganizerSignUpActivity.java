@@ -31,6 +31,16 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
     private ImageView gobackButton;
     private FirebaseFirestore db;
 
+    /**
+     * Displays the fields needed to sign up as an organizer. This activity navigates to the MenuActivity if the user successfully
+     * sign ups as an organizer
+     *
+     * @author Seyi
+     * @see FirebaseDB
+     * @see UserSession
+     * @version 1
+     * @since 1
+     */
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
@@ -46,6 +56,11 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
 
         firebaseDB = new FirebaseDB(this);
 
+        /**
+         * Takes the text from the fields provided and signs up the user as an organizer. The organizer sign up
+         * functionality is handled by FirebaseDB's signup function. The user is redirected to the OrganizerMenuActivity
+         * when successfully registered
+         */
         signUpButton = findViewById(R.id.SignUpButton);
         signUpButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -109,6 +124,9 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         *Navigates to the previous activity when pressed (OrganizerSignInActivity)
+         */
         gobackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

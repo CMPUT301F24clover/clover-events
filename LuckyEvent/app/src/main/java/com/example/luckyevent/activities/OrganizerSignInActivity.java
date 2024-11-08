@@ -14,12 +14,24 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
 import com.example.luckyevent.OrganizerSession;
+import com.example.luckyevent.UserSession;
 import com.example.luckyevent.firebase.FirebaseDB;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * Displays the fields needed to sign in as an organizer. This activity also gives the user the option
+ * to sign up if they are not registered in the system
+ * This activity navigates to the MenuActivity if the user successfully signs in as an organizer
+ *
+ * @author Seyi
+ * @see FirebaseDB
+ * @see UserSession
+ * @version 1
+ * @since 1
+ */
 public class OrganizerSignInActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;
@@ -43,6 +55,10 @@ public class OrganizerSignInActivity extends AppCompatActivity {
         signInButton = findViewById(R.id.SignInButton);
         gobackButton = findViewById(R.id.previousIcon);
 
+        /**
+         *When clicked, this activity collects all the text provided in the field and signs in using FireBaseDB's
+         * SignIn function. It navigates to the OrganizerMenuActivity when it has successfully registered
+         */
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,6 +132,10 @@ public class OrganizerSignInActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         *When clicked, this activity navigates to the OrganizerSignUpActivity. The user can sign up
+         * as an organizer in that activity
+         */
         signUpButton = findViewById(R.id.SignUpButton);
         signUpButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -125,6 +145,9 @@ public class OrganizerSignInActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         *When clicked, this activity navigates to the previous activity (LoginActivity)
+         */
         gobackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
