@@ -1,5 +1,6 @@
 package com.example.luckyevent.activities;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
@@ -10,8 +11,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.luckyevent.R;
+import com.example.luckyevent.fragments.DisplayOrganizerEventsFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -101,6 +104,9 @@ public class GenerateQrActivity extends AppCompatActivity {
             if (validateInputs()) {
                 saveEventInfoToFirestore();
             }
+            Intent intent = new Intent(GenerateQrActivity.this, DisplayOrganizerEventsActivity.class);
+            startActivity(intent);
+            finish();
         });
     }
 

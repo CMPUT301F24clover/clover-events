@@ -52,7 +52,7 @@ public class DisplayOrganizerEventsFragment extends Fragment {
         if (firebaseUser != null) {
             String organizerId = firebaseUser.getUid();
             db = FirebaseFirestore.getInstance();
-            orgDocRef = db.collection("loginProfile").document(organizerId);
+            orgDocRef = db.collection("events").document(organizerId);
 
             getEventIdsList();
         }

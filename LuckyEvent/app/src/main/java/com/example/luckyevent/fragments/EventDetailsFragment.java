@@ -7,17 +7,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckyevent.LotteryService;
 import com.example.luckyevent.R;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 public class EventDetailsFragment extends Fragment {
     private FirebaseFirestore db;
@@ -65,6 +70,11 @@ public class EventDetailsFragment extends Fragment {
                     Toast.makeText(getActivity(), "Click on 'View List of Chosen Entrants' for results.", Toast.LENGTH_SHORT).show();
                     sampleEntrants.setVisibility(View.GONE);
                 }
+            });
+
+            ImageView qrCodeImageView = view.findViewById(R.id.event_qr_link);
+            qrCodeImageView.setOnClickListener(v -> {
+                showQrCodeDialog();
             });
 
             Button waitingListButton = view.findViewById(R.id.waiting_list_button);
@@ -121,4 +131,30 @@ public class EventDetailsFragment extends Fragment {
                 .addToBackStack(null)
                 .commit();
     }
+
+    // This method handles the click and shows the QR code in a dialog
+    private void showQrCodeDialog() {
+        // Prepare an ImageView for the dialog
+        ImageView imageView = new ImageView(getActivity());
+
+        // Firebase Storage reference for the QR code image (example path)
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference qrCodeRef = storage.getReference().child("events/qrContent");
+
+        // Use Picasso to load the image from Firebase Storage into the ImageView
+        qrCodeRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            Picasso.get().load(uri).into(imageView);
+        }).addOnFailureListener(exception -> {
+            Log.e("EventDetailsFragment", "Error loading QR code", exception);
+            Toast.makeText(getActivity(), "Error loading QR code.", Toast.LENGTH_SHORT).show();
+        });
+
+        // Create and show an AlertDialog with the QR code ImageView
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Event QR Code")
+                .setView(imageView)
+                .setPositiveButton("Close", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
 }
+

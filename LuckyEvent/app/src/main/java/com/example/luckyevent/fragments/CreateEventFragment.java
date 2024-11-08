@@ -26,6 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class fragment opens up the create event page where the organizer can enter the event
+ * details and create an event.
+ */
 public class CreateEventFragment extends Fragment {
 
     private TextInputEditText eventName;
@@ -169,6 +173,7 @@ public class CreateEventFragment extends Fragment {
                     String eventId = documentReference.getId();
                     addEventToProfile(userID, eventId);
                     generateQRCode(eventId);
+                    Toast.makeText(getContext(),"Event Created Successfully",Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(getContext(), "Failed to create event", Toast.LENGTH_SHORT).show();

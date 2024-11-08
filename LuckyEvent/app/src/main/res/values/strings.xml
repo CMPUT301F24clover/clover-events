@@ -22,6 +22,9 @@
     <string name="chosen_list">List of Chosen Entrants</string>
     <string name="welcome_message">Welcome, %1$s!</string>
     <string name="organizer_dashboard">Organizer Dashboard</string>
+    <string name="event_poster">Event Poster</string>
+    <string name="sample_entrants">Sample Entrants</string>
+    <string name="event_qr_code">Event QR Code</string>
 
 
 </resources>

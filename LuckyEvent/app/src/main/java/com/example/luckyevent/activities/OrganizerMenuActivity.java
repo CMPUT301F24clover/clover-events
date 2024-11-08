@@ -69,12 +69,18 @@ public class OrganizerMenuActivity extends AppCompatActivity implements Organize
 
     @Override
     public void onNavigateToMyEvents() {
-        bottomNavigationView.setSelectedItemId(R.id.events_item);
+        //bottomNavigationView.setSelectedItemId(R.id.events_item);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.OrganizerMenuFragment, new DisplayOrganizerEventsFragment())
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
     public void onNavigateToMyFacility() {
         bottomNavigationView.setSelectedItemId(R.id.profile_item);
+
     }
 
     @Override
