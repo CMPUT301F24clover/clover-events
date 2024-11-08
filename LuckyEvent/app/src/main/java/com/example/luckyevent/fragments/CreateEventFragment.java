@@ -17,6 +17,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -159,7 +160,7 @@ public class CreateEventFragment extends Fragment {
         eventInfo.put("sampleSize", selectedSampleSize);
         eventInfo.put("currentWaitList", 0);
         eventInfo.put("organizerId", userID);
-        eventInfo.put("waitListMembers", Arrays.asList());
+        eventInfo.put("waitingList", Arrays.asList());
         eventInfo.put("status", "active");
         eventInfo.put("createdAt", System.currentTimeMillis());
 
@@ -176,15 +177,9 @@ public class CreateEventFragment extends Fragment {
     }
 
     private void addEventToProfile(String userID, String eventID) {
-        Map<String, Object> eventIdMap = new HashMap<>();
-        eventIdMap.put("eventID", eventID);
-        eventIdMap.put("addedAt", System.currentTimeMillis());
-
         firestore.collection("loginProfile")
                 .document(userID)
-                .collection("myEvents")
-                .document(eventID)
-                .set(eventIdMap)
+                .update("myEvents", FieldValue.arrayUnion(eventID))
                 .addOnFailureListener(e ->
                         Toast.makeText(getContext(), "Failed to add event to profile", Toast.LENGTH_SHORT).show());
     }

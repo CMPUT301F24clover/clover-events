@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.luckyevent.Entrant;
 import com.example.luckyevent.LotteryService;
 import com.example.luckyevent.R;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -24,7 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * and the list of enrolled, cancelled and chosen entrants. The sampling of entrants from the waiting list
  * is conducted in this fragment
  *
- * @author Amna, Melve, Seyi,
+ * @author Amna, Mmelve, Seyi,
  * @version 1
  * @since 1
  */

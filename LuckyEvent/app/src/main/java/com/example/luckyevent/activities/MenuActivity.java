@@ -2,18 +2,14 @@ package com.example.luckyevent.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.luckyevent.OrganizerSession;
 import com.example.luckyevent.R;
 import com.example.luckyevent.fragments.DisplayNotificationsFragment;
 import com.example.luckyevent.fragments.HomePageFragment;
 import com.example.luckyevent.fragments.ScanQrFragment;
-import com.example.luckyevent.fragments.TestFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,7 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * the bottom navigation bar needed to navigate between fragments and activities. These fragments and
  * activities are the entrant home page, entrant profile section, scan qr code section  and the notifications page
  *
- * @author Amna, Melve, Seyi, Divij
+ * @author Amna, Mmelve, Seyi, Divij
  * @see com.example.luckyevent.UserSession
  * @version 2
  * @since 1

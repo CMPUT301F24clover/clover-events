@@ -1,9 +1,7 @@
 package com.example.luckyevent.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -12,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.Entrant;
 import com.example.luckyevent.R;
-import com.example.luckyevent.UserSession;
-import com.example.luckyevent.firebase.FirebaseDB;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,14 +17,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * This activity gives the user the option to join the waitlist of the displayed event. The events
  * collection is also updated to reflect transaction
  *
- * @author Amna, Melve
+ * @author Amna
  * @see Entrant
  * @version 1
  * @since 1
