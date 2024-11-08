@@ -13,6 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.luckyevent.R;
+import com.example.luckyevent.ScanQR;
+import com.example.luckyevent.firebase.FirebaseDB;
+import com.example.luckyevent.fragments.ScanQrFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
@@ -33,6 +36,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This activity deals with event creation and  QR code generation. These functions work together to
+ * store the generated QR codes and events both locally and on firestore. Additional functions are present
+ * to store the generated event ids in the entrant's profile
+ *
+ * @author Aagam, Tola, Amna
+ * @see ScanQrFragment
+ * @see ScanQR
+
+ * @version 1
+ * @since 1
+ */
 public class GenerateQrActivity extends AppCompatActivity {
 
     private TextInputEditText eventName;
@@ -159,6 +174,10 @@ public class GenerateQrActivity extends AppCompatActivity {
         });
     }
     */
+    /**
+     *This function saves the inputted event info into firestore. An event id generated alongside for
+     * reference
+     */
     private void saveEventInfoToFirestore() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) { // CHANGED: Added null check for FirebaseUser
@@ -189,6 +208,9 @@ public class GenerateQrActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     *This function adds the event id of an event to the profile document of an entrant.
+     */
     private void addEventToProfile(String userID, String eventID) {
         Map<String, Object> eventIdMap = new HashMap<>();
         eventIdMap.put("eventID",eventID);

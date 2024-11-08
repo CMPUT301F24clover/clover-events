@@ -1,5 +1,12 @@
 package com.example.luckyevent;
 
+/**
+ * A class used to store the details of the currently signed in entrant
+ *
+ * @author Seyi
+ * @version 1
+ * @since 1
+ */
 public class UserSession {
     private static UserSession instance;
     //Additional values can be added

@@ -24,11 +24,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * Displays the fields and buttons needed to sign in as an entrant or administrator. The user also
  * has the option to sign up as entrant, sign in or sign up as organizer or, sign in with their
  * device id
+ *
  * @author Seyi
- * @see com.example.luckyevent.UserSession
+ * @see UserSession
  * @see FirebaseDB
 
- * @version 2
+ * @version 1
  * @since 1
  */
 public class LoginActivity extends AppCompatActivity {
@@ -71,9 +72,12 @@ public class LoginActivity extends AppCompatActivity {
 
 
         signInButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             *When clicked, the activity uses FireBaseDB's SignIn function to sign in the user using the
+             * fields provided. It navigates to the MenuActivity if it is successful in signing the user
+             */
             @Override
             public void onClick(View view) {
-
                     String userInput = username.getText().toString().trim();
                     String passwordInput = password.getText().toString().trim();
 
@@ -131,8 +135,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+
         signUpButton = findViewById(R.id.SignUpButton);
         signUpButton.setOnClickListener(new View.OnClickListener(){
+            /**
+             *Navigates to the EntrantSignUp Activity when clicked
+             */
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, EntrantSignUpActivity.class);
                 startActivity(intent);
@@ -143,6 +151,9 @@ public class LoginActivity extends AppCompatActivity {
 
         registerText = findViewById(R.id.RegisterText);
         registerText.setOnClickListener(new View.OnClickListener() {
+            /**
+             *Navigates to the RegisterDeviceActivity when clicked
+             */
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, RegisterDeviceActivity.class);
@@ -153,6 +164,9 @@ public class LoginActivity extends AppCompatActivity {
 
         organizerText = findViewById(R.id.OrganizerText);
         organizerText.setOnClickListener(new View.OnClickListener() {
+            /**
+             *Navigates to the OrganizerSignInActivity when clicked
+             */
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, OrganizerSignInActivity.class);
