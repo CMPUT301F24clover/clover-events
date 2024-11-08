@@ -22,19 +22,5 @@
     <string name="chosen_list">List of Chosen Entrants</string>
     <string name="welcome_message">Welcome, %1$s!</string>
 
-    <string-array name="waiting_list_sizes">
-        <item>10</item>
-        <item>20</item>
-        <item>30</item>
-        <item>50</item>
-        <item>100</item>
-    </string-array>
 
-    <string-array name="sample_sizes">
-        <item>5</item>
-        <item>10</item>
-        <item>15</item>
-        <item>25</item>
-        <item>50</item>
-    </string-array>
 </resources>

@@ -20,24 +20,46 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Amna
+ * this is the controller class that handles profile creation, editing profile fields, and allows users to view profile details
+ */
 public class ProfileController {
     private ProfileSetup model;
     private FirebaseFirestore db;
     private Context context;
 
+
+    /**
+     * uses the profileSetup model
+     * @param model
+     * @param context
+     */
     public ProfileController(ProfileSetup model, Context context){
         this.model = model;
         this.db = FirebaseFirestore.getInstance();
         this.context = context;
     }
+
+    /**
+     * Registers a profile for the current user by finding the current users id, then add the fields to the profile
+     * @param firstName
+     * @param lastName
+     * @param email
+     * @param phoneNumber
+     * @param onSuccessListener
+     */
     public void registerProfile(String firstName, String lastName, String email, String  phoneNumber,OnSuccessListener<String> onSuccessListener){
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String userID = user.getUid();
+        String userID = user.getUid(); // retrieve the user ID
+
+        // set up the model data
         model.setName(firstName +" "+ lastName);
         model.setEmail(email);
         model.setPhoneNumber(phoneNumber);
 
+        // find the current signed in user based on the user ID
         db.collection("loginProfile")
                 .document(userID)
                 .get()
@@ -45,13 +67,16 @@ public class ProfileController {
                         if (task.isSuccessful()){
                             DocumentSnapshot doc = task.getResult();
                             if (doc != null && doc.exists()) {
+                                // get the first and last name from the document
                                 String dbfirstName = doc.getString("firstName");
                                 String dblastName = doc.getString("lastName");
                                 if (firstName.equals(dbfirstName) && lastName.equals(dblastName)) {
+                                    // check if the name the user entered matches the one in the db
                                     HashMap<String, Object> data = new HashMap<>();
                                     data.put("Email", email);
                                     data.put("Phone Number", phoneNumber.isEmpty() ? "" : phoneNumber);
                                     data.put("hasUserProfile", true);
+                                    //update the fields in the db document
                                     doc.getReference().update(data)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
@@ -82,6 +107,14 @@ public class ProfileController {
 
     }
 
+    /**
+     * Edits/updates the first and last name, email, and phone number fields in the database,
+     * @param docID this is the document id of the profile that needs to be updated
+     * @param firstName
+     * @param lastName
+     * @param email
+     * @param phoneNumber
+     */
     public void editProfile(String docID, String firstName, String lastName, String email, String  phoneNumber){
         model.setName(firstName +" "+ lastName);
         model.setEmail(email);
@@ -95,6 +128,7 @@ public class ProfileController {
         updateData.put("Email", email);
         updateData.put("Phone Number", phoneNumber);
 
+        // update the fields in the db document
         profileRef.update(updateData)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -109,6 +143,12 @@ public class ProfileController {
                     }
                 });
     }
+
+    /**
+     * Loads up the users profile information (which includes their name, email, and phone number (which is a field that can be empty since its optional)
+     * @param docID
+     * @param onSuccessListener
+     */
     public void loadProfile(String docID, OnSuccessListener<ProfileSetup> onSuccessListener){
         if (docID == null) {
             Toast.makeText(context, "Document ID is null", Toast.LENGTH_SHORT).show();
@@ -122,6 +162,7 @@ public class ProfileController {
                 if (task.isSuccessful()){
                     DocumentSnapshot doc = task.getResult();
                     if (doc.exists()){
+                        // get the given fields and set it in the model
                         String firstName = doc.getString("firstName");
                         String lastName = doc.getString("lastName");
                         String email = doc.getString("Email");
