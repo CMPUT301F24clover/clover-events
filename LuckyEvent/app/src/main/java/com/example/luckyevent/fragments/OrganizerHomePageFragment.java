@@ -70,55 +70,50 @@ public class OrganizerHomePageFragment extends Fragment {
             welcomeTextView.setText("Welcome!");
         }
 
-        Button testCreate = view.findViewById(R.id.testCreateEvent);
-        testCreate.setOnClickListener(new View.OnClickListener() {
+        // Set up navigation card clicks
+
+        Button createEventButton = view.findViewById(R.id.createEventButton);
+        createEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), GenerateQrActivity.class);
-                startActivity(intent);
+                if (navigateListener != null) {
+                    navigateListener.onNavigateToCreateEvent();
+                }
             }
         });
 
-        // Set up navigation card clicks
-        //CardView createEventCard = view.findViewById(R.id.createEventCard);
-        //CardView myEventsCard = view.findViewById(R.id.myEventsCard);
-        //CardView myFacilityCard = view.findViewById(R.id.myFacilityCard);
-        //CardView eventSettingsCard = view.findViewById(R.id.eventSettingsCard);
-
-/*
-        createEventCard.setOnClickListener(view1 -> {
-            if (navigateListener != null) {
-                navigateListener.onNavigateToCreateEvent();
+        Button myEventsButton = view.findViewById(R.id.myEventsButton);
+        myEventsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (navigateListener != null) {
+                    navigateListener.onNavigateToMyEvents();
+                }
             }
         });
 
-
-        myEventsCard.setOnClickListener(view1 -> {
-            if (navigateListener != null) {
-                navigateListener.onNavigateToMyEvents();
+        Button myFacilityButton = view.findViewById(R.id.myFacilityButton);
+        myFacilityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (navigateListener != null) {
+                    navigateListener.onNavigateToMyFacility();
+                }
             }
         });
 
-        myFacilityCard.setOnClickListener(view1 -> {
-            if (navigateListener != null) {
-                navigateListener.onNavigateToMyFacility();
+        Button eventSettingsButton = view.findViewById(R.id.eventSettingsButton);
+        eventSettingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (navigateListener != null) {
+                    navigateListener.onNavigateToEventSettings();
+                }
             }
         });
-
-        eventSettingsCard.setOnClickListener(view1 -> {
-            if (navigateListener != null) {
-                navigateListener.onNavigateToEventSettings();
-            }
-        });
-
- */
 
         return view;
-
-
     }
-
-
 
     @Override
     public void onDetach() {
