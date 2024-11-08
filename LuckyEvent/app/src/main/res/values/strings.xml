@@ -21,6 +21,7 @@
     <string name="event_name">Event Name</string>
     <string name="chosen_list">List of Chosen Entrants</string>
     <string name="welcome_message">Welcome, %1$s!</string>
+    <string name="organizer_dashboard">Organizer Dashboard</string>
 
 
 </resources>
