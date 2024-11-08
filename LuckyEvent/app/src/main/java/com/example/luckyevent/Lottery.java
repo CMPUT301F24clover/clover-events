@@ -3,7 +3,6 @@ package com.example.luckyevent;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -14,17 +13,17 @@ import java.util.Random;
  * @since 1
  */
 public class Lottery implements Serializable {
-    private List<String> entrants;
-    private List<String> winners;
+    private ArrayList<String> entrants;
+    private ArrayList<String> winners;
     private int sampleSize;
 
-    public Lottery(List<String> entrants, int sampleSize) {
+    public Lottery(ArrayList<String> entrants, int sampleSize) {
         this.entrants = entrants;
         this.winners = new ArrayList<>();
         this.sampleSize = sampleSize;
     }
 
-    public void setEntrants(List<String> entrants) {
+    public void setEntrants(ArrayList<String> entrants) {
         this.entrants = entrants;
     }
 
@@ -32,11 +31,11 @@ public class Lottery implements Serializable {
         this.sampleSize = sampleSize;
     }
 
-    public List<String> getWinners() {
+    public ArrayList<String> getWinners() {
         return winners;
     }
 
-    public List<String> getEntrants() {
+    public ArrayList<String> getEntrants() {
         return entrants;
     }
 
@@ -49,7 +48,7 @@ public class Lottery implements Serializable {
         int size = entrants.size();
 
         if (sampleSize <= size) {
-            List<String> shuffledList = getShuffledList();
+            ArrayList<String> shuffledList = getShuffledList();
             winners = new ArrayList<>(shuffledList.subList(0, sampleSize));
             entrants = new ArrayList<>(shuffledList.subList(sampleSize, size));
         } else {
@@ -62,8 +61,8 @@ public class Lottery implements Serializable {
      * Implements the Fisher-Yates' shuffle algorithm to randomly shuffle the entrants list.
      * @return A shuffled list of entrants.
      */
-    private List<String> getShuffledList() {
-        List<String> shuffledList = new ArrayList<>(entrants);
+    private ArrayList<String> getShuffledList() {
+        ArrayList<String> shuffledList = new ArrayList<>(entrants);
         Random r = new Random();
         int size = shuffledList.size();
 

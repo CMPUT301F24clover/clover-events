@@ -9,12 +9,11 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @RunWith(JUnit4.class)
 public class LotteryTest {
-    private List<String> entrantsList() {
-        List<String> entrants = new ArrayList<>();
+    private ArrayList<String> entrantsList() {
+        ArrayList<String> entrants = new ArrayList<>();
         entrants.add("A");
         entrants.add("B");
         entrants.add("C");
@@ -24,7 +23,7 @@ public class LotteryTest {
 
     @Test
     public void testInitialization() {
-        List<String> entrants = entrantsList();
+        ArrayList<String> entrants = entrantsList();
         Lottery lottery = new Lottery(entrants, 2);
         assertEquals(entrants, lottery.getEntrants());
         assertTrue(lottery.getWinners().isEmpty());
@@ -32,7 +31,7 @@ public class LotteryTest {
 
     @Test
     public void testSelectWinnersNotEveryoneWins() {
-        List<String> entrants = entrantsList();
+        ArrayList<String> entrants = entrantsList();
         Lottery lottery = new Lottery(entrants, 2);
         lottery.selectWinners();
 
@@ -42,7 +41,7 @@ public class LotteryTest {
 
     @Test
     public void testSelectWinnersEveryoneWins() {
-        List<String> entrants = entrantsList();
+        ArrayList<String> entrants = entrantsList();
         Lottery lottery = new Lottery(entrants, 5);
         lottery.selectWinners();
 
@@ -52,7 +51,7 @@ public class LotteryTest {
 
     @Test
     public void testShuffling() {
-        List<String> entrants = entrantsList();
+        ArrayList<String> entrants = entrantsList();
         Lottery lottery = new Lottery(entrants, 4);
         lottery.selectWinners();
 

@@ -22,7 +22,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Displays a list of entrants associated with a given event and a given list name. List of
@@ -36,8 +35,8 @@ import java.util.List;
  * @since 1
  */
 public class DisplayEntrantsFragment extends Fragment {
-    private List<String> entrantsIdList;
-    private List<Entrant> entrantsList;
+    private ArrayList<String> entrantIdsList;
+    private ArrayList<Entrant> entrantsList;
     private String listName;
     private EntrantListAdapter listAdapter;
     private FirebaseFirestore db;
@@ -69,7 +68,16 @@ public class DisplayEntrantsFragment extends Fragment {
 
             // create notification button
             FloatingActionButton notification_button = view.findViewById(R.id.create_notification_fab);
-            notification_button.setOnClickListener(v -> Toast.makeText(getContext(), "Manual notification fragment not yet implemented", Toast.LENGTH_SHORT).show());
+            notification_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    bundle.putStringArrayList("entrantIdsList", entrantIdsList);
+                    CreateNotificationFragment createNotificationFragment = new CreateNotificationFragment();
+                    createNotificationFragment.setArguments(bundle);
+                    createNotificationFragment.show(getParentFragmentManager(), "dialog");
+                }
+            });
         }
 
         return view;
@@ -84,8 +92,8 @@ public class DisplayEntrantsFragment extends Fragment {
                 return;
             }
             if (snapshot != null && snapshot.exists()) {
-                entrantsIdList = (List<String>) snapshot.get(listName);
-                if (entrantsIdList != null) {
+                entrantIdsList = (ArrayList<String>) snapshot.get(listName);
+                if (entrantIdsList != null) {
                     createEntrantsList();
                 } else {
                     Toast.makeText(getContext(), "List does not exist.", Toast.LENGTH_SHORT).show();
@@ -100,7 +108,7 @@ public class DisplayEntrantsFragment extends Fragment {
      */
     private void createEntrantsList() {
         entrantsList.clear();
-        for (String id: entrantsIdList) {
+        for (String id: entrantIdsList) {
             db.collection("loginProfile").document(id).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     DocumentSnapshot snapshot = task.getResult();

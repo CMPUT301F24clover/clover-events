@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * A class implementing the list adapter for a user's list of notifications.
@@ -21,10 +21,10 @@ import java.util.List;
  * @since 1
  */
 public class NotificationListAdapter extends ArrayAdapter<Notification> {
-    private List<Notification> notifs;
+    private ArrayList<Notification> notifs;
     private Context context;
 
-    public NotificationListAdapter(@NonNull Context context, List<Notification> notifs) {
+    public NotificationListAdapter(@NonNull Context context, ArrayList<Notification> notifs) {
         super(context, 0, notifs);
         this.context = context;
         this.notifs = notifs;

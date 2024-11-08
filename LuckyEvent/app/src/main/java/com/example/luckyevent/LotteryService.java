@@ -10,20 +10,20 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Conducts the lottery: samples from the waiting list to get a list of winners and losers.
  *
  * @author Mmelve
  * @see Lottery
- * @version 1
+ * @version 1.5
  * @since 1
  */
 public class LotteryService extends Service {
     private static final String TAG = "LotteryService";
     private String eventName;
-    private List<String> waitingList;
+    private ArrayList<String> waitingList;
     private int sampleSize;
     private Lottery lottery;
     private DocumentReference docRef;
@@ -43,7 +43,7 @@ public class LotteryService extends Service {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         docRef = db.collection("events").document(eventId);
 
-        getWaitingList();
+        startLottery();
 
         return START_NOT_STICKY;
     }
@@ -62,26 +62,37 @@ public class LotteryService extends Service {
      * Retrieves the waiting list from the document of the given event and uses it to conduct the
      * lottery.
      */
-    private void getWaitingList() {
+    private void startLottery() {
         docRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot snapshot = task.getResult();
                 if (snapshot.exists()) {
                     eventName = (String) snapshot.get("eventName");
-                    sampleSize = Math.toIntExact((long) snapshot.get("sampleSize"));
-                    waitingList = (List<String>) snapshot.get("waitingList");
-                    if (waitingList != null) {
+                    try {
+                        sampleSize = (int) snapshot.get("sampleSize");
+                    } catch (Exception e1) {
+                        try {
+                            sampleSize = Math.toIntExact((long) snapshot.get("sampleSize"));
+                        } catch (Exception e2) {
+                            Toast.makeText(this, "sampleSize type is invalid", Toast.LENGTH_SHORT).show();
+                            stopSelf();
+                        }
+                    }
+                    waitingList = (ArrayList<String>) snapshot.get("waitingList");
+                    if (waitingList == null || waitingList.isEmpty()) {
+                        Toast.makeText(this, "Waiting list is not available. Cannot initiate lottery.", Toast.LENGTH_SHORT).show();
+                        stopSelf();
+                    } else {
                         lottery = new Lottery(waitingList, sampleSize);
                         lottery.selectWinners();
                         setResult();
-                    } else {
-                        Toast.makeText(this, "Waiting list does not exist. Cannot initiate lottery.", Toast.LENGTH_SHORT).show();
-                        stopSelf();
                     }
                 } else {
+                    Toast.makeText(this, "Cannot retrieve waiting list from database.", Toast.LENGTH_SHORT).show();
                     stopSelf();
                 }
             } else {
+                Toast.makeText(this, "Cannot retrieve waiting list from database.", Toast.LENGTH_SHORT).show();
                 stopSelf();
             }
         });
@@ -106,14 +117,22 @@ public class LotteryService extends Service {
     }
 
     /**
-     * Starts the next activity/service.
+     * Notifies all of the lottery participants of the results.
      */
     private void startNextActivity() {
         if (!lottery.getWinners().isEmpty()) {
-            Intent serviceIntent = new Intent(this, AutoNotificationService.class);
-            serviceIntent.putExtra("lottery", lottery);
-            serviceIntent.putExtra("eventName", eventName);
-            startService(serviceIntent);
+            Intent intentWinners = new Intent(this, NotificationService.class);
+            intentWinners.putStringArrayListExtra("entrants", lottery.getWinners());
+            intentWinners.putExtra("title", "Congratulations!");
+            intentWinners.putExtra("description", String.format("You have been chosen to sign up for %s!", eventName));
+            startService(intentWinners);
+            if (!lottery.getEntrants().isEmpty()) {
+                Intent intentLosers = new Intent(this, NotificationService.class);
+                intentLosers.putStringArrayListExtra("entrants", lottery.getEntrants());
+                intentLosers.putExtra("title", "Hello there!");
+                intentLosers.putExtra("description", String.format("We regret to inform you that you have not been chosen to sign up for %s. Thank you for your interest.", eventName));
+                startService(intentLosers);
+            }
         }
         stopSelf();
     }
