@@ -94,7 +94,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
 
                     else{
                         if(imageUri == null){
-                            imageUri = generateDefualtProfileImage(Initials);
+                            imageUri = generateDefaultProfileImage(Initials);
                         }
                         firebaseDB.signUp(userNameInput, passwordInput, firstNameInput, lastNameInput, "entrant", null, null, new FirebaseDB.SignInCallback() {
                             @Override
@@ -134,7 +134,6 @@ public class EntrantSignUpActivity extends AppCompatActivity {
         addImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Create an intent to open the gallery
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -149,35 +148,37 @@ public class EntrantSignUpActivity extends AppCompatActivity {
 
         if (requestCode == selectAmount && resultCode == RESULT_OK && data != null && data.getData() != null) {
             imageUri = data.getData();
-            // Do something with the image URI, like displaying it in an ImageView
-            profileImage = findViewById(R.id.profile_image); // Replace with your ImageView ID
+            profileImage = findViewById(R.id.profile_image);
             profileImage.setImageURI(imageUri);
         }
     }
 
-    public Uri generateDefualtProfileImage(String initials){
+    public Uri generateDefaultProfileImage(String initials) {
         String avatarUrl = "https://ui-avatars.com/api/?name=" + initials + "&size=128&background=0D8ABC&color=fff";
-
         try {
-            // Glide request to download the image into a temporary file
             FutureTarget<File> futureTarget = Glide.with(this)
                     .asFile()
                     .load(avatarUrl)
                     .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
                     .submit();
 
-            // Wait for the result to come back (this can be done asynchronously too)
             File downloadedImage = futureTarget.get();
 
-            // Return the URI of the downloaded image
-            return Uri.fromFile(downloadedImage);
+            if (downloadedImage != null) {
+                return Uri.fromFile(downloadedImage);
+            } else {
+                Log.e("EntrantSignUpActivity", "Downloaded image is null");
+                return null;
+            }
 
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-            Log.e("EntrantSignUpActivity", "Failed to download image");
+            Log.e("EntrantSignUpActivity", "Failed to download image", e);
             return null;
         }
     }
-    }
 
 }
+
+
+
+
