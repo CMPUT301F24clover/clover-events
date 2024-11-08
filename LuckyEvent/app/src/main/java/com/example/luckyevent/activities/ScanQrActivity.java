@@ -1,6 +1,5 @@
 package com.example.luckyevent.activities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -10,8 +9,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.firebase.FirebaseDB;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.CaptureActivity;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
@@ -35,9 +35,7 @@ public class ScanQrActivity extends AppCompatActivity {
         setContentView(R.layout.entrant_scan_qr_screen);
         scanButton = findViewById(R.id.button_startScanning);
 
-        scanButton.setOnClickListener(v->{
-            scanCode();
-        });
+        scanButton.setOnClickListener(v-> scanCode());
     }
 
     /**
@@ -56,8 +54,39 @@ public class ScanQrActivity extends AppCompatActivity {
     {
         if(result.getContents()!=null)
         {
-            Intent intent = new Intent(ScanQrActivity.this, DisplayQrActivity.class);
-            startActivity(intent);
+            String scannedContent = result.getContents();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            db.collection("events")
+                    .whereEqualTo("qrContent", scannedContent)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+                            String eventName = document.getString("eventName");
+                            String eventDate = document.getString("date");
+                            String eventDescription = document.getString("description");
+                            String eventId = document.getId();
+
+                            Intent intent = new Intent(ScanQrActivity.this, DisplayQrActivity.class);
+                            intent.putExtra("eventID", eventId);
+                            intent.putExtra("eventName", eventName);
+                            intent.putExtra("eventDate", eventDate);
+                            intent.putExtra("eventDescription", eventDescription);
+                            startActivity(intent);
+                        } else {
+                            showAlertDialog("Event not found", "No matching event found for this QR code.");
+                        }
+                    })
+                    .addOnFailureListener(e -> showAlertDialog("Error", "Failed to search for event: " + e.getMessage()));
         }
     });
+
+    private void showAlertDialog(String title, String message) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .show();
+    }
 }
