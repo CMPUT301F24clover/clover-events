@@ -1,7 +1,9 @@
 package com.example.luckyevent.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -10,13 +12,21 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.FutureTarget;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.luckyevent.R;
 import com.example.luckyevent.ScanQR;
 import com.example.luckyevent.UserSession;
 import com.example.luckyevent.firebase.FirebaseDB;
 import com.example.luckyevent.fragments.ScanQrFragment;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Displays the fields needed to sign up as an entrant. This activity navigates to the MenuActivity if the user successfully
@@ -36,6 +46,9 @@ public class EntrantSignUpActivity extends AppCompatActivity {
     private EditText lastName;
     private FirebaseDB firebaseDB;
     private ImageView gobackButton;
+    private ImageView profileImage;
+    private static final int selectAmount = 1;
+    private Uri imageUri = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,6 +61,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
         lastName = findViewById(R.id.SignUpLastNameInput);
         gobackButton = findViewById(R.id.previousIcon);
 
+
         signUpButton = findViewById(R.id.SignUpButton);
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +72,14 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                     String passwordInput = password.getText().toString().trim();
                     String firstNameInput = firstName.getText().toString().trim();
                     String lastNameInput = lastName.getText().toString().trim();
+                    String Initials;
+
+                    if (lastNameInput.isEmpty()) {
+                        Initials = "";
+                    }
+                    else {
+                        Initials = String.valueOf(lastNameInput.charAt(0));
+                    }
 
                     if (userNameInput.isEmpty() || passwordInput.isEmpty()) {
                         if(userNameInput.isEmpty() && passwordInput.isEmpty()){
@@ -71,6 +93,9 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                     }
 
                     else{
+                        if(imageUri == null){
+                            imageUri = generateDefualtProfileImage(Initials);
+                        }
                         firebaseDB.signUp(userNameInput, passwordInput, firstNameInput, lastNameInput, "entrant", null, null, new FirebaseDB.SignInCallback() {
                             @Override
                             public void onSuccess() {
@@ -89,7 +114,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                             public void onFailure(String errorMessage) {
                                 Toast.makeText(EntrantSignUpActivity.this, "Sign-Up failed: " + errorMessage, Toast.LENGTH_SHORT).show();
                             }
-                        });
+                        },imageUri.toString());
                     }
 
                 }
@@ -104,6 +129,55 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                 finish(); // Optional
             }
         });
+
+        FloatingActionButton addImageButton = findViewById(R.id.button_add_image); // Or your Button ID
+        addImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Create an intent to open the gallery
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), selectAmount);
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == selectAmount && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            imageUri = data.getData();
+            // Do something with the image URI, like displaying it in an ImageView
+            profileImage = findViewById(R.id.profile_image); // Replace with your ImageView ID
+            profileImage.setImageURI(imageUri);
+        }
+    }
+
+    public Uri generateDefualtProfileImage(String initials){
+        String avatarUrl = "https://ui-avatars.com/api/?name=" + initials + "&size=128&background=0D8ABC&color=fff";
+
+        try {
+            // Glide request to download the image into a temporary file
+            FutureTarget<File> futureTarget = Glide.with(this)
+                    .asFile()
+                    .load(avatarUrl)
+                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+                    .submit();
+
+            // Wait for the result to come back (this can be done asynchronously too)
+            File downloadedImage = futureTarget.get();
+
+            // Return the URI of the downloaded image
+            return Uri.fromFile(downloadedImage);
+
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            Log.e("EntrantSignUpActivity", "Failed to download image");
+            return null;
+        }
+    }
     }
 
 

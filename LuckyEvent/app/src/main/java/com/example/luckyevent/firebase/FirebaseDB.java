@@ -1,7 +1,9 @@
 package com.example.luckyevent.firebase;
 
 import android.content.Context;
+import android.net.Uri;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.luckyevent.ScanQR;
@@ -12,9 +14,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  *This class deals with the login section of the app. It works directly with firestore to store the
@@ -49,7 +54,7 @@ public class FirebaseDB {
      * This function deals with the entrant and organizer sign up functionality. New documents are
      * created in the loginProfile collection for each entrant and organizer
      */
-    public void signUp(String userName, String password, String firstName, String lastName, String role, String organizationName, String facilityCode , SignInCallback callback) {
+    public void signUp(String userName, String password, String firstName, String lastName, String role, String organizationName, String facilityCode , SignInCallback callback, String profileUri) {
         db.collection("loginProfile").whereEqualTo("userName", userName).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult().isEmpty()) {
@@ -238,6 +243,35 @@ public class FirebaseDB {
 
     public void joinWaitlist(){
 
+    }
+
+    private void uploadProfileToFirebase(Uri imageUri, String userId) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference().child("images/" + UUID.randomUUID().toString());
+
+        storageRef.putFile(imageUri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        String downloadUrl = uri.toString();
+                        saveProfileToFirestore(downloadUrl, userId);
+                    });
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("FirebaseDB","Upload failed: " + e.getMessage());
+                });
+    }
+
+    private void saveProfileToFirestore(String downloadUrl, String userId) {
+        Map<String, Object> imageData = new HashMap<>();
+        imageData.put("imageUrl", downloadUrl);
+        db.collection("profileImages").document(userId).set(imageData)
+                .addOnSuccessListener(documentReference ->
+                                Log.e("FirebaseDB","Image URL saved to Firestore")
+                )
+                .addOnFailureListener(e ->
+                        Log.e("FirebaseDB","Failed to save URL to Firestore: " + e.getMessage())
+
+                );
     }
 
 
