@@ -163,7 +163,7 @@ public class GenerateQrActivity extends AppCompatActivity {
         }
     }
   
-    */
+
     /**
      *This function saves the inputted event info into firestore. An event id generated alongside for
      * reference
