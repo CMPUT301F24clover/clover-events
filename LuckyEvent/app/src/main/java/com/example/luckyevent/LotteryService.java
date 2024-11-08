@@ -17,6 +17,7 @@ import java.util.ArrayList;
  *
  * @author Mmelve
  * @see Lottery
+ * @see NotificationService
  * @version 1.5
  * @since 1
  */
