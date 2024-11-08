@@ -26,7 +26,8 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Tests the following classes: NotificationService and DisplayNotificationsFragment.
+ * Tests if a user's notifications are displayed and regularly updated. Uses the following classes:
+ * NotificationService and DisplayNotificationsFragment.
  */
 public class ReceiveAndDisplayNotificationTest {
 
