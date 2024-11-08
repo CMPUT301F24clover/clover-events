@@ -79,8 +79,10 @@ public class DisplayNotificationsFragment extends Fragment {
                 for (DocumentSnapshot notifSnapshot : snapshot.getDocuments()) {
                     String title = notifSnapshot.getString("title");
                     String content = notifSnapshot.getString("content");
-                    Notification notif = new Notification(title, content);
-                    notifsList.add(notif);
+                    if (title != null) {
+                        Notification notif = new Notification(title, content);
+                        notifsList.add(notif);
+                    }
                 }
                 listAdapter.notifyDataSetChanged();
             }
