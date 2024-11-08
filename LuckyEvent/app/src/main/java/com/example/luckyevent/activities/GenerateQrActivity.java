@@ -2,21 +2,21 @@ package com.example.luckyevent.activities;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
+import com.example.luckyevent.ScanQR;
+import com.example.luckyevent.fragments.ScanQrFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -27,6 +27,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This activity deals with event creation and  QR code generation. These functions work together to
+ * store the generated QR codes and events both locally and on firestore. Additional functions are present
+ * to store the generated event ids in the entrant's profile
+ *
+ * @author Aagam, Tola, Amna
+ * @see ScanQrFragment
+ * @see ScanQR
+
+ * @version 1
+ * @since 1
+ */
 public class GenerateQrActivity extends AppCompatActivity {
     private TextInputEditText eventName;
     private TextInputEditText date;
@@ -145,7 +157,12 @@ public class GenerateQrActivity extends AppCompatActivity {
             Toast.makeText(this, "Failed to generate QR code", Toast.LENGTH_SHORT).show();
         }
     }
+  
 
+    /**
+     *This function saves the inputted event info into firestore. An event id generated alongside for
+     * reference
+     */
     private void saveEventInfoToFirestore() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
@@ -162,7 +179,7 @@ public class GenerateQrActivity extends AppCompatActivity {
         eventInfo.put("sampleSize", selectedSampleSize);
         eventInfo.put("currentWaitList", 0);
         eventInfo.put("organizerId", userID);
-        eventInfo.put("waitListMembers", Arrays.asList());
+        eventInfo.put("waitingList", Arrays.asList());
         eventInfo.put("status", "active");
         eventInfo.put("createdAt", System.currentTimeMillis());
 
@@ -178,16 +195,13 @@ public class GenerateQrActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     *This function adds the event id of an event to the profile document of the event creator.
+     */
     private void addEventToProfile(String userID, String eventID) {
-        Map<String, Object> eventIdMap = new HashMap<>();
-        eventIdMap.put("eventID", eventID);
-        eventIdMap.put("addedAt", System.currentTimeMillis());
-
         firestore.collection("loginProfile")
                 .document(userID)
-                .collection("myEvents")
-                .document(eventID)
-                .set(eventIdMap)
+                .update("myEvents", FieldValue.arrayUnion(eventID))
                 .addOnFailureListener(e ->
                         Toast.makeText(this, "Failed to add event to profile", Toast.LENGTH_SHORT).show());
     }

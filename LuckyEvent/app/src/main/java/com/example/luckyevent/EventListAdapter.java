@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * A class implementing the list adapter for an organizer's list of events.
@@ -20,10 +20,10 @@ import java.util.List;
  * @since 1
  */
 public class EventListAdapter extends ArrayAdapter<String> {
-    private List<String> eventNames;
+    private ArrayList<String> eventNames;
     private Context context;
 
-    public EventListAdapter(@NonNull Context context, List<String> eventNames) {
+    public EventListAdapter(@NonNull Context context, ArrayList<String> eventNames) {
         super(context, 0, eventNames);
         this.eventNames = eventNames;
         this.context = context;

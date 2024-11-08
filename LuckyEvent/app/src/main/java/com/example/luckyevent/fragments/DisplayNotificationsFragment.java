@@ -22,7 +22,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Displays a list of the current user's notifications.
@@ -34,7 +33,7 @@ import java.util.List;
  * @since 1
  */
 public class DisplayNotificationsFragment extends Fragment {
-    private List<Notification> notifsList;
+    private ArrayList<Notification> notifsList;
     private NotificationListAdapter listAdapter;
     private CollectionReference notifRef;
     private ListenerRegistration reg;
@@ -80,8 +79,10 @@ public class DisplayNotificationsFragment extends Fragment {
                 for (DocumentSnapshot notifSnapshot : snapshot.getDocuments()) {
                     String title = notifSnapshot.getString("title");
                     String content = notifSnapshot.getString("content");
-                    Notification notif = new Notification(title, content);
-                    notifsList.add(notif);
+                    if (title != null) {
+                        Notification notif = new Notification(title, content);
+                        notifsList.add(notif);
+                    }
                 }
                 listAdapter.notifyDataSetChanged();
             }

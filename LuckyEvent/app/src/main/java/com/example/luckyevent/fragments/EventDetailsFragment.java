@@ -18,7 +18,15 @@ import com.example.luckyevent.LotteryService;
 import com.example.luckyevent.R;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
+/**
+ * Displays all the event details of the the event selected. The organizer can also view the waiting list
+ * and the list of enrolled, cancelled and chosen entrants. The sampling of entrants from the waiting list
+ * is conducted in this fragment
+ *
+ * @author Amna, Mmelve, Seyi,
+ * @version 1
+ * @since 1
+ */
 public class EventDetailsFragment extends Fragment {
     private FirebaseFirestore db;
 
@@ -95,7 +103,11 @@ public class EventDetailsFragment extends Fragment {
             enrolledEntrantsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), "Display list of enrolled entrants not yet implemented.", Toast.LENGTH_SHORT).show();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("screenTitle", "List of Enrolled Entrants");
+                    bundle.putString("eventId", eventId);
+                    bundle.putString("listName", "enrolledEntrants");
+                    goToList(bundle);
                 }
             });
 
@@ -103,7 +115,11 @@ public class EventDetailsFragment extends Fragment {
             cancelledEntrantsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), "Display list of cancelled entrants not yet implemented.", Toast.LENGTH_SHORT).show();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("screenTitle", "List of Cancelled Entrants");
+                    bundle.putString("eventId", eventId);
+                    bundle.putString("listName", "cancelledEntrants");
+                    goToList(bundle);
                 }
             });
         }
@@ -111,6 +127,9 @@ public class EventDetailsFragment extends Fragment {
         return view;
     }
 
+    /**
+     *This function sets the bundle needed for the DisplayEntrantsFragment and navigates to it
+     */
     private void goToList(Bundle bundle) {
         DisplayEntrantsFragment displayEntrantsFragment = new DisplayEntrantsFragment();
         displayEntrantsFragment.setArguments(bundle);

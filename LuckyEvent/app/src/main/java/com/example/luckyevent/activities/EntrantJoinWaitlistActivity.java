@@ -1,9 +1,7 @@
 package com.example.luckyevent.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,9 +17,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.Map;
-
+/**
+ * This activity gives the user the option to join the waitlist of the displayed event. The events
+ * collection is also updated to reflect transaction
+ *
+ * @author Amna
+ * @see Entrant
+ * @version 1
+ * @since 1
+ */
 public class EntrantJoinWaitlistActivity extends AppCompatActivity {
     private androidx.appcompat.widget.AppCompatButton joinButton;
     private FirebaseFirestore db;
@@ -42,6 +46,11 @@ public class EntrantJoinWaitlistActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * This function updates the events collection by adding the user to a sub-collection called
+     * waitingList
+     */
     private void addUserToFirestore(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String userId = user.getUid();

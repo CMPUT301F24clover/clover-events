@@ -21,15 +21,14 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Displays a list of events created by the current organizer. If the organizer clicks on one of
  * the events, they are taken to a screen displaying the selected event's details.
  */
 public class DisplayOrganizerEventsFragment extends Fragment {
-    private List<String> eventIdsList;
-    private List<String> eventNamesList;
+    private ArrayList<String> eventIdsList;
+    private ArrayList<String> eventNamesList;
     private EventListAdapter listAdapter;
     private FirebaseFirestore db;
     private DocumentReference orgDocRef;
@@ -73,7 +72,7 @@ public class DisplayOrganizerEventsFragment extends Fragment {
             if (task.isSuccessful()) {
                 DocumentSnapshot snapshot = task.getResult();
                 if (snapshot.exists()) {
-                    eventIdsList = (List<String>) snapshot.get("myEvents");
+                    eventIdsList = (ArrayList<String>) snapshot.get("myEvents");
                     if (eventIdsList != null) {
                         getEventNamesList();
                     } else {

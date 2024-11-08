@@ -2,22 +2,31 @@ package com.example.luckyevent.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.luckyevent.R;
 import com.example.luckyevent.fragments.DisplayNotificationsFragment;
 import com.example.luckyevent.fragments.HomePageFragment;
 import com.example.luckyevent.fragments.ScanQrFragment;
-import com.example.luckyevent.fragments.TestFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+
+/**
+ * Displays the fragments needed for the user to sign up for events and receive notifications. It contains
+ * the bottom navigation bar needed to navigate between fragments and activities. These fragments and
+ * activities are the entrant home page, entrant profile section, scan qr code section  and the notifications page
+ *
+ * @author Amna, Mmelve, Seyi, Divij
+ * @see com.example.luckyevent.UserSession
+ * @version 2
+ * @since 1
+ */
 public class MenuActivity extends AppCompatActivity implements HomePageFragment.OnNavigateListener {
 
     BottomNavigationView bottomNavigationView;
@@ -31,6 +40,10 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
         bottomNavigationView = findViewById(R.id.bottomNavigationViewEntrant);
         db = FirebaseFirestore.getInstance();
 
+        /**
+         *When an element of the this bottomNavigationView is clicked, it navigates to it csorresponding
+         * fragment
+         */
         bottomNavigationView.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.home_item) {
                 getSupportFragmentManager()
@@ -70,7 +83,10 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
                 .replace(R.id.MenuFragment, new HomePageFragment())
                 .commit();
     }
-
+    /**
+     *Uses the user id to find the profile id of a user. This profile id is passed onto the ViewProfileActivity
+     * before it is navigated to
+     */
     private void findProfile() {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -107,6 +123,9 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
         }
     }
 
+    /**
+     *Navigates to the ScanQrFragment when the camera_item is clicked
+     */
     @Override
     public void onNavigateToScanQr() {
         bottomNavigationView.setSelectedItemId(R.id.camera_item);
