@@ -54,6 +54,7 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
         facilityCode = findViewById(R.id.SignUpFacilityCodeInput);
         gobackButton = findViewById(R.id.previousIcon);
 
+
         firebaseDB = new FirebaseDB(this);
 
         /**
@@ -118,7 +119,7 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
                         public void onFailure(String errorMessage) {
                             Toast.makeText(OrganizerSignUpActivity.this, "Sign-in failed: " + errorMessage, Toast.LENGTH_SHORT).show();
                         }
-                    });
+                    },null);
                 }
 
             }
