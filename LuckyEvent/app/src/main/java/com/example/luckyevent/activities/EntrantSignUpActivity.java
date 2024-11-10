@@ -1,43 +1,37 @@
 package com.example.luckyevent.activities;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.Manifest;
+import com.squareup.picasso.Picasso;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.FutureTarget;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.luckyevent.R;
-import com.example.luckyevent.ScanQR;
 import com.example.luckyevent.UserSession;
 import com.example.luckyevent.firebase.FirebaseDB;
-import com.example.luckyevent.fragments.ScanQrFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.io.File;
-import java.util.concurrent.ExecutionException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
-/**
- * Displays the fields needed to sign up as an entrant. This activity navigates to the MenuActivity if the user successfully
- * sign ups as an entrant
- *
- * @author Seyi
- * @see FirebaseDB
- * @see UserSession
- * @version 1
- * @since 1
- */
 public class EntrantSignUpActivity extends AppCompatActivity {
     private androidx.appcompat.widget.AppCompatButton signUpButton;
     private EditText userName;
@@ -60,125 +54,158 @@ public class EntrantSignUpActivity extends AppCompatActivity {
         firstName = findViewById(R.id.SignUpFirstNameInput);
         lastName = findViewById(R.id.SignUpLastNameInput);
         gobackButton = findViewById(R.id.previousIcon);
-
+        profileImage = findViewById(R.id.profile_image);
 
         signUpButton = findViewById(R.id.SignUpButton);
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                {
+        signUpButton.setOnClickListener(view -> {
+            String userNameInput = userName.getText().toString().trim();
+            String passwordInput = password.getText().toString().trim();
+            String firstNameInput = firstName.getText().toString().trim();
+            String lastNameInput = lastName.getText().toString().trim();
+            String initials = lastNameInput.isEmpty() ? "" : String.valueOf(lastNameInput.charAt(0));
 
-                    String userNameInput = userName.getText().toString().trim();
-                    String passwordInput = password.getText().toString().trim();
-                    String firstNameInput = firstName.getText().toString().trim();
-                    String lastNameInput = lastName.getText().toString().trim();
-                    String Initials;
+            if (userNameInput.isEmpty() || passwordInput.isEmpty()) {
+                String message = userNameInput.isEmpty() && passwordInput.isEmpty() ?
+                        "Username field and password field are required" :
+                        (userNameInput.isEmpty() ? "Username field is required" : "Password field is required");
 
-                    if (lastNameInput.isEmpty()) {
-                        Initials = "";
-                    }
-                    else {
-                        Initials = String.valueOf(lastNameInput.charAt(0));
-                    }
-
-                    if (userNameInput.isEmpty() || passwordInput.isEmpty()) {
-                        if(userNameInput.isEmpty() && passwordInput.isEmpty()){
-                            Toast.makeText(EntrantSignUpActivity.this, "Username field and password field are required", Toast.LENGTH_SHORT).show();
+                showToast(message);
+            } else {
+                if (imageUri == null) {
+                    generateDefaultProfileImage(initials, new ProfileImageCallback() {
+                        @Override
+                        public void onImageGenerated(Uri imageUri) {
+                            Log.e("EntrantSignUp", "imageUri:" + imageUri);
+                            EntrantSignUpActivity.this.imageUri = imageUri;
+                            signUpUser(userNameInput, passwordInput, firstNameInput, lastNameInput, imageUri);
                         }
-                        else if(userNameInput.isEmpty()) {
-                            Toast.makeText(EntrantSignUpActivity.this, "Username field is required", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(EntrantSignUpActivity.this, "Password field is required", Toast.LENGTH_SHORT).show();
+
+                        @Override
+                        public void onFailure() {
+                            showToast("Failed to generate profile image");
                         }
-                    }
-
-                    else{
-                        if(imageUri == null){
-                            imageUri = generateDefaultProfileImage(Initials);
-                        }
-                        firebaseDB.signUp(userNameInput, passwordInput, firstNameInput, lastNameInput, "entrant", null, null, new FirebaseDB.SignInCallback() {
-                            @Override
-                            public void onSuccess() {
-                                //gets the currently signed in user
-                                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                                String userId = firebaseUser.getUid();
-                                UserSession.getInstance().setUserId(userId);
-                                UserSession.getInstance().setFirstName(firstNameInput);
-
-                                Intent intent = new Intent(EntrantSignUpActivity.this, MenuActivity.class);
-                                startActivity(intent);
-                                finish(); // Optional
-                            }
-
-                            @Override
-                            public void onFailure(String errorMessage) {
-                                Toast.makeText(EntrantSignUpActivity.this, "Sign-Up failed: " + errorMessage, Toast.LENGTH_SHORT).show();
-                            }
-                        },imageUri.toString());
-                    }
-
+                    });
+                } else {
+                    Log.e("EntrantSignUp", "imageUri:" + imageUri);
+                    signUpUser(userNameInput, passwordInput, firstNameInput, lastNameInput, imageUri);
                 }
             }
         });
 
-        gobackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(EntrantSignUpActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish(); // Optional
+        gobackButton.setOnClickListener(v -> {
+            startActivity(new Intent(EntrantSignUpActivity.this, LoginActivity.class));
+            finish();
+        });
+
+        FloatingActionButton addImageButton = findViewById(R.id.button_add_image);
+        addImageButton.setOnClickListener(view -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.READ_MEDIA_IMAGES}, 1);
+                } else {
+                    openImagePicker();
+                }
+            } else {
+                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                } else {
+                    openImagePicker();
+                }
             }
         });
 
-        FloatingActionButton addImageButton = findViewById(R.id.button_add_image); // Or your Button ID
-        addImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), selectAmount);
-            }
-        });
     }
+
+    private void openImagePicker() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), selectAmount);
+    }
+
+    // Handle the permission result
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openImagePicker();
+            } else {
+                Toast.makeText(this, "Permission denied to read your images", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == selectAmount && resultCode == RESULT_OK && data != null && data.getData() != null) {
+        if (requestCode == selectAmount && resultCode == RESULT_OK && data != null) {
             imageUri = data.getData();
-            profileImage = findViewById(R.id.profile_image);
-            profileImage.setImageURI(imageUri);
+            Picasso.get().load(imageUri).into(profileImage);
         }
     }
 
-    public Uri generateDefaultProfileImage(String initials) {
+    public void generateDefaultProfileImage(String initials, ProfileImageCallback callback) {
         String avatarUrl = "https://ui-avatars.com/api/?name=" + initials + "&size=128&background=0D8ABC&color=fff";
-        try {
-            FutureTarget<File> futureTarget = Glide.with(this)
-                    .asFile()
-                    .load(avatarUrl)
-                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
-                    .submit();
 
-            File downloadedImage = futureTarget.get();
+        Picasso.get()
+                .load(avatarUrl)
+                .into(new com.squareup.picasso.Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        File file = new File(getFilesDir(), "default_profile_image.jpg");
+                        try (FileOutputStream out = new FileOutputStream(file)) {
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                            Uri imageUri = Uri.fromFile(file);
+                            Log.e("EntrantSignUp", "imageUri:" + imageUri);
+                            callback.onImageGenerated(imageUri);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            callback.onFailure();
+                        }
+                    }
 
-            if (downloadedImage != null) {
-                return Uri.fromFile(downloadedImage);
-            } else {
-                Log.e("EntrantSignUpActivity", "Downloaded image is null");
-                return null;
+                    @Override
+                    public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                        Log.e("EntrantSignUpActivity", "Failed to download image", e);
+                        callback.onFailure();
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    }
+                });
+    }
+
+    private void signUpUser(String userName, String password, String firstName, String lastName, Uri profileImageUri) {
+        firebaseDB.signUp(userName, password, firstName, lastName, "entrant", null, null, new FirebaseDB.SignInCallback() {
+            @Override
+            public void onSuccess() {
+                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                UserSession.getInstance().setUserId(firebaseUser.getUid());
+                UserSession.getInstance().setFirstName(firstName);
+
+                startActivity(new Intent(EntrantSignUpActivity.this, MenuActivity.class));
+                finish();
             }
 
-        } catch (ExecutionException | InterruptedException e) {
-            Log.e("EntrantSignUpActivity", "Failed to download image", e);
-            return null;
-        }
+            @Override
+            public void onFailure(String errorMessage) {
+                showToast("Sign-Up failed: " + errorMessage);
+            }
+        }, profileImageUri);
     }
 
+    private void showToast(String message) {
+        new Handler(Looper.getMainLooper()).post(() ->
+                Toast.makeText(EntrantSignUpActivity.this, message, Toast.LENGTH_SHORT).show()
+        );
+    }
+
+    public interface ProfileImageCallback {
+        void onImageGenerated(Uri imageUri);
+        void onFailure();
+    }
 }
-
-
-
-
