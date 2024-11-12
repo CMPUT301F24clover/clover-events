@@ -15,12 +15,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
 
 /**
  *This class deals with the login section of the app. It works directly with firestore to store the
@@ -55,7 +58,7 @@ public class FirebaseDB {
      * This function deals with the entrant and organizer sign up functionality. New documents are
      * created in the loginProfile collection for each entrant and organizer
      */
-    public void signUp(String userName, String password, String firstName, String lastName, String role, String organizationName, String facilityCode , SignInCallback callback, Uri profileUri) {
+    public void signUp(String userName, String password, String firstName, String lastName, String role, String organizationName, String facilityCode , SignInCallback callback) {
         db.collection("loginProfile").whereEqualTo("userName", userName).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult().isEmpty()) {
@@ -69,8 +72,6 @@ public class FirebaseDB {
 
                                         Map<String, Object> loginMap = new HashMap<>();
                                         if("entrant".equals(role)){
-                                            Log.e("FirebaseDB","ImageUri: " + profileUri);
-                                            uploadProfileToFirebase(profileUri,userId);
                                             loginMap.put("userName", userName);
                                             loginMap.put("firstName",firstName);
                                             loginMap.put("lastName", lastName);
@@ -248,32 +249,54 @@ public class FirebaseDB {
 
     }
 
-    private void uploadProfileToFirebase(Uri imageUri, String userId) {
-        Log.e("FirbaseDB", "imageUri:" + imageUri);
-
-        if (imageUri != null) {
-            StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images/" + UUID.randomUUID().toString());
-            Log.d("FirebaseDB", "Storage reference path: " + storageRef.getPath());
-            storageRef.putFile(imageUri)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            String downloadUrl = uri.toString();
-                            saveProfileToFirestore(downloadUrl, userId);
-                        });
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("FirebaseDb", "Error: " + e.getMessage(), e);
-                    });
-        } else {
-            Log.e("FirebaseDB", "Image Uri is null.");
-        }
-
+    public interface UploadCallback {
+        void onUploadSuccess();
+        void onUploadFailure(String errorMessage);
     }
 
-    private void saveProfileToFirestore(String downloadUrl, String userId) {
+    public void uploadProfileToFirebase(Uri imageUri, String userName, UploadCallback callback) {
+        if (firebaseAuth.getCurrentUser() != null) {
+            Log.e("FirebaseDB", "uploadProfileToFirebase: A user is logged in");
+        } else {
+            Log.e("FirebaseDB", "uploadProfileToFirebase: No user is logged in");
+        }
+
+        Log.e("FirebaseDB", "imageUri:" + imageUri);
+        if (imageUri != null) {
+            try {
+                FirebaseStorage storage = FirebaseStorage.getInstance("gs://luckyevent-22fbd.firebasestorage.app");
+                InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
+                String path = "userProfilePics/" + userName;
+                StorageReference storageRef = storage.getReference().child(path);
+
+                assert inputStream != null;
+                storageRef.putStream(inputStream)
+                        .addOnSuccessListener(taskSnapshot -> {
+                            storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                String downloadUrl = uri.toString();
+                                saveProfileToFirestore(downloadUrl, userName);
+                                callback.onUploadSuccess();
+                            });
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e("FirebaseDb", "Error: " + e.getMessage(), e);
+                            callback.onUploadFailure(e.getMessage());
+                        });
+            } catch (FileNotFoundException e) {
+                Log.e("FirebaseDB", "File not found: " + e.getMessage(), e);
+                callback.onUploadFailure(e.getMessage());
+            }
+        } else {
+            Log.e("FirebaseDB", "Image Uri is null.");
+            callback.onUploadFailure("Image Uri is null.");
+        }
+    }
+
+
+    private void saveProfileToFirestore(String downloadUrl, String userName) {
         Map<String, Object> imageData = new HashMap<>();
         imageData.put("imageUrl", downloadUrl);
-        db.collection("profileImages").document(userId).set(imageData)
+        db.collection("profileImages").document(userName).set(imageData)
                 .addOnSuccessListener(documentReference ->
                                 Log.e("FirebaseDB","Image URL saved to Firestore")
                 )

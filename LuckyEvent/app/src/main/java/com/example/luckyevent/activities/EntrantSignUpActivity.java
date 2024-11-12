@@ -1,11 +1,9 @@
 package com.example.luckyevent.activities;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,10 +12,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.Manifest;
 import com.squareup.picasso.Picasso;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -74,10 +70,19 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                 if (imageUri == null) {
                     generateDefaultProfileImage(initials, new ProfileImageCallback() {
                         @Override
-                        public void onImageGenerated(Uri imageUri) {
-                            Log.e("EntrantSignUp", "imageUri:" + imageUri);
-                            EntrantSignUpActivity.this.imageUri = imageUri;
-                            signUpUser(userNameInput, passwordInput, firstNameInput, lastNameInput, imageUri);
+                        public void onImageGenerated(Uri generatedUri) {
+                            firebaseDB.uploadProfileToFirebase(generatedUri, userNameInput, new FirebaseDB.UploadCallback() {
+                                @Override
+                                public void onUploadSuccess() {
+                                    Log.e("EntrantSignUp", "Upload successful. Proceeding to sign up.");
+                                    signUpUser(userNameInput, passwordInput, firstNameInput, lastNameInput, generatedUri);
+                                }
+
+                                @Override
+                                public void onUploadFailure(String errorMessage) {
+                                    showToast("Failed to upload profile image: " + errorMessage);
+                                }
+                            });
                         }
 
                         @Override
@@ -87,8 +92,19 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                     });
                 } else {
                     Log.e("EntrantSignUp", "imageUri:" + imageUri);
-                    signUpUser(userNameInput, passwordInput, firstNameInput, lastNameInput, imageUri);
+                    firebaseDB.uploadProfileToFirebase(imageUri, userNameInput, new FirebaseDB.UploadCallback() {
+                        @Override
+                        public void onUploadSuccess() {
+                            signUpUser(userNameInput, passwordInput, firstNameInput, lastNameInput, imageUri);
+                        }
+
+                        @Override
+                        public void onUploadFailure(String errorMessage) {
+                            showToast("Failed to upload profile image: " + errorMessage);
+                        }
+                    });
                 }
+
             }
         });
 
@@ -99,43 +115,12 @@ public class EntrantSignUpActivity extends AppCompatActivity {
 
         FloatingActionButton addImageButton = findViewById(R.id.button_add_image);
         addImageButton.setOnClickListener(view -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.READ_MEDIA_IMAGES}, 1);
-                } else {
-                    openImagePicker();
-                }
-            } else {
-                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                } else {
-                    openImagePicker();
-                }
-            }
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), selectAmount);
         });
-
     }
-
-    private void openImagePicker() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), selectAmount);
-    }
-
-    // Handle the permission result
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openImagePicker();
-            } else {
-                Toast.makeText(this, "Permission denied to read your images", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -195,7 +180,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
             public void onFailure(String errorMessage) {
                 showToast("Sign-Up failed: " + errorMessage);
             }
-        }, profileImageUri);
+        });
     }
 
     private void showToast(String message) {
@@ -208,4 +193,6 @@ public class EntrantSignUpActivity extends AppCompatActivity {
         void onImageGenerated(Uri imageUri);
         void onFailure();
     }
+
+
 }

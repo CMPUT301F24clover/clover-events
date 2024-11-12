@@ -119,7 +119,7 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
                         public void onFailure(String errorMessage) {
                             Toast.makeText(OrganizerSignUpActivity.this, "Sign-in failed: " + errorMessage, Toast.LENGTH_SHORT).show();
                         }
-                    },null);
+                    });
                 }
 
             }
