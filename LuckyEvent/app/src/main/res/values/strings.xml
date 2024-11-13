@@ -25,4 +25,7 @@
     <string name="notification_title">Notification title</string>
     <string name="notification_description">Notification description</string>
     <string name="organizer_dashboard">Organizer Dashboard</string>
+    <string name="event_details">Event Details</string>
+
+
 </resources>
