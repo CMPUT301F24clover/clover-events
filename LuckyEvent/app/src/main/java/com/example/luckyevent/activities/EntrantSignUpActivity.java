@@ -58,7 +58,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
             String passwordInput = password.getText().toString().trim();
             String firstNameInput = firstName.getText().toString().trim();
             String lastNameInput = lastName.getText().toString().trim();
-            String initials = lastNameInput.isEmpty() ? "" : String.valueOf(lastNameInput.charAt(0));
+            String initials = userNameInput.isEmpty() ? "" : String.valueOf(lastNameInput.charAt(0));
 
             if (userNameInput.isEmpty() || passwordInput.isEmpty()) {
                 String message = userNameInput.isEmpty() && passwordInput.isEmpty() ?
@@ -75,6 +75,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                                 @Override
                                 public void onUploadSuccess() {
                                     Log.e("EntrantSignUp", "Upload successful. Proceeding to sign up.");
+                                    UserSession.getInstance().setProfileUri(generatedUri.toString());
                                     signUpUser(userNameInput, passwordInput, firstNameInput, lastNameInput, generatedUri);
                                 }
 
@@ -95,6 +96,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                     firebaseDB.uploadProfileToFirebase(imageUri, userNameInput, new FirebaseDB.UploadCallback() {
                         @Override
                         public void onUploadSuccess() {
+                            UserSession.getInstance().setProfileUri(imageUri.toString());
                             signUpUser(userNameInput, passwordInput, firstNameInput, lastNameInput, imageUri);
                         }
 
@@ -171,6 +173,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                 UserSession.getInstance().setUserId(firebaseUser.getUid());
                 UserSession.getInstance().setFirstName(firstName);
+                UserSession.getInstance().setUserName(userName);
 
                 startActivity(new Intent(EntrantSignUpActivity.this, MenuActivity.class));
                 finish();

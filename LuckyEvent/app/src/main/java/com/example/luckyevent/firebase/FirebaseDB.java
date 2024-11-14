@@ -6,8 +6,12 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.example.luckyevent.ScanQR;
 import com.example.luckyevent.fragments.ScanQrFragment;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -254,6 +258,11 @@ public class FirebaseDB {
         void onUploadFailure(String errorMessage);
     }
 
+    public interface UpdateProfPicCallBack{
+        void onUpdateSuccess();
+        void onUpdateFailure(String errorMessage);
+    }
+
     public void uploadProfileToFirebase(Uri imageUri, String userName, UploadCallback callback) {
         if (firebaseAuth.getCurrentUser() != null) {
             Log.e("FirebaseDB", "uploadProfileToFirebase: A user is logged in");
@@ -304,6 +313,59 @@ public class FirebaseDB {
                         Log.e("FirebaseDB","Failed to save URL to Firestore: " + e.getMessage())
 
                 );
+    }
+
+    public void updateProfilePicture(Uri imageUri, String userName, UpdateProfPicCallBack callBack){
+        try {
+            FirebaseStorage storage = FirebaseStorage.getInstance("gs://luckyevent-22fbd.firebasestorage.app");
+            InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
+            Log.e("FirebaseDB", "updateProfilePicture:" +userName );
+            String path = "userProfilePics/" +userName;
+            StorageReference storageRef = storage.getReference().child(path);
+            storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>(){
+                @Override
+                public void onSuccess(Void unused) {
+                    Log.d("FirebaseDB", "updateProfilePicture: file successfully deleted");
+
+                    storageRef.putStream(inputStream)
+                            .addOnSuccessListener(taskSnapshot -> {
+                                storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                    String downloadUrl = uri.toString();
+                                    db.collection("profileImages").document(userName)
+                                            .delete()
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d("Firestore", "DocumentSnapshot successfully deleted!");
+                                                    saveProfileToFirestore(downloadUrl,userName);
+                                                    callBack.onUpdateSuccess();
+
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w("Firestore", "Error deleting document", e);
+                                                    callBack.onUpdateFailure(e.getMessage());
+                                                }
+                                            });
+
+                                });
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("FirebaseDb", "Error: " + e.getMessage(), e);
+                            });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("FirebaseDB", "updateProfilePicture: Deletion failed");
+                }
+            });
+        }
+        catch (FileNotFoundException e) {
+            Log.e("FirebaseDB", "File not found: " + e.getMessage(), e);
+        }
     }
 
 
