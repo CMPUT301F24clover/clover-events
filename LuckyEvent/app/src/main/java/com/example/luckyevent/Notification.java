@@ -8,12 +8,21 @@ package com.example.luckyevent;
  * @since 1
  */
 public class Notification {
+    private String notifId;
     private String title;
     private String content;
 
-    public Notification(String title, String content) {
+    public Notification(String notifId, String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public String getNotifId() {
+        return notifId;
+    }
+
+    public void setNotifId(String notifId) {
+        this.notifId = notifId;
     }
 
     public String getTitle() {
