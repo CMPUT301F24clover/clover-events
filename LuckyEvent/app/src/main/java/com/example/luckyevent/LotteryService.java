@@ -125,7 +125,7 @@ public class LotteryService extends Service {
             Intent intentWinners = new Intent(this, NotificationService.class);
             intentWinners.putStringArrayListExtra("entrants", lottery.getWinners());
             intentWinners.putExtra("title", "Congratulations!");
-            intentWinners.putExtra("description", String.format("You have been chosen to sign up for %s!", eventName));
+            intentWinners.putExtra("description", String.format("You have been chosen to sign up for %s! Go to 'My Waiting Lists' to accept your invitation.", eventName));
             startService(intentWinners);
             if (!lottery.getEntrants().isEmpty()) {
                 Intent intentLosers = new Intent(this, NotificationService.class);

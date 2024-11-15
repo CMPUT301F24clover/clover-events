@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.MetadataChanges;
 
 import java.util.ArrayList;
 
@@ -59,17 +61,25 @@ public class DisplayNotificationsFragment extends Fragment {
 
             getNotifsList();
 
+            if (notifsList.isEmpty()) {
+                TextView textView = view.findViewById(R.id.text_emptyList);
+                textView.setText("No notifications");
+            }
+
         }
+
+        // add ability to delete notification
+
 
         return view;
     }
 
     /**
-     * Retrieves all the documents in a given user's collection of notifications. These documents
+     * Retrieves all the documents in a given user's subcollection of notifications. These documents
      * are used to create a list of Notification objects.
      */
     private void getNotifsList() {
-        reg = notifRef.addSnapshotListener((snapshot, error) -> {
+        reg = notifRef.addSnapshotListener(MetadataChanges.INCLUDE, (snapshot, error) -> {
             notifsList.clear();
             if (error != null) {
                 return;
@@ -79,7 +89,7 @@ public class DisplayNotificationsFragment extends Fragment {
                 for (DocumentSnapshot notifSnapshot : snapshot.getDocuments()) {
                     String title = notifSnapshot.getString("title");
                     String content = notifSnapshot.getString("content");
-                    if (title != null) {
+                    if (title != null && content != null) {
                         Notification notif = new Notification(title, content);
                         notifsList.add(notif);
                     }
@@ -95,6 +105,17 @@ public class DisplayNotificationsFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        if (reg != null) {
+            reg.remove();
+        }
+    }
+
+    /**
+     * Removes listener once view is detached from fragment.
+     */
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
         if (reg != null) {
             reg.remove();
         }

@@ -36,7 +36,7 @@ public class NotificationListAdapter extends ArrayAdapter<Notification> {
         View view = convertView;
 
         if (view == null) {
-            view = LayoutInflater.from(context).inflate(R.layout.box_content, parent, false);
+            view = LayoutInflater.from(context).inflate(R.layout.box_content_notification, parent, false);
         }
 
         Notification notif = notifs.get(position);
