@@ -5,10 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.google.firebase.firestore.CollectionReference;
 
 import java.util.ArrayList;
 
@@ -23,11 +27,13 @@ import java.util.ArrayList;
 public class NotificationListAdapter extends ArrayAdapter<Notification> {
     private ArrayList<Notification> notifs;
     private Context context;
+    private CollectionReference notifRef;
 
-    public NotificationListAdapter(@NonNull Context context, ArrayList<Notification> notifs) {
+    public NotificationListAdapter(@NonNull Context context, ArrayList<Notification> notifs, CollectionReference notifRef) {
         super(context, 0, notifs);
         this.context = context;
         this.notifs = notifs;
+        this.notifRef = notifRef;
     }
 
     @NonNull
@@ -45,6 +51,11 @@ public class NotificationListAdapter extends ArrayAdapter<Notification> {
         textViewTitle.setText(notif.getTitle());
         TextView textViewContent = view.findViewById(R.id.text_content);
         textViewContent.setText(notif.getContent());
+
+        ImageView deleteNotif = view.findViewById(R.id.image_trash);
+        deleteNotif.setOnClickListener(v -> notifRef.document(notif.getNotifId()).delete()
+                .addOnSuccessListener(aVoid -> Toast.makeText(context, "Notification deleted", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(context, "Error deleting notification", Toast.LENGTH_SHORT).show()));
 
         return view;
     }

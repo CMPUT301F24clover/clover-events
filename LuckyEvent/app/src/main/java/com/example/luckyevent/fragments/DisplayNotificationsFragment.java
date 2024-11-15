@@ -53,7 +53,7 @@ public class DisplayNotificationsFragment extends Fragment {
 
             ListView listview = view.findViewById(R.id.customListView);
             notifsList = new ArrayList<>();
-            listAdapter = new NotificationListAdapter(getContext(), notifsList);
+            listAdapter = new NotificationListAdapter(getContext(), notifsList, notifRef);
             listview.setAdapter(listAdapter);
 
             Toolbar toolbar = view.findViewById(R.id.topBar);
@@ -63,20 +63,16 @@ public class DisplayNotificationsFragment extends Fragment {
 
             if (notifsList.isEmpty()) {
                 TextView textView = view.findViewById(R.id.text_emptyList);
-                textView.setText("No notifications");
+                textView.setText(R.string.no_notifications);
             }
-
         }
-
-        // add ability to delete notification
-
 
         return view;
     }
 
     /**
-     * Retrieves all the documents in a given user's subcollection of notifications. These documents
-     * are used to create a list of Notification objects.
+     * Retrieves all the documents in a given user's sub-collection of notifications. These
+     * documents are used to create a list of Notification objects.
      */
     private void getNotifsList() {
         reg = notifRef.addSnapshotListener(MetadataChanges.INCLUDE, (snapshot, error) -> {
@@ -87,10 +83,11 @@ public class DisplayNotificationsFragment extends Fragment {
 
             if (snapshot != null && !snapshot.isEmpty()) {
                 for (DocumentSnapshot notifSnapshot : snapshot.getDocuments()) {
+                    String notifId = notifSnapshot.getString("notifId");
                     String title = notifSnapshot.getString("title");
                     String content = notifSnapshot.getString("content");
-                    if (title != null && content != null) {
-                        Notification notif = new Notification(title, content);
+                    if (notifId != null && title != null && content != null) {
+                        Notification notif = new Notification(notifId, title, content);
                         notifsList.add(notif);
                     }
                 }

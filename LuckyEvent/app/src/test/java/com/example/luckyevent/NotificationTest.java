@@ -5,9 +5,10 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class NotificationTest {
+    private String notifId;
     private String title;
     private String content;
-    Notification notification = new Notification(title,content);
+    Notification notification = new Notification(notifId, title,content);
 
     @Test
     public void testTitleField() {
