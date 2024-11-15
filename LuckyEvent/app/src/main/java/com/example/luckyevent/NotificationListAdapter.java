@@ -54,8 +54,8 @@ public class NotificationListAdapter extends ArrayAdapter<Notification> {
 
         ImageView deleteNotif = view.findViewById(R.id.image_trash);
         deleteNotif.setOnClickListener(v -> notifRef.document(notif.getNotifId()).delete()
-                .addOnSuccessListener(aVoid -> Toast.makeText(context, "Notification deleted", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(context, "Error deleting notification", Toast.LENGTH_SHORT).show()));
+                .addOnSuccessListener(aVoid -> Toast.makeText(context, "Notification deleted.", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(context, "Error deleting notification.", Toast.LENGTH_SHORT).show()));
 
         return view;
     }
