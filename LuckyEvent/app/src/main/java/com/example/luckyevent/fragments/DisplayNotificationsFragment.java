@@ -71,8 +71,8 @@ public class DisplayNotificationsFragment extends Fragment {
     }
 
     /**
-     * Retrieves all the documents in a given user's sub-collection of notifications. These
-     * documents are used to create a list of Notification objects.
+     * Retrieves all the documents in the user's sub-collection of notifications. These documents
+     * are used to create a list of Notification objects.
      */
     private void getNotifsList() {
         reg = notifRef.addSnapshotListener(MetadataChanges.INCLUDE, (snapshot, error) -> {
@@ -82,10 +82,10 @@ public class DisplayNotificationsFragment extends Fragment {
             }
 
             if (snapshot != null && !snapshot.isEmpty()) {
-                for (DocumentSnapshot notifSnapshot : snapshot.getDocuments()) {
-                    String notifId = notifSnapshot.getString("notifId");
-                    String title = notifSnapshot.getString("title");
-                    String content = notifSnapshot.getString("content");
+                for (DocumentSnapshot notifDocument : snapshot.getDocuments()) {
+                    String notifId = notifDocument.getString("notifId");
+                    String title = notifDocument.getString("title");
+                    String content = notifDocument.getString("content");
                     if (notifId != null && title != null && content != null) {
                         Notification notif = new Notification(notifId, title, content);
                         notifsList.add(notif);

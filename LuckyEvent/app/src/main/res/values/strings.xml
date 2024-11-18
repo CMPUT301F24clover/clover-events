@@ -32,4 +32,7 @@
     <string name="accept_invitation">Accept Invite</string>
     <string name="enrolled">Enrolled</string>
     <string name="no_notifications">No notifications</string>
+    <string name="cancel_entrant">Cancel Entrant</string>
+    <string name="sample_new_entrant">Sample New Entrant</string>
+    <string name="no_entrants">No entrants</string>
 </resources>

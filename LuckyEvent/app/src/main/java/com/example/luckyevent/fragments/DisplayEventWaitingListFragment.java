@@ -13,37 +13,31 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-import com.example.luckyevent.ChosenEntrantListAdapter;
 import com.example.luckyevent.Entrant;
 import com.example.luckyevent.EntrantListAdapter;
 import com.example.luckyevent.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.MetadataChanges;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 
 /**
- * Displays a list of entrants associated with a given event and a given invitation status. List of
- * entrants can be any of the following: list of chosen entrants, list of enrolled entrants, or
- * list of cancelled entrants.
+ * Displays the entrants in a given event's waiting list.
  *
  * @author Mmelve
  * @see Entrant
  * @see EntrantListAdapter
- * @see ChosenEntrantListAdapter
- * @version 2
+ * @version 1
  * @since 1
  */
-public class DisplayEntrantsFragment extends Fragment {
-    private String invitationStatus;
+public class DisplayEventWaitingListFragment extends Fragment {
     private ArrayList<String> entrantIdsList;
     private ArrayList<Entrant> entrantsList;
-    private ChosenEntrantListAdapter chosenEntrantListAdapter;
-    private EntrantListAdapter entrantListAdapter;
+    private EntrantListAdapter listAdapter;
     private CollectionReference entrantsRef;
     private ListenerRegistration reg;
 
@@ -55,25 +49,18 @@ public class DisplayEntrantsFragment extends Fragment {
         if (getArguments() != null) {
             String screenTitle = getArguments().getString("screenTitle");
             String eventId = getArguments().getString("eventId");
-            invitationStatus = getArguments().getString("invitationStatus");
 
             Toolbar toolbar = view.findViewById(R.id.topBar);
             toolbar.setTitle(screenTitle);
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            entrantsRef = db.collection("events").document(eventId).collection("chosenEntrants");
+            entrantsRef = db.collection("events").document(eventId).collection("waitingList");
 
             ListView listview = view.findViewById(R.id.customListView);
             entrantIdsList = new ArrayList<>();
             entrantsList = new ArrayList<>();
-
-            if (invitationStatus.equals("Enrolled") || invitationStatus.equals("Cancelled")) {
-                entrantListAdapter = new EntrantListAdapter(getContext(), entrantsList);
-                listview.setAdapter(entrantListAdapter);
-            } else {
-                chosenEntrantListAdapter = new ChosenEntrantListAdapter(getContext(), entrantsList, entrantsRef, eventId);
-                listview.setAdapter(chosenEntrantListAdapter);
-            }
+            listAdapter = new EntrantListAdapter(getContext(), entrantsList);
+            listview.setAdapter(listAdapter);
 
             getEntrantsList();
 
@@ -102,12 +89,11 @@ public class DisplayEntrantsFragment extends Fragment {
     }
 
     /**
-     * Retrieves the documents representing the desired entrants and uses them to create a list of
-     * Entrant objects.
+     * Retrieves all the documents in the event's waitingList sub-collection. These documents are
+     * used to create a list of Entrant objects.
      */
     private void getEntrantsList() {
-        reg = entrantsRef.whereEqualTo("invitationStatus", invitationStatus)
-                .addSnapshotListener(MetadataChanges.INCLUDE, (snapshot, error) -> {
+        reg = entrantsRef.addSnapshotListener(MetadataChanges.INCLUDE, (snapshot, error) -> {
             entrantIdsList.clear();
             entrantsList.clear();
             if (error != null) {
@@ -115,13 +101,13 @@ public class DisplayEntrantsFragment extends Fragment {
             }
 
             if (snapshot != null && !snapshot.isEmpty()) {
-                for (QueryDocumentSnapshot entrantDocument : snapshot) {
+                for (DocumentSnapshot entrantDocument : snapshot.getDocuments()) {
                     String entrantId = entrantDocument.getString("userId");
                     String name = entrantDocument.getString("name");
                     // delete if statement later
                     if (entrantId != null && name != null) {
                         entrantIdsList.add(entrantId);
-                        Entrant entrant = new Entrant(entrantId, name, invitationStatus);
+                        Entrant entrant = new Entrant(entrantId, name);
                         entrantsList.add(entrant);
                     }
                     // uncomment code once profileImageUrl field is added to entrant documents in
@@ -129,15 +115,11 @@ public class DisplayEntrantsFragment extends Fragment {
 //                    String profileImageUrl = entrantDocument.getString("profileImageUrl");
 //                    if (entrantId != null && name != null && profileImageUrl != null) {
 //                        entrantIdsList.add(entrantId);
-//                        Entrant entrant = new Entrant(entrantId, name, invitationStatus, profileImageUrl);
+//                        Entrant entrant = new Entrant(entrantId, name, profileImageUrl);
 //                        entrantsList.add(entrant);
 //                    }
                 }
-                if (invitationStatus.equals("Enrolled") || invitationStatus.equals("Cancelled")) {
-                    entrantListAdapter.notifyDataSetChanged();
-                } else {
-                    chosenEntrantListAdapter.notifyDataSetChanged();
-                }
+                listAdapter.notifyDataSetChanged();
             }
         });
     }
