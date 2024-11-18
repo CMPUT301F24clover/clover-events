@@ -17,8 +17,10 @@ import com.example.luckyevent.ChosenEntrantListAdapter;
 import com.example.luckyevent.Entrant;
 import com.example.luckyevent.EntrantListAdapter;
 import com.example.luckyevent.R;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.MetadataChanges;
@@ -44,6 +46,7 @@ public class DisplayEntrantsFragment extends Fragment {
     private ArrayList<Entrant> entrantsList;
     private ChosenEntrantListAdapter chosenEntrantListAdapter;
     private EntrantListAdapter entrantListAdapter;
+    private CollectionReference profilesRef;
     private CollectionReference entrantsRef;
     private ListenerRegistration reg;
 
@@ -61,6 +64,7 @@ public class DisplayEntrantsFragment extends Fragment {
             toolbar.setTitle(screenTitle);
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
+            profilesRef = db.collection("loginProfile");
             entrantsRef = db.collection("events").document(eventId).collection("chosenEntrants");
 
             ListView listview = view.findViewById(R.id.customListView);
@@ -102,8 +106,8 @@ public class DisplayEntrantsFragment extends Fragment {
     }
 
     /**
-     * Retrieves the documents representing the desired entrants and uses them to create a list of
-     * Entrant objects.
+     * Finds the user IDs of the desired entrants, passes each ID to getEntrant and receives the
+     * Entrant object associated with the ID, then adds the Entrant object to a list.
      */
     private void getEntrantsList() {
         reg = entrantsRef.whereEqualTo("invitationStatus", invitationStatus)
@@ -117,27 +121,45 @@ public class DisplayEntrantsFragment extends Fragment {
             if (snapshot != null && !snapshot.isEmpty()) {
                 for (QueryDocumentSnapshot entrantDocument : snapshot) {
                     String entrantId = entrantDocument.getString("userId");
-                    String name = entrantDocument.getString("name");
-                    // delete if statement later
-                    if (entrantId != null && name != null) {
+                    if (entrantId != null) {
                         entrantIdsList.add(entrantId);
-                        Entrant entrant = new Entrant(entrantId, name, invitationStatus);
-                        entrantsList.add(entrant);
+                        getEntrant(entrantId).addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Entrant entrant = task.getResult();
+                                if (entrant != null) {
+                                    entrantsList.add(entrant);
+                                }
+                            }
+                        });
                     }
-                    // uncomment code once profileImageUrl field is added to entrant documents in
-                    // waitingList/chosenEntrants subcollection
-//                    String profileImageUrl = entrantDocument.getString("profileImageUrl");
-//                    if (entrantId != null && name != null && profileImageUrl != null) {
-//                        entrantIdsList.add(entrantId);
-//                        Entrant entrant = new Entrant(entrantId, name, invitationStatus, profileImageUrl);
-//                        entrantsList.add(entrant);
-//                    }
                 }
                 if (invitationStatus.equals("Enrolled") || invitationStatus.equals("Cancelled")) {
                     entrantListAdapter.notifyDataSetChanged();
                 } else {
                     chosenEntrantListAdapter.notifyDataSetChanged();
                 }
+            }
+        });
+    }
+
+    /**
+     * Finds the remaining data needed to create an Entrant object and creates it.
+     * @param entrantId The ID of the entrant. Also the ID of the document that represents the user.
+     * @return Task<Entrant> A Task object that contains the Entrant associated with the given
+     * entrant ID if the task succeeds.
+     */
+    private Task<Entrant> getEntrant(String entrantId) {
+        return profilesRef.document(entrantId).get().continueWith(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                DocumentSnapshot document = task.getResult();
+                String name = String.format("%s %s", document.getString("firstName"), document.getString("lastName"));
+                // uncomment code once profileImageUrl field is added to entrant documents in
+                // waitingList/chosenEntrants subcollection
+//                String profileImageUrl = document.getString("profileImageUrl");
+                return new Entrant(entrantId, name, invitationStatus);
+//                return new Entrant(entrantId, name, invitationStatus, profileImageUrl);
+            } else {
+                return null;
             }
         });
     }

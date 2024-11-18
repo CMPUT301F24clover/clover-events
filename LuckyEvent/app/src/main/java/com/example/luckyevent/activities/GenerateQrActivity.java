@@ -179,7 +179,6 @@ public class GenerateQrActivity extends AppCompatActivity {
         eventInfo.put("sampleSize", selectedSampleSize);
         eventInfo.put("currentWaitList", 0);
         eventInfo.put("organizerId", userID);
-        eventInfo.put("waitingList", Arrays.asList());
         eventInfo.put("status", "active");
         eventInfo.put("createdAt", System.currentTimeMillis());
 
