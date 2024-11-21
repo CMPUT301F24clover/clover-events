@@ -144,6 +144,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                                 @Override
                                 public void onUploadSuccess() {
                                     Log.e("EntrantSignUp", "Upload successful. Proceeding to sign up.");
+                                    UserSession.getInstance().setProfileUri(generatedUri.toString());
                                     if (userName.toLowerCase().contains("admin".toLowerCase())) {
                                         startActivity(new Intent(EntrantSignUpActivity.this, AdminMenuActivity.class));
                                         finish();

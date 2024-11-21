@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                             if (role.equals("entrant")) {
                                                 db.collection("profileImages")
-                                                        .document(document.getString("userName"))
+                                                        .document(document.getString("userId"))
                                                         .get()
                                                         .addOnCompleteListener(task1 -> {
                                                             if (task1.isSuccessful() && task1.getResult() != null) {
