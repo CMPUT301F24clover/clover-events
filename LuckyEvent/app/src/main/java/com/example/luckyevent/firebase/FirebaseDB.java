@@ -79,9 +79,16 @@ public class FirebaseDB {
                                             loginMap.put("userName", userName);
                                             loginMap.put("firstName",firstName);
                                             loginMap.put("lastName", lastName);
-                                            loginMap.put("userId", userId);// I stored the userId generated from the firebaseAuth
-                                            loginMap.put("role", role);// The only work around for firebase's lack of enums
+                                            loginMap.put("userId", userId); // I stored the userId generated from the firebaseAuth
                                             loginMap.put("hasUserProfile", false);
+
+                                            if (userName.toLowerCase().contains("admin".toLowerCase())) {
+                                                loginMap.put("role", "admin");
+                                            } else {
+                                                loginMap.put("role", role); // The only work around for firebase's lack of enums
+                                            }
+
+
                                         }
                                         else{loginMap.put("userName", userName);
                                             loginMap.put("firstName",firstName);
