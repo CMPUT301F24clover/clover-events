@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -56,6 +57,11 @@ public class EntrantListAdapter extends ArrayAdapter<Entrant> {
 
         TextView textViewContent = view.findViewById(R.id.text_content);
         textViewContent.setVisibility(View.GONE);
+
+        Button cancelEntrantButton = view.findViewById(R.id.button_cancelEntrant);
+        Button sampleNewEntrantButton = view.findViewById(R.id.button_sampleNewEntrant);
+        cancelEntrantButton.setVisibility(View.GONE);
+        sampleNewEntrantButton.setVisibility(View.GONE);
 
         return view;
     }

@@ -18,11 +18,8 @@ import com.example.luckyevent.LotteryService;
 import com.example.luckyevent.QRDownloadService;
 import com.example.luckyevent.R;
 
-
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.Set;
 
 /**
  * Displays all the event details of the the event selected. The organizer can also view the waiting list
@@ -81,8 +78,6 @@ public class EventDetailsFragment extends Fragment {
                 }
             });
 
-
-
             TextView sampleEntrants = view.findViewById(R.id.sample_entrant);
             sampleEntrants.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -126,7 +121,6 @@ public class EventDetailsFragment extends Fragment {
                     Bundle bundle = new Bundle();
                     bundle.putString("screenTitle", "List of Chosen Entrants");
                     bundle.putString("eventId", eventId);
-                    bundle.putString("invitationStatus", "Pending");
                     goToList(bundle, displayEntrantsFragment);
                 }
             });

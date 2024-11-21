@@ -1,5 +1,12 @@
 package com.example.luckyevent;
 
+/**
+ * A class representing an event's waiting list.
+ *
+ * @author Mmelve
+ * @version 1
+ * @since 1
+ */
 public class WaitingList {
     private String eventName;
     private String eventDateTime;

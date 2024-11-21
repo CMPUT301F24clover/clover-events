@@ -63,12 +63,13 @@ public class ChosenEntrantListAdapter extends ArrayAdapter<Entrant> {
         textViewTitle.setText(entrantFullName);
 
         TextView textViewContent = view.findViewById(R.id.text_content);
-        textViewContent.setText(entrant.getInvitationStatus());
+        String invitationStatus = entrant.getInvitationStatus();
+        textViewContent.setText(invitationStatus);
 
         Button cancelEntrantButton = view.findViewById(R.id.button_cancelEntrant);
         Button sampleNewEntrantButton = view.findViewById(R.id.button_sampleNewEntrant);
 
-        if (entrant.getInvitationStatus().equals("Pending")) {
+        if (invitationStatus.equals("Pending")) {
             textViewContent.setTextColor(ContextCompat.getColor(context, R.color.yellow));
             sampleNewEntrantButton.setVisibility(View.GONE);
 
@@ -76,8 +77,8 @@ public class ChosenEntrantListAdapter extends ArrayAdapter<Entrant> {
             cancelEntrantButton.setOnClickListener(v -> chosenEntrantsRef.document(entrant.getEntrantId())
                     .update("invitationStatus", "Cancelled")
                     .addOnSuccessListener(aVoid -> Toast.makeText(context, "Entrant cancelled.", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e -> Toast.makeText(context, "Error cancelling entrant.", Toast.LENGTH_SHORT).show()));
-        } else if (entrant.getInvitationStatus().equals("Enrolled")) {
+                    .addOnFailureListener(e -> Toast.makeText(context, eventId, Toast.LENGTH_SHORT).show()));
+        } else if (invitationStatus.equals("Enrolled")) {
             textViewContent.setTextColor(ContextCompat.getColor(context, R.color.green));
             cancelEntrantButton.setVisibility(View.GONE);
             sampleNewEntrantButton.setVisibility(View.GONE);

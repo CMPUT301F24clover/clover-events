@@ -6,8 +6,6 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.luckyevent.activities.EntrantJoinWaitlistActivity;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -24,7 +22,7 @@ import java.util.Map;
  * @author Mmelve
  * @see Lottery
  * @see NotificationService
- * @version 1.5
+ * @version 2
  * @since 1
  */
 public class LotteryService extends Service {
@@ -127,24 +125,20 @@ public class LotteryService extends Service {
      * list.
      */
     private void setResult() {
-        for (String entrantId : entrantIdsList) {
-            waitingListRef.document(entrantId).delete()
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "Waitlisted entrant successfully deleted!");
-                    })
+        for (String winnersId : lottery.getWinners()) {
+            waitingListRef.document(winnersId).delete()
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Waitlisted entrant successfully deleted!"))
                     .addOnFailureListener(e -> {
                         Log.w(TAG, "Error deleting waitlisted entrant", e);
-                        stopSelf();
                     });
 
-            Map<String, Object> chosenEntrant = new HashMap();
-            chosenEntrant.put("userId", entrantId);
+            Map<String, Object> chosenEntrant = new HashMap<>();
+            chosenEntrant.put("userId", winnersId);
             chosenEntrant.put("invitationStatus", "Pending");
 
-            eventRef.collection("chosenEntrants").add(chosenEntrant)
-                    .addOnSuccessListener(documentReference -> {
-                        Log.d(TAG, "Chosen entrant successfully added!");
-                    })
+            eventRef.collection("chosenEntrants").document(winnersId)
+                    .set(chosenEntrant)
+                    .addOnSuccessListener(documentReference -> Log.d(TAG, "Chosen entrant successfully added!"))
                     .addOnFailureListener(e -> {
                         Log.w(TAG, "Error adding chosen entrant", e);
                     });

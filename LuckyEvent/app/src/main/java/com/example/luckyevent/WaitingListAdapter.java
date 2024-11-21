@@ -13,6 +13,14 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
+/**
+ * A class implementing the list adapter for a list of all the waiting lists a user has joined.
+ *
+ * @author Mmelve
+ * @see WaitingList
+ * @version 3
+ * @since 1
+ */
 public class WaitingListAdapter extends ArrayAdapter<WaitingList> {
     private ArrayList<WaitingList> waitingLists;
     private Context context;

@@ -26,6 +26,11 @@ import java.util.ArrayList;
 /**
  * Displays a list of events created by the current organizer. If the organizer clicks on one of
  * the events, they are taken to a screen displaying the selected event's details.
+ *
+ * @author Mmelve
+ * @see EventListAdapter
+ * @version 1
+ * @since 1
  */
 public class DisplayOrganizerEventsFragment extends Fragment {
     private ArrayList<String> eventIdsList;

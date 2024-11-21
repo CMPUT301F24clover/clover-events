@@ -17,6 +17,7 @@ import com.example.luckyevent.Entrant;
 import com.example.luckyevent.EntrantListAdapter;
 import com.example.luckyevent.R;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -67,11 +68,6 @@ public class DisplayEventWaitingListFragment extends Fragment {
 
             getEntrantsList();
 
-            if (entrantIdsList.isEmpty()) {
-                TextView textView = view.findViewById(R.id.text_emptyList);
-                textView.setText(R.string.no_entrants);
-            }
-
             // create notification button
             FloatingActionButton notification_button = view.findViewById(R.id.create_notification_fab);
             notification_button.setOnClickListener(v -> {
@@ -92,11 +88,11 @@ public class DisplayEventWaitingListFragment extends Fragment {
     }
 
     /**
-     * Finds the user IDs of the desired entrants, passes each ID to getEntrant and receives the
-     * Entrant object associated with the ID, then adds the Entrant object to a list.
+     * Finds the user IDs of all the entrants in the waiting list, passes each ID to getEntrant and
+     * receives the Entrant object associated with the ID, then adds the Entrant object to a list.
      */
     private void getEntrantsList() {
-        reg = entrantsRef.addSnapshotListener(MetadataChanges.INCLUDE, (snapshot, error) -> {
+        reg = entrantsRef.addSnapshotListener((snapshot, error) -> {
             entrantIdsList.clear();
             entrantsList.clear();
             if (error != null) {
@@ -104,21 +100,30 @@ public class DisplayEventWaitingListFragment extends Fragment {
             }
 
             if (snapshot != null && !snapshot.isEmpty()) {
+                ArrayList<Task<Entrant>> tasks = new ArrayList<>();
                 for (DocumentSnapshot entrantDocument : snapshot.getDocuments()) {
                     String entrantId = entrantDocument.getString("userId");
                     if (entrantId != null) {
                         entrantIdsList.add(entrantId);
-                        getEntrant(entrantId).addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                Entrant entrant = task.getResult();
-                                if (entrant != null) {
-                                    entrantsList.add(entrant);
-                                }
-                            }
-                        });
+                        tasks.add(getEntrant(entrantId));
                     }
                 }
-                listAdapter.notifyDataSetChanged();
+
+                // update list adapter after all Entrant objects have been added to the list
+                Tasks.whenAllComplete(tasks).addOnCompleteListener(task -> {
+                    for (Task<?> entrantTask : tasks) {
+                        if (entrantTask.isSuccessful()) {
+                            Entrant entrant = (Entrant) entrantTask.getResult();
+                            if (entrant != null) {
+                                entrantsList.add(entrant);
+                            }
+                        }
+                    }
+                    listAdapter.notifyDataSetChanged();
+                });
+            } else {
+                TextView textView = getView().findViewById(R.id.text_emptyList);
+                textView.setText(R.string.no_entrants);
             }
         });
     }
