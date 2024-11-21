@@ -150,11 +150,11 @@ public class EditProfilePictureActivity extends AppCompatActivity {
 
 
     public void updateProfPic(){
-        firebaseDB.updateProfilePicture(imageUri, UserSession.getInstance().getUserName(), new FirebaseDB.UpdateProfPicCallBack() {
+        firebaseDB.updateProfilePicture(imageUri, UserSession.getInstance().getUserId(), new FirebaseDB.UpdateProfPicCallBack() {
             @Override
             public void onUpdateSuccess() {
                 db.collection("profileImages")
-                        .document(UserSession.getInstance().getUserName())
+                        .document(UserSession.getInstance().getUserId())
                         .get()
                         .addOnCompleteListener(task1 -> {
                             if (task1.isSuccessful() && task1.getResult() != null) {

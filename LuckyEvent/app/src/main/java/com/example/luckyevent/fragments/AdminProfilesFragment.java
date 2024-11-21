@@ -80,25 +80,6 @@ public class AdminProfilesFragment extends Fragment {
             }
         });
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                new String[]{"All", "Fruit", "Vegetable"}
-        );
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(spinnerAdapter);
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedProperty = parent.getItemAtPosition(position).toString();
-                adapter.filterByProperty(selectedProperty);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
 
         return rootView;
     }
