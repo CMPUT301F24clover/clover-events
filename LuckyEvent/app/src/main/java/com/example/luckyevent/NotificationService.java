@@ -10,10 +10,9 @@ import android.widget.Toast;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -27,7 +26,8 @@ import java.util.Map;
  */
 public class NotificationService extends Service {
     private static final String TAG = "NotificationService";
-    private ArrayList<String> entrants;
+    private ArrayList<String> entrantIds;
+    private String eventId;
     private String title;
     private String description;
     private CollectionReference profilesRef;
@@ -44,11 +44,12 @@ public class NotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Service started");
 
-        entrants = intent.getStringArrayListExtra("entrants");
+        entrantIds = intent.getStringArrayListExtra("entrantIds");
+        eventId = intent.getStringExtra("eventId");
         title = intent.getStringExtra("title");
         description = intent.getStringExtra("description");
 
-        if (!entrants.isEmpty()) {
+        if (!entrantIds.isEmpty()) {
             notifyEntrants();
         }
 
@@ -68,15 +69,16 @@ public class NotificationService extends Service {
 
     /**
      * Creates a document that represents the notification. Then, adds the document to each
-     * entrant's "notifications" collection.
+     * entrant's "notifications" sub-collection.
      */
     private void notifyEntrants() {
-        for (String id: entrants) {
+        for (String entrantId: entrantIds) {
             String notifId = generateNotifId();
             Map<String, Object> notif = new HashMap<>();
+            notif.put("notifId", notifId);
             notif.put("title", title);
             notif.put("content", description);
-            profilesRef.document(id).collection("notifications").document(notifId)
+            profilesRef.document(entrantId).collection("notifications").document(notifId)
                     .set(notif)
                     .addOnSuccessListener(aVoid -> {
                         Log.d(TAG, "Notification successfully written!");
@@ -90,13 +92,14 @@ public class NotificationService extends Service {
     }
 
     /**
-     * Generates a document ID for the notification by using the current date and time.
-     * @return A string containing the current date and time.
+     * Generates a document ID for the notification by using the current date and time, as well as
+     * the event ID.
+     * @return A unique ID for the notification document.
      */
     private String generateNotifId() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale.CANADA);
-        Date currentTime = Calendar.getInstance().getTime();
-        return sdf.format(currentTime);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss_", Locale.CANADA);
+        String currentTime = LocalDateTime.now().format(formatter);
+        return currentTime + eventId;
     }
 
     /**

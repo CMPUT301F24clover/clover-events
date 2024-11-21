@@ -8,39 +8,19 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public class EntrantTest {
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String phoneNumber;
-    Entrant entrant = new Entrant(firstName,lastName,email);
+    private final String id = "1234";
+    private String name;
+    Entrant entrant = new Entrant(id, name);
 
     @Test
-    public void testFirstNameFields() {
-        firstName = "John";
-        entrant.setFirstName(firstName);
-        assertEquals(firstName, entrant.getFirstName());
+    public void testGetUserId() {
+        assertEquals(id, entrant.getEntrantId());
     }
 
     @Test
-    public void testLastNameFields() {
-        lastName = "Doe";
-        entrant.setLastName(lastName);
-        assertEquals(lastName, entrant.getLastName());
+    public void testNameFields() {
+        name = "John Doe";
+        entrant.setName(name);
+        assertEquals(name, entrant.getName());
     }
-
-    @Test
-    public void testEmailFields() {
-         email= "JohnDoe@gmail.com";
-        entrant.setEmail(email);
-        assertEquals(email, entrant.getEmail());
-    }
-
-    @Test
-    public void testPhoneNumberFields() {
-        phoneNumber = "(415) 867-5309";
-        entrant.setPhoneNumber(phoneNumber);
-        assertEquals(phoneNumber, entrant.getPhoneNumber());
-    }
-
-
 }

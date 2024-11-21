@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-import com.example.luckyevent.ChosenEntrantListAdapter;
 import com.example.luckyevent.Entrant;
 import com.example.luckyevent.EntrantListAdapter;
 import com.example.luckyevent.R;
@@ -25,28 +24,22 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.MetadataChanges;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 
 /**
- * Displays a list of entrants associated with a given event and a given invitation status. List of
- * entrants can be any of the following: list of chosen entrants, list of enrolled entrants, or
- * list of cancelled entrants.
+ * Displays the entrants in a given event's waiting list.
  *
  * @author Mmelve
  * @see Entrant
  * @see EntrantListAdapter
- * @see ChosenEntrantListAdapter
- * @version 2
+ * @version 1
  * @since 1
  */
-public class DisplayEntrantsFragment extends Fragment {
+public class DisplayEventWaitingListFragment extends Fragment {
     private ArrayList<String> entrantIdsList;
     private ArrayList<Entrant> entrantsList;
-    private ChosenEntrantListAdapter chosenEntrantListAdapter;
-    private EntrantListAdapter entrantListAdapter;
+    private EntrantListAdapter listAdapter;
     private CollectionReference profilesRef;
     private CollectionReference entrantsRef;
     private ListenerRegistration reg;
@@ -59,28 +52,21 @@ public class DisplayEntrantsFragment extends Fragment {
         if (getArguments() != null) {
             String screenTitle = getArguments().getString("screenTitle");
             String eventId = getArguments().getString("eventId");
-            String invitationStatus = getArguments().getString("invitationStatus", "n/a");
 
             Toolbar toolbar = view.findViewById(R.id.topBar);
             toolbar.setTitle(screenTitle);
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             profilesRef = db.collection("loginProfile");
-            entrantsRef = db.collection("events").document(eventId).collection("chosenEntrants");
+            entrantsRef = db.collection("events").document(eventId).collection("waitingList");
 
             ListView listview = view.findViewById(R.id.customListView);
             entrantIdsList = new ArrayList<>();
             entrantsList = new ArrayList<>();
+            listAdapter = new EntrantListAdapter(getContext(), entrantsList);
+            listview.setAdapter(listAdapter);
 
-            if (screenTitle.equals("List of Chosen Entrants")) {
-                chosenEntrantListAdapter = new ChosenEntrantListAdapter(getContext(), entrantsList, entrantsRef, eventId);
-                listview.setAdapter(chosenEntrantListAdapter);
-                getEntrantsList(invitationStatus);
-            } else {
-                entrantListAdapter = new EntrantListAdapter(getContext(), entrantsList);
-                listview.setAdapter(entrantListAdapter);
-                getEntrantsList(invitationStatus);
-            }
+            getEntrantsList();
 
             // create notification button
             FloatingActionButton notification_button = view.findViewById(R.id.create_notification_fab);
@@ -102,20 +88,11 @@ public class DisplayEntrantsFragment extends Fragment {
     }
 
     /**
-     * Finds the user IDs of the desired entrants, passes each ID to getEntrant and receives the
-     * Entrant object associated with the ID, then adds the Entrant object to a list.
-     * @param invitationStatus The current status of a chosen entrant's invitation. Can be one of
-     *                         the following: Pending, Cancelled, Enrolled, Declined, null.
+     * Finds the user IDs of all the entrants in the waiting list, passes each ID to getEntrant and
+     * receives the Entrant object associated with the ID, then adds the Entrant object to a list.
      */
-    private void getEntrantsList(String invitationStatus) {
-        Query query;
-        if (invitationStatus.equals("n/a")) {
-            query = entrantsRef;
-        } else {
-            query = entrantsRef.whereEqualTo("invitationStatus", invitationStatus);
-        }
-
-        reg = query.addSnapshotListener((snapshot, error) -> {
+    private void getEntrantsList() {
+        reg = entrantsRef.addSnapshotListener((snapshot, error) -> {
             entrantIdsList.clear();
             entrantsList.clear();
             if (error != null) {
@@ -124,12 +101,11 @@ public class DisplayEntrantsFragment extends Fragment {
 
             if (snapshot != null && !snapshot.isEmpty()) {
                 ArrayList<Task<Entrant>> tasks = new ArrayList<>();
-                for (QueryDocumentSnapshot entrantDocument : snapshot) {
+                for (DocumentSnapshot entrantDocument : snapshot.getDocuments()) {
                     String entrantId = entrantDocument.getString("userId");
-                    String status = entrantDocument.getString("invitationStatus");
                     if (entrantId != null) {
                         entrantIdsList.add(entrantId);
-                        tasks.add(getEntrant(entrantId, status));
+                        tasks.add(getEntrant(entrantId));
                     }
                 }
 
@@ -143,11 +119,7 @@ public class DisplayEntrantsFragment extends Fragment {
                             }
                         }
                     }
-                    if (invitationStatus.equals("n/a")) {
-                        chosenEntrantListAdapter.notifyDataSetChanged();
-                    } else {
-                        entrantListAdapter.notifyDataSetChanged();
-                    }
+                    listAdapter.notifyDataSetChanged();
                 });
             } else {
                 TextView textView = getView().findViewById(R.id.text_emptyList);
@@ -159,12 +131,10 @@ public class DisplayEntrantsFragment extends Fragment {
     /**
      * Finds the remaining data needed to create an Entrant object and creates it.
      * @param entrantId The ID of the entrant. Also the ID of the document that represents the user.
-     * @param invitationStatus The current status of a chosen entrant's invitation. Can be one of
-     *                         the following: Pending, Cancelled, Enrolled, Declined.
      * @return Task<Entrant> A Task object that contains the Entrant associated with the given
      * entrant ID if the task succeeds.
      */
-    private Task<Entrant> getEntrant(String entrantId, String invitationStatus) {
+    private Task<Entrant> getEntrant(String entrantId) {
         return profilesRef.document(entrantId).get().continueWith(task -> {
             if (task.isSuccessful() && task.getResult().exists()) {
                 DocumentSnapshot document = task.getResult();
@@ -172,8 +142,8 @@ public class DisplayEntrantsFragment extends Fragment {
                 // uncomment code once profileImageUrl field is added to entrant documents in
                 // waitingList/chosenEntrants subcollection
 //                String profileImageUrl = document.getString("profileImageUrl");
-                return new Entrant(entrantId, name, invitationStatus);
-//                return new Entrant(entrantId, name, invitationStatus, profileImageUrl);
+                return new Entrant(entrantId, name);
+//                return new Entrant(entrantId, name, profileImageUrl);
             } else {
                 return null;
             }

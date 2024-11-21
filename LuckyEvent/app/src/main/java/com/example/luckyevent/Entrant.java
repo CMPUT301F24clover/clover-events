@@ -1,47 +1,71 @@
 package com.example.luckyevent;
 
+/**
+ * A class representing an entrant.
+ *
+ * @author Mmelve
+ * @version 2
+ * @since 1
+ */
 public class Entrant {
-    private String firstName;
-    private String lastName;
-    private String username;
-    private String phoneNumber;
+    private final String entrantId;
+    private String name;
+    private String invitationStatus;
+    private String profileImageUrl;
 
-    public Entrant(String firstName, String lastName, String username) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.username = username;
-        this.phoneNumber = "";
+    // delete this constructor later
+    public Entrant(String entrantId, String name) {
+        this.entrantId = entrantId;
+        this.name = name;
+        invitationStatus = "n/a";
     }
 
-    public String getFirstName() {
-        return firstName;
+    // delete this constructor later
+    public Entrant(String entrantId, String name, String invitationStatus) {
+        this.entrantId = entrantId;
+        this.name = name;
+        this.invitationStatus = invitationStatus;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+//    public Entrant(String entrantId, String name, String profileImageUrl) {
+//        this.entrantId = entrantId;
+//        this.name = name;
+//        invitationStatus = "n/a";
+//        this.profileImageUrl = profileImageUrl;
+//    }
+//
+//    public Entrant(String entrantId, String name, String invitationStatus, String profileImageUrl) {
+//        this.entrantId = entrantId;
+//        this.name = name;
+//        this.invitationStatus = invitationStatus;
+//        this.profileImageUrl = profileImageUrl;
+//    }
+
+    public String getEntrantId() {
+        return entrantId;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getName() {
+        return name;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getEmail() {
-        return username;
+    public String getInvitationStatus() {
+        return invitationStatus;
     }
 
-    public void setEmail(String email) {
-        this.username = email;
+    public void setInvitationStatus(String invitationStatus) {
+        this.invitationStatus = invitationStatus;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getProfileImageUrl() {
+        return profileImageUrl;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 }

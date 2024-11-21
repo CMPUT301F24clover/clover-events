@@ -6,11 +6,15 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Conducts the lottery: samples from the waiting list to get a list of winners and losers.
@@ -18,16 +22,18 @@ import java.util.ArrayList;
  * @author Mmelve
  * @see Lottery
  * @see NotificationService
- * @version 1.5
+ * @version 2
  * @since 1
  */
 public class LotteryService extends Service {
     private static final String TAG = "LotteryService";
+    private String eventId;
     private String eventName;
-    private ArrayList<String> waitingList;
+    private ArrayList<String> entrantIdsList;
     private int sampleSize;
     private Lottery lottery;
-    private DocumentReference docRef;
+    private DocumentReference eventRef;
+    private CollectionReference waitingListRef;
 
     @Override
     public void onCreate() {
@@ -39,10 +45,11 @@ public class LotteryService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Service started");
 
-        String eventId = intent.getStringExtra("eventId");
+        eventId = intent.getStringExtra("eventId");
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        docRef = db.collection("events").document(eventId);
+        eventRef = db.collection("events").document(eventId);
+        waitingListRef = eventRef.collection("waitingList");
 
         startLottery();
 
@@ -64,33 +71,25 @@ public class LotteryService extends Service {
      * lottery.
      */
     private void startLottery() {
-        docRef.get().addOnCompleteListener(task -> {
+        getSampleSize();
+
+        waitingListRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                DocumentSnapshot snapshot = task.getResult();
-                if (snapshot.exists()) {
-                    eventName = (String) snapshot.get("eventName");
-                    try {
-                        sampleSize = (int) snapshot.get("sampleSize");
-                    } catch (Exception e1) {
-                        try {
-                            sampleSize = Math.toIntExact((long) snapshot.get("sampleSize"));
-                        } catch (Exception e2) {
-                            Toast.makeText(this, "sampleSize type is invalid", Toast.LENGTH_SHORT).show();
-                            stopSelf();
-                        }
+                entrantIdsList = new ArrayList<>();
+                for (QueryDocumentSnapshot entrantDocument : task.getResult()) {
+                    String entrantId = entrantDocument.getString("userId");
+                    if (entrantId != null) {
+                        entrantIdsList.add(entrantId);
                     }
-                    waitingList = (ArrayList<String>) snapshot.get("waitingList");
-                    if (waitingList == null || waitingList.isEmpty()) {
-                        Toast.makeText(this, "Waiting list is not available. Cannot initiate lottery.", Toast.LENGTH_SHORT).show();
-                        stopSelf();
-                    } else {
-                        lottery = new Lottery(waitingList, sampleSize);
-                        lottery.selectWinners();
-                        setResult();
-                    }
-                } else {
-                    Toast.makeText(this, "Cannot retrieve waiting list from database.", Toast.LENGTH_SHORT).show();
+                }
+
+                if (entrantIdsList.isEmpty()) {
+                    Toast.makeText(this, "Waiting list is not available. Cannot initiate lottery.", Toast.LENGTH_SHORT).show();
                     stopSelf();
+                } else {
+                    lottery = new Lottery(entrantIdsList, sampleSize);
+                    lottery.selectWinners();
+                    setResult();
                 }
             } else {
                 Toast.makeText(this, "Cannot retrieve waiting list from database.", Toast.LENGTH_SHORT).show();
@@ -100,21 +99,52 @@ public class LotteryService extends Service {
     }
 
     /**
+     * Retrieves the event sample size from the document of the given event.
+     */
+    private void getSampleSize() {
+        eventRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                DocumentSnapshot snapshot = task.getResult();
+                eventName = (String) snapshot.get("eventName");
+                try {
+                    sampleSize = (int) snapshot.get("sampleSize");
+                } catch (Exception e1) {
+                    try {
+                        sampleSize = Math.toIntExact((long) snapshot.get("sampleSize"));
+                    } catch (Exception e2) {
+                        Toast.makeText(this, "sampleSize type is invalid", Toast.LENGTH_SHORT).show();
+                        stopSelf();
+                    }
+                }
+            }
+        });
+    }
+
+    /**
      * Updates the document of the given event to reflect changes in the waiting list and winners
      * list.
      */
     private void setResult() {
-        docRef
-                .update("waitingList", lottery.getEntrants(),
-                        "chosenEntrants", lottery.getWinners())
-                .addOnSuccessListener(unused -> {
-                    Log.d(TAG, "Document successfully updated!");
-                    startNextActivity();
-                })
-                .addOnFailureListener(e -> {
-                    Log.w(TAG, "Error updating document", e);
-                    stopSelf();
-                });
+        for (String winnersId : lottery.getWinners()) {
+            waitingListRef.document(winnersId).delete()
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Waitlisted entrant successfully deleted!"))
+                    .addOnFailureListener(e -> {
+                        Log.w(TAG, "Error deleting waitlisted entrant", e);
+                    });
+
+            Map<String, Object> chosenEntrant = new HashMap<>();
+            chosenEntrant.put("userId", winnersId);
+            chosenEntrant.put("invitationStatus", "Pending");
+
+            eventRef.collection("chosenEntrants").document(winnersId)
+                    .set(chosenEntrant)
+                    .addOnSuccessListener(documentReference -> Log.d(TAG, "Chosen entrant successfully added!"))
+                    .addOnFailureListener(e -> {
+                        Log.w(TAG, "Error adding chosen entrant", e);
+                    });
+        }
+
+        startNextActivity();
     }
 
     /**
@@ -123,13 +153,15 @@ public class LotteryService extends Service {
     private void startNextActivity() {
         if (!lottery.getWinners().isEmpty()) {
             Intent intentWinners = new Intent(this, NotificationService.class);
-            intentWinners.putStringArrayListExtra("entrants", lottery.getWinners());
+            intentWinners.putStringArrayListExtra("entrantIds", lottery.getWinners());
+            intentWinners.putExtra("eventId", eventId);
             intentWinners.putExtra("title", "Congratulations!");
-            intentWinners.putExtra("description", String.format("You have been chosen to sign up for %s!", eventName));
+            intentWinners.putExtra("description", String.format("You have been chosen to sign up for %s! Go to 'My Waiting Lists' to accept your invitation.", eventName));
             startService(intentWinners);
             if (!lottery.getEntrants().isEmpty()) {
                 Intent intentLosers = new Intent(this, NotificationService.class);
-                intentLosers.putStringArrayListExtra("entrants", lottery.getEntrants());
+                intentLosers.putStringArrayListExtra("entrantIds", lottery.getEntrants());
+                intentLosers.putExtra("eventId", eventId);
                 intentLosers.putExtra("title", "Hello there!");
                 intentLosers.putExtra("description", String.format("We regret to inform you that you have not been chosen to sign up for %s. Thank you for your interest.", eventName));
                 startService(intentLosers);
