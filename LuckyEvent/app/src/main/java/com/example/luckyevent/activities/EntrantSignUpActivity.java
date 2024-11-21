@@ -106,8 +106,4 @@ public class EntrantSignUpActivity extends AppCompatActivity {
         });
     }
 
-
-
-
-
 }

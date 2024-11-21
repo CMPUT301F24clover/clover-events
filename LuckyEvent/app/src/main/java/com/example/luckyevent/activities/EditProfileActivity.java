@@ -89,12 +89,14 @@ public class EditProfileActivity extends AppCompatActivity {
     private void saveProfileEdit() {
         String name = nameEdit.getText().toString();
         String[] fullName = name.split(" "); // split the name into first and last
+        String email = emailEdit.getText().toString();
         if (fullName.length != 2) { //give warning to make sure only first and last name was entered
             Toast.makeText(EditProfileActivity.this, "Please only enter first and last name", Toast.LENGTH_SHORT).show();
+        } else if (email.isEmpty()) {
+            Toast.makeText(EditProfileActivity.this, "Email is required", Toast.LENGTH_SHORT).show();
         } else{
             String firstName = fullName[0];
             String lastName = fullName[1];
-            String email = emailEdit.getText().toString();
             String phoneNumber = phoneEdit.getText().toString();
             //call the profile controller to update to profile information using editProfile
             profileController.editProfile(documentID, firstName, lastName, email, phoneNumber);
