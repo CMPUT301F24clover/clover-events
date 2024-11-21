@@ -263,7 +263,7 @@ public class FirebaseDB {
         void onUpdateFailure(String errorMessage);
     }
 
-    public void uploadProfileToFirebase(Uri imageUri, String userName, UploadCallback callback) {
+    public void uploadProfileToFirebase(Uri imageUri, String userId, UploadCallback callback) {
         if (firebaseAuth.getCurrentUser() != null) {
             Log.e("FirebaseDB", "uploadProfileToFirebase: A user is logged in");
         } else {
@@ -275,7 +275,7 @@ public class FirebaseDB {
             try {
                 FirebaseStorage storage = FirebaseStorage.getInstance("gs://luckyevent-22fbd.firebasestorage.app");
                 InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
-                String path = "userProfilePics/" + userName;
+                String path = "userProfilePics/" + userId;
                 StorageReference storageRef = storage.getReference().child(path);
 
                 assert inputStream != null;
@@ -283,7 +283,7 @@ public class FirebaseDB {
                         .addOnSuccessListener(taskSnapshot -> {
                             storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                                 String downloadUrl = uri.toString();
-                                saveProfileToFirestore(downloadUrl, userName);
+                                saveProfileToFirestore(downloadUrl, userId);
                                 callback.onUploadSuccess();
                             });
                         })
@@ -302,10 +302,10 @@ public class FirebaseDB {
     }
 
 
-    private void saveProfileToFirestore(String downloadUrl, String userName) {
+    private void saveProfileToFirestore(String downloadUrl, String userId) {
         Map<String, Object> imageData = new HashMap<>();
         imageData.put("imageUrl", downloadUrl);
-        db.collection("profileImages").document(userName).set(imageData)
+        db.collection("profileImages").document(userId).set(imageData)
                 .addOnSuccessListener(documentReference ->
                                 Log.e("FirebaseDB","Image URL saved to Firestore")
                 )
@@ -315,12 +315,12 @@ public class FirebaseDB {
                 );
     }
 
-    public void updateProfilePicture(Uri imageUri, String userName, UpdateProfPicCallBack callBack){
+    public void updateProfilePicture(Uri imageUri, String userId, UpdateProfPicCallBack callBack){
         try {
             FirebaseStorage storage = FirebaseStorage.getInstance("gs://luckyevent-22fbd.firebasestorage.app");
             InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
-            Log.e("FirebaseDB", "updateProfilePicture:" +userName );
-            String path = "userProfilePics/" +userName;
+            Log.e("FirebaseDB", "updateProfilePicture:" + userId );
+            String path = "userProfilePics/" + userId;
             StorageReference storageRef = storage.getReference().child(path);
             storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>(){
                 @Override
@@ -331,13 +331,13 @@ public class FirebaseDB {
                             .addOnSuccessListener(taskSnapshot -> {
                                 storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                                     String downloadUrl = uri.toString();
-                                    db.collection("profileImages").document(userName)
+                                    db.collection("profileImages").document(userId)
                                             .delete()
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
                                                     Log.d("Firestore", "DocumentSnapshot successfully deleted!");
-                                                    saveProfileToFirestore(downloadUrl,userName);
+                                                    saveProfileToFirestore(downloadUrl,userId);
                                                     callBack.onUpdateSuccess();
 
                                                 }

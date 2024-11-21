@@ -67,46 +67,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
 
                 showToast(message);
             } else {
-                if (imageUri == null) {
-                    generateDefaultProfileImage(initials, new ProfileImageCallback() {
-                        @Override
-                        public void onImageGenerated(Uri generatedUri) {
-                            firebaseDB.uploadProfileToFirebase(generatedUri, userNameInput, new FirebaseDB.UploadCallback() {
-                                @Override
-                                public void onUploadSuccess() {
-                                    Log.e("EntrantSignUp", "Upload successful. Proceeding to sign up.");
-                                    UserSession.getInstance().setProfileUri(generatedUri.toString());
-                                    signUpUser(userNameInput, passwordInput, firstNameInput, lastNameInput, generatedUri);
-                                }
-
-                                @Override
-                                public void onUploadFailure(String errorMessage) {
-                                    showToast("Failed to upload profile image: " + errorMessage);
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onFailure() {
-                            showToast("Failed to generate profile image");
-                        }
-                    });
-                } else {
-                    Log.e("EntrantSignUp", "imageUri:" + imageUri);
-                    firebaseDB.uploadProfileToFirebase(imageUri, userNameInput, new FirebaseDB.UploadCallback() {
-                        @Override
-                        public void onUploadSuccess() {
-                            UserSession.getInstance().setProfileUri(imageUri.toString());
-                            signUpUser(userNameInput, passwordInput, firstNameInput, lastNameInput, imageUri);
-                        }
-
-                        @Override
-                        public void onUploadFailure(String errorMessage) {
-                            showToast("Failed to upload profile image: " + errorMessage);
-                        }
-                    });
-                }
-
+                signUpUser(userNameInput,passwordInput, firstNameInput,lastNameInput,initials);
             }
         });
 
@@ -166,7 +127,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                 });
     }
 
-    private void signUpUser(String userName, String password, String firstName, String lastName, Uri profileImageUri) {
+    private void signUpUser(String userName, String password, String firstName, String lastName, String initials) {
         firebaseDB.signUp(userName, password, firstName, lastName, "entrant", null, null, new FirebaseDB.SignInCallback() {
             @Override
             public void onSuccess() {
@@ -175,8 +136,48 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                 UserSession.getInstance().setFirstName(firstName);
                 UserSession.getInstance().setUserName(userName);
 
-                startActivity(new Intent(EntrantSignUpActivity.this, MenuActivity.class));
-                finish();
+                if (imageUri == null) {
+                    generateDefaultProfileImage(initials, new ProfileImageCallback() {
+                        @Override
+                        public void onImageGenerated(Uri generatedUri) {
+                            firebaseDB.uploadProfileToFirebase(generatedUri,firebaseUser.getUid(), new FirebaseDB.UploadCallback() {
+                                @Override
+                                public void onUploadSuccess() {
+                                    Log.e("EntrantSignUp", "Upload successful. Proceeding to sign up.");
+                                    UserSession.getInstance().setProfileUri(generatedUri.toString());
+                                    startActivity(new Intent(EntrantSignUpActivity.this, MenuActivity.class));
+                                    finish();
+
+                                }
+
+                                @Override
+                                public void onUploadFailure(String errorMessage) {
+                                    showToast("Failed to upload profile image: " + errorMessage);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailure() {
+                            showToast("Failed to generate profile image");
+                        }
+                    });
+                } else {
+                    Log.e("EntrantSignUp", "imageUri:" + imageUri);
+                    firebaseDB.uploadProfileToFirebase(imageUri, firebaseUser.getUid(), new FirebaseDB.UploadCallback() {
+                        @Override
+                        public void onUploadSuccess() {
+                            UserSession.getInstance().setProfileUri(imageUri.toString());
+                            startActivity(new Intent(EntrantSignUpActivity.this, MenuActivity.class));
+                            finish();
+                        }
+
+                        @Override
+                        public void onUploadFailure(String errorMessage) {
+                            showToast("Failed to upload profile image: " + errorMessage);
+                        }
+                    });
+                }
             }
 
             @Override
