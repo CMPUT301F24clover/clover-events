@@ -44,7 +44,6 @@
         <activity android:name=".activities.EditProfileActivity" />
         <activity android:name=".activities.ViewProfileActivity" />
         <activity android:name=".activities.RegisterProfileActivity" />
-        <activity android:name=".activities.CreateEventActivity" />
         <activity android:name=".activities.EditProfilePictureActivity"/>
         <activity android:name = ".activities.OrganizerMenuActivity"
             android:exported="false"/>
