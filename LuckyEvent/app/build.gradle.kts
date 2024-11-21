@@ -34,6 +34,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.play.services.maps)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.core)
     implementation("androidx.navigation:navigation-fragment-ktx:2.6.0")
