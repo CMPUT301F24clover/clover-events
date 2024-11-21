@@ -144,9 +144,13 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                                 @Override
                                 public void onUploadSuccess() {
                                     Log.e("EntrantSignUp", "Upload successful. Proceeding to sign up.");
-                                    UserSession.getInstance().setProfileUri(generatedUri.toString());
-                                    startActivity(new Intent(EntrantSignUpActivity.this, MenuActivity.class));
-                                    finish();
+                                    if (userName.toLowerCase().contains("admin".toLowerCase())) {
+                                        startActivity(new Intent(EntrantSignUpActivity.this, AdminMenuActivity.class));
+                                        finish();
+                                    } else {
+                                        startActivity(new Intent(EntrantSignUpActivity.this, MenuActivity.class));
+                                        finish();
+                                    }
 
                                 }
 
@@ -168,8 +172,14 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                         @Override
                         public void onUploadSuccess() {
                             UserSession.getInstance().setProfileUri(imageUri.toString());
-                            startActivity(new Intent(EntrantSignUpActivity.this, MenuActivity.class));
-                            finish();
+
+                            if (userName.toLowerCase().contains("admin".toLowerCase())) {
+                                startActivity(new Intent(EntrantSignUpActivity.this, AdminMenuActivity.class));
+                                finish();
+                            } else {
+                                startActivity(new Intent(EntrantSignUpActivity.this, MenuActivity.class));
+                                finish();
+                            }
                         }
 
                         @Override
