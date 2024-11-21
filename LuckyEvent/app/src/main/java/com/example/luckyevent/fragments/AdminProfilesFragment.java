@@ -53,19 +53,31 @@ public class AdminProfilesFragment extends Fragment {
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://luckyevent-22fbd.firebasestorage.app");
         StorageReference storageRef = storage.getReference().child("userProfilePics");
 
-        storageRef.listAll()
-                .addOnSuccessListener(listResult -> {
-                    for (StorageReference item : listResult.getItems()) {
-                        documentIds.add(item.getName());
 
-                        Log.d(TAG, "File: " + item.getName());
+
+        db.collection("loginProfile")
+                .whereEqualTo("role", "entrant")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        Log.d(TAG, "fetchProfiles: Got a profile");
+                        List<DocumentSnapshot> documents = task.getResult().getDocuments();
+                        for(DocumentSnapshot document :documents){
+                            String userName = document.getString("userName");
+                            String firstName = document.getString("firstName");
+                            String lastName = document.getString("lastName");
+                            String userId = document.getString("userId");
+                            userList.add(new Profile(userName, firstName, lastName, userId));
+                            adapter.notifyDataSetChanged();
+
+                        }
+                        Log.d(TAG, "fetchProfiles: userList size = " + userList.size());
+                        Log.d(TAG, "fetchProfiles: adapter size = " + adapter.getCount());
                     }
-                    fetchProfiles();
                 })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error listing files: " + e.getMessage());
+                .addOnFailureListener(task -> {
+                    Log.e(TAG, "fetchProfiles: Failed to get profile", task);
                 });
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
