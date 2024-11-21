@@ -6,14 +6,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
+import com.example.luckyevent.UserSession;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.squareup.picasso.Picasso;
 
 /**
  * @author Amna
@@ -26,7 +29,9 @@ public class EditProfileActivity extends AppCompatActivity {
     private ProfileController profileController;
     private ProfileSetup profileSetup;
     private String documentID;
-
+    private ImageView profile;
+    private String imageUrl;
+    private FloatingActionButton editProfilePictureButton;
 
     /**
      * here we get the users input and load up the profile information for the user
@@ -37,12 +42,18 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_profile);
 
+        profile = findViewById(R.id.imageView);
+        imageUrl = UserSession.getInstance().getProfileUri();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Picasso.get().load(imageUrl).into(profile);
+        }
 
         nameEdit = findViewById(R.id.nameEditText);
         emailEdit = findViewById(R.id.emailEditText);
         phoneEdit = findViewById(R.id.phoneEditText);
         saveButton = findViewById(R.id.saveButton);
         backButton = findViewById(R.id.imageButton);
+        editProfilePictureButton = findViewById(R.id.editProfilePictureButton);
         // get the document id to load to users profile information
         documentID = getIntent().getStringExtra("profileID");
 
@@ -81,6 +92,16 @@ public class EditProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        editProfilePictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EditProfileActivity.this, EditProfilePictureActivity.class);
+                intent.putExtra("profileID",documentID);
+                startActivity(intent);
+            }
+        });
+
     }
 
     /**

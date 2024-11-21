@@ -8,9 +8,10 @@
 
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -43,9 +44,10 @@
         <activity android:name=".activities.EditProfileActivity" />
         <activity android:name=".activities.ViewProfileActivity" />
         <activity android:name=".activities.RegisterProfileActivity" />
-
+        <activity android:name=".activities.EditProfilePictureActivity"/>
         <activity android:name = ".activities.OrganizerMenuActivity"
             android:exported="false"/>
+        <activity android:name=".activities.AdminMenuActivity"/>
         <activity android:name = ".activities.OrganizerHomePageActivity"/>
         <service android:name=".LotteryService" />
         <service android:name=".QRDownloadService" />
