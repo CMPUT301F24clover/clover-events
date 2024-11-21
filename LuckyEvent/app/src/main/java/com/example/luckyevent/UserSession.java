@@ -12,9 +12,9 @@ public class UserSession {
     //Additional values can be added
     private String userId;
     private String firstName;
+    private String profileUri = null;
     private String lastName;
     private String userName;
-
     private UserSession() {}
 
     public static UserSession getInstance() {
@@ -38,6 +38,22 @@ public class UserSession {
 
     public String getFirstName() {
         return firstName;
+    }
+
+    public void setProfileUri(String profileUri){
+        this.profileUri = profileUri;
+    }
+
+    public String getProfileUri (){
+        return profileUri;
+    }
+
+    public String getUserName(){
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     //The userId can be accessed by any activity like this:

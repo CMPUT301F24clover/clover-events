@@ -108,6 +108,16 @@ public class EventDetailsFragment extends Fragment {
                 }
             });
 
+            TextView eventPoster = view.findViewById(R.id.event_poster_link);
+            eventPoster.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("eventId", eventId);
+                    goToPoster(bundle);
+                }
+            });
+
             Button chosenEntrantsButton = view.findViewById(R.id.chosen_entrant_button);
             chosenEntrantsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -158,6 +168,20 @@ public class EventDetailsFragment extends Fragment {
         getParentFragmentManager()
                 .beginTransaction()
                 .replace(R.id.OrganizerMenuFragment, displayEntrantsFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    /**
+     *This function sets the bundle needed for the EventPosterFragment and navigates to it
+     */
+    private void goToPoster(Bundle bundle) {
+        EventPosterFragment eventPosterFragment = new EventPosterFragment();
+        eventPosterFragment.setArguments(bundle);
+
+        getParentFragmentManager()
+                .beginTransaction()
+                .replace(R.id.OrganizerMenuFragment, eventPosterFragment)
                 .addToBackStack(null)
                 .commit();
     }
