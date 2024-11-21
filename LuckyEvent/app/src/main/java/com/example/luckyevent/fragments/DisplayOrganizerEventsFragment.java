@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -37,7 +38,7 @@ public class DisplayOrganizerEventsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.organizer_my_events_screen, container, false);
+        View view = inflater.inflate(R.layout.list_screen, container, false);
 
         ListView listView = view.findViewById(R.id.customListView);
         eventNamesList = new ArrayList<>();
@@ -54,6 +55,11 @@ public class DisplayOrganizerEventsFragment extends Fragment {
             orgDocRef = db.collection("loginProfile").document(organizerId);
 
             getEventIdsList();
+        }
+
+        if (eventNamesList.isEmpty()) {
+            TextView textView = view.findViewById(R.id.text_emptyList);
+            textView.setText("No events");
         }
 
         listView.setOnItemClickListener((parent, view1, position, id) -> {
