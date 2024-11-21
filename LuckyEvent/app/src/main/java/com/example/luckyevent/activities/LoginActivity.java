@@ -110,28 +110,37 @@ public class LoginActivity extends AppCompatActivity {
                                             DocumentSnapshot document = task.getResult().getDocuments().get(0);
                                             String firstName = document.getString("firstName");
                                             String userName = document.getString("userName");
+                                            String role  = document.getString("role");
                                             Log.d("LoginActivity", "firstName: " + firstName);
                                             UserSession.getInstance().setFirstName(firstName);
                                             UserSession.getInstance().setUserName(userName);
 
-                                            db.collection("profileImages")
-                                                    .document(document.getString("userName"))
-                                                    .get()
-                                                    .addOnCompleteListener(task1 -> {
-                                                        if (task1.isSuccessful() && task1.getResult() != null) {
-                                                            DocumentSnapshot imageDocument = task1.getResult();
-                                                            String imageUrl = imageDocument.getString("imageUrl");
-                                                            UserSession.getInstance().setProfileUri(imageUrl);
-                                                        }
-                                                        else{
-                                                            Log.e("LoginActivity", "User does not have a profile pictue");
-                                                        }
-                                                    });
+                                            if (role.equals("entrant")) {
+                                                db.collection("profileImages")
+                                                        .document(document.getString("userName"))
+                                                        .get()
+                                                        .addOnCompleteListener(task1 -> {
+                                                            if (task1.isSuccessful() && task1.getResult() != null) {
+                                                                DocumentSnapshot imageDocument = task1.getResult();
+                                                                String imageUrl = imageDocument.getString("imageUrl");
+                                                                UserSession.getInstance().setProfileUri(imageUrl);
+                                                            } else {
+                                                                Log.e("LoginActivity", "User does not have a profile pictue");
+                                                            }
+                                                        });
 
 
-                                            Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
-                                            startActivity(intent);
-                                            finish();
+                                                Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
+                                                startActivity(intent);
+                                                finish();
+
+                                            }
+
+                                            else if(role.equals("admin")){
+                                                Intent intent = new Intent(LoginActivity.this, AdminMenuActivity.class);
+                                                startActivity(intent);
+                                                finish();
+                                            }
 
                                         } else {
                                             Log.e("LoginActivity", "Failed to retrieve user profile data.");
