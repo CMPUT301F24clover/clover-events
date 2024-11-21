@@ -54,6 +54,7 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
         facilityCode = findViewById(R.id.SignUpFacilityCodeInput);
         gobackButton = findViewById(R.id.previousIcon);
 
+
         firebaseDB = new FirebaseDB(this);
 
         /**

@@ -15,9 +15,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckyevent.LotteryService;
+import com.example.luckyevent.QRDownloadService;
 import com.example.luckyevent.R;
+
+
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Set;
+
 /**
  * Displays all the event details of the the event selected. The organizer can also view the waiting list
  * and the list of enrolled, cancelled and chosen entrants. The sampling of entrants from the waiting list
@@ -62,6 +68,21 @@ public class EventDetailsFragment extends Fragment {
                         }
                     });
 
+            // Set click listener for QR code text
+            TextView qrCodeText = view.findViewById(R.id.event_qr_link);
+            qrCodeText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), QRDownloadService.class);
+                    intent.putExtra("eventId", eventId);
+                    getContext().startService(intent);
+                    //qrCodeText.setVisibility(View.GONE);
+
+                }
+            });
+
+
+
             TextView sampleEntrants = view.findViewById(R.id.sample_entrant);
             sampleEntrants.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -84,6 +105,16 @@ public class EventDetailsFragment extends Fragment {
                     bundle.putString("eventId", eventId);
                     bundle.putString("listName", "waitingList");
                     goToList(bundle);
+                }
+            });
+
+            TextView eventPoster = view.findViewById(R.id.event_poster_link);
+            eventPoster.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("eventId", eventId);
+                    goToPoster(bundle);
                 }
             });
 
@@ -137,6 +168,20 @@ public class EventDetailsFragment extends Fragment {
         getParentFragmentManager()
                 .beginTransaction()
                 .replace(R.id.OrganizerMenuFragment, displayEntrantsFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    /**
+     *This function sets the bundle needed for the EventPosterFragment and navigates to it
+     */
+    private void goToPoster(Bundle bundle) {
+        EventPosterFragment eventPosterFragment = new EventPosterFragment();
+        eventPosterFragment.setArguments(bundle);
+
+        getParentFragmentManager()
+                .beginTransaction()
+                .replace(R.id.OrganizerMenuFragment, eventPosterFragment)
                 .addToBackStack(null)
                 .commit();
     }
