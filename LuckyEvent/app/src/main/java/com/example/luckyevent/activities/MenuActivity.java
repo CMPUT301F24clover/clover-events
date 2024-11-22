@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
 import com.example.luckyevent.fragments.DisplayNotificationsFragment;
+import com.example.luckyevent.fragments.DisplayWaitingListsFragment;
 import com.example.luckyevent.fragments.HomePageFragment;
 import com.example.luckyevent.fragments.ScanQrFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -41,7 +42,7 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
         db = FirebaseFirestore.getInstance();
 
         /**
-         *When an element of the this bottomNavigationView is clicked, it navigates to it csorresponding
+         *When an element of the this bottomNavigationView is clicked, it navigates to it corresponding
          * fragment
          */
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -61,6 +62,14 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.MenuFragment, new ScanQrFragment())
+                        .commit();
+                return true;
+            }
+
+            else if (item.getItemId() == R.id.waiting_list_item) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.MenuFragment, new DisplayWaitingListsFragment())
                         .commit();
                 return true;
             }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,11 @@ import java.util.ArrayList;
 /**
  * Displays a list of events created by the current organizer. If the organizer clicks on one of
  * the events, they are taken to a screen displaying the selected event's details.
+ *
+ * @author Mmelve
+ * @see EventListAdapter
+ * @version 1
+ * @since 1
  */
 public class DisplayOrganizerEventsFragment extends Fragment {
     private ArrayList<String> eventIdsList;
@@ -37,7 +43,7 @@ public class DisplayOrganizerEventsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.organizer_my_events_screen, container, false);
+        View view = inflater.inflate(R.layout.list_screen, container, false);
 
         ListView listView = view.findViewById(R.id.customListView);
         eventNamesList = new ArrayList<>();
@@ -54,6 +60,11 @@ public class DisplayOrganizerEventsFragment extends Fragment {
             orgDocRef = db.collection("loginProfile").document(organizerId);
 
             getEventIdsList();
+        }
+
+        if (eventNamesList.isEmpty()) {
+            TextView textView = view.findViewById(R.id.text_emptyList);
+            textView.setText("No events");
         }
 
         listView.setOnItemClickListener((parent, view1, position, id) -> {

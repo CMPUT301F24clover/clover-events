@@ -31,7 +31,8 @@ import java.util.ArrayList;
  * @since 1
  */
 public class CreateNotificationFragment extends DialogFragment {
-    ArrayList<String> entrantIdsList;
+    private ArrayList<String> entrantIdsList;
+    private String eventId;
 
     @NonNull
     @Override
@@ -42,6 +43,7 @@ public class CreateNotificationFragment extends DialogFragment {
 
         if (getArguments() != null) {
             entrantIdsList = getArguments().getStringArrayList("entrantIdsList");
+            eventId = getArguments().getString("eventId");
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -95,7 +97,8 @@ public class CreateNotificationFragment extends DialogFragment {
      */
     private void addNotif(ArrayList<String> entrantIdsList, String title, String description) {
         Intent serviceIntent = new Intent(getContext(), NotificationService.class);
-        serviceIntent.putStringArrayListExtra("entrants", entrantIdsList);
+        serviceIntent.putStringArrayListExtra("entrantIds", entrantIdsList);
+        serviceIntent.putExtra("eventId", eventId);
         serviceIntent.putExtra("title", title);
         serviceIntent.putExtra("description", description);
         getContext().startService(serviceIntent);

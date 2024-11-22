@@ -8,8 +8,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.luckyevent.QRDownloadService;
 import com.example.luckyevent.R;
-import com.example.luckyevent.ScanQR;
 import com.example.luckyevent.fragments.ScanQrFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -34,9 +34,10 @@ import java.util.Map;
  *
  * @author Aagam, Tola, Amna
  * @see ScanQrFragment
- * @see ScanQR
+ * @see QRDownloadService
 
- * @version 1
+
+ * @version 2
  * @since 1
  */
 public class GenerateQrActivity extends AppCompatActivity {
@@ -141,6 +142,7 @@ public class GenerateQrActivity extends AppCompatActivity {
             // Update the event with QR code info
             Map<String, Object> qrUpdate = new HashMap<>();
             qrUpdate.put("qrContent", qrContent);
+            qrUpdate.put("hasQRCode", true); // Add this flag
 
             firestore.collection("events")
                     .document(eventId)
@@ -149,6 +151,7 @@ public class GenerateQrActivity extends AppCompatActivity {
                         if (qrCodeGeneratedListener != null) {
                             qrCodeGeneratedListener.onQRCodeGenerated(qrBitmap, eventId);
                         }
+                        Toast.makeText(this, "Event created successfully!", Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e ->
                             Toast.makeText(this, "Failed to update QR code info", Toast.LENGTH_SHORT).show());
@@ -179,7 +182,6 @@ public class GenerateQrActivity extends AppCompatActivity {
         eventInfo.put("sampleSize", selectedSampleSize);
         eventInfo.put("currentWaitList", 0);
         eventInfo.put("organizerId", userID);
-        eventInfo.put("waitingList", Arrays.asList());
         eventInfo.put("status", "active");
         eventInfo.put("createdAt", System.currentTimeMillis());
 
