@@ -5,12 +5,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.luckyevent.R;
+import com.example.luckyevent.UserSession;
+import com.squareup.picasso.Picasso;
 
 /**
  * Implements the view profile functionality. displays the users information, such as name, email, and phone number.
@@ -23,6 +26,8 @@ public class ViewProfileActivity extends AppCompatActivity {
     private ProfileController profileController;
     private ProfileSetup profileSetup;
     private Button logOutButton;
+    private ImageView profile;
+    private String imageUrl;
 
     /**
      * Loads the profile information, implements logout, edit and back button functionality
@@ -32,6 +37,12 @@ public class ViewProfileActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_profile);
+
+        profile = findViewById(R.id.imageView);
+        imageUrl = UserSession.getInstance().getProfileUri();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Picasso.get().load(imageUrl).into(profile);
+        }
 
         nameText = findViewById(R.id.nameField);
         emailText = findViewById(R.id.emailField);

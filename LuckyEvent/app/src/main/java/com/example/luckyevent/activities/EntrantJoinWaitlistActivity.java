@@ -14,8 +14,12 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This activity gives the user the option to join the waitlist of the displayed event. The events
@@ -54,13 +58,14 @@ public class EntrantJoinWaitlistActivity extends AppCompatActivity {
     private void addUserToFirestore(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String userId = user.getUid();
+        Map<String, Object> waitlistedEntrant = new HashMap<>();
+        waitlistedEntrant.put("userId", userId);
 
-        db.collection("events")
-                .document(eventID)
-                .update("waitingList", FieldValue.arrayUnion(userId))
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+        db.collection("events").document(eventID).collection("waitingList")
+                .add(waitlistedEntrant)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
-                    public void onSuccess(Void unused) {
+                    public void onSuccess(DocumentReference documentReference) {
                         Toast.makeText(EntrantJoinWaitlistActivity.this,"You have joined the waitlist",Toast.LENGTH_SHORT).show();
                     }
                 })

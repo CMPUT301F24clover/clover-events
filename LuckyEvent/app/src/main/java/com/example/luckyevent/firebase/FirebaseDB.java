@@ -1,20 +1,36 @@
 package com.example.luckyevent.firebase;
 
 import android.content.Context;
+import android.net.Uri;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.example.luckyevent.ScanQR;
 import com.example.luckyevent.fragments.ScanQrFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+
 
 /**
  *This class deals with the login section of the app. It works directly with firestore to store the
@@ -66,9 +82,16 @@ public class FirebaseDB {
                                             loginMap.put("userName", userName);
                                             loginMap.put("firstName",firstName);
                                             loginMap.put("lastName", lastName);
-                                            loginMap.put("userId", userId);// I stored the userId generated from the firebaseAuth
-                                            loginMap.put("role", role);// The only work around for firebase's lack of enums
+                                            loginMap.put("userId", userId); // I stored the userId generated from the firebaseAuth
                                             loginMap.put("hasUserProfile", false);
+
+                                            if (userName.toLowerCase().contains("admin".toLowerCase())) {
+                                                loginMap.put("role", "admin");
+                                            } else {
+                                                loginMap.put("role", role); // The only work around for firebase's lack of enums
+                                            }
+
+
                                         }
                                         else{loginMap.put("userName", userName);
                                             loginMap.put("firstName",firstName);
@@ -240,7 +263,118 @@ public class FirebaseDB {
 
     }
 
+    public interface UploadCallback {
+        void onUploadSuccess();
+        void onUploadFailure(String errorMessage);
+    }
+
+    public interface UpdateProfPicCallBack{
+        void onUpdateSuccess();
+        void onUpdateFailure(String errorMessage);
+    }
+
+    public void uploadProfileToFirebase(Uri imageUri, String userId, UploadCallback callback) {
+        if (firebaseAuth.getCurrentUser() != null) {
+            Log.e("FirebaseDB", "uploadProfileToFirebase: A user is logged in");
+        } else {
+            Log.e("FirebaseDB", "uploadProfileToFirebase: No user is logged in");
+        }
+
+        Log.e("FirebaseDB", "imageUri:" + imageUri);
+        if (imageUri != null) {
+            try {
+                FirebaseStorage storage = FirebaseStorage.getInstance("gs://luckyevent-22fbd.firebasestorage.app");
+                InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
+                String path = "userProfilePics/" + userId;
+                StorageReference storageRef = storage.getReference().child(path);
+
+                assert inputStream != null;
+                storageRef.putStream(inputStream)
+                        .addOnSuccessListener(taskSnapshot -> {
+                            storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                String downloadUrl = uri.toString();
+                                saveProfileToFirestore(downloadUrl, userId);
+                                callback.onUploadSuccess();
+                            });
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e("FirebaseDb", "Error: " + e.getMessage(), e);
+                            callback.onUploadFailure(e.getMessage());
+                        });
+            } catch (FileNotFoundException e) {
+                Log.e("FirebaseDB", "File not found: " + e.getMessage(), e);
+                callback.onUploadFailure(e.getMessage());
+            }
+        } else {
+            Log.e("FirebaseDB", "Image Uri is null.");
+            callback.onUploadFailure("Image Uri is null.");
+        }
+    }
 
 
+    private void saveProfileToFirestore(String downloadUrl, String userId) {
+        Map<String, Object> imageData = new HashMap<>();
+        imageData.put("imageUrl", downloadUrl);
+        db.collection("profileImages").document(userId).set(imageData)
+                .addOnSuccessListener(documentReference ->
+                                Log.e("FirebaseDB","Image URL saved to Firestore")
+                )
+                .addOnFailureListener(e ->
+                        Log.e("FirebaseDB","Failed to save URL to Firestore: " + e.getMessage())
 
+                );
+    }
+
+    public void updateProfilePicture(Uri imageUri, String userId, UpdateProfPicCallBack callBack){
+        try {
+            FirebaseStorage storage = FirebaseStorage.getInstance("gs://luckyevent-22fbd.firebasestorage.app");
+            InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
+            Log.e("FirebaseDB", "updateProfilePicture:" + userId );
+            String path = "userProfilePics/" + userId;
+            StorageReference storageRef = storage.getReference().child(path);
+            storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>(){
+                @Override
+                public void onSuccess(Void unused) {
+                    Log.d("FirebaseDB", "updateProfilePicture: file successfully deleted");
+
+                    storageRef.putStream(inputStream)
+                            .addOnSuccessListener(taskSnapshot -> {
+                                storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                    String downloadUrl = uri.toString();
+                                    db.collection("profileImages").document(userId)
+                                            .delete()
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d("Firestore", "DocumentSnapshot successfully deleted!");
+                                                    saveProfileToFirestore(downloadUrl,userId);
+                                                    callBack.onUpdateSuccess();
+
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w("Firestore", "Error deleting document", e);
+                                                    callBack.onUpdateFailure(e.getMessage());
+                                                }
+                                            });
+
+                                });
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("FirebaseDb", "Error: " + e.getMessage(), e);
+                            });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("FirebaseDB", "updateProfilePicture: Deletion failed");
+                }
+            });
+        }
+        catch (FileNotFoundException e) {
+            Log.e("FirebaseDB", "File not found: " + e.getMessage(), e);
+        }
+    }
 }

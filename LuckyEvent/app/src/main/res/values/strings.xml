@@ -25,7 +25,36 @@
     <string name="notification_title">Notification title</string>
     <string name="notification_description">Notification description</string>
     <string name="organizer_dashboard">Organizer Dashboard</string>
+    <string name="profile_image">Profile image</string>
+    <string name="delete_notification">Delete notification</string>
+    <string name="leave_waiting_list">Leave Waiting List</string>
+    <string name="decline_invitation">Decline Invite</string>
+    <string name="accept_invitation">Accept Invite</string>
+    <string name="enrolled">Enrolled</string>
+    <string name="no_notifications">No notifications</string>
+    <string name="cancel_entrant">Cancel Entrant</string>
+    <string name="sample_new_entrant">Sample New Entrant</string>
+    <string name="no_entrants">No entrants</string>
     <string name="event_details">Event Details</string>
+    <string name="my_facility">My Facility</string>
+    <string name="set_up_your_facility">Set Up Your Facility</string>
+    <string name="facility_name">Name</string>
+    <string name="create_facility">Create Facility</string>
+    <string name="facility_email">Email</string>
+    <string name="your_facility_name">Your Facility Name</string>
+    <string name="your_email_example_org">your.email@example.org</string>
+    <string name="facility_address">Address</string>
+    <string name="your_facility_address">Your Facility Address</string>
+    <string name="facility_phone_optional">Phone (optional)</string>
+    <string name="_123_456_7890">(123) 456-7890</string>
+    <string name="edit_your_facility_profile">Edit Your Facility Profile</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="address">Address</string>
+    <string name="phone">Phone</string>
+    <string name="email">Email</string>
+    <string name="name">Name</string>
+    <string name="edit_facility">Edit Facility</string>
+    <string name="log_out">Log Out</string>
 
 
 </resources>

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.MetadataChanges;
 
 import java.util.ArrayList;
 
@@ -41,7 +43,7 @@ public class DisplayNotificationsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.entrant_list_screen, container, false);
+        View view = inflater.inflate(R.layout.list_screen, container, false);
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
@@ -51,7 +53,7 @@ public class DisplayNotificationsFragment extends Fragment {
 
             ListView listview = view.findViewById(R.id.customListView);
             notifsList = new ArrayList<>();
-            listAdapter = new NotificationListAdapter(getContext(), notifsList);
+            listAdapter = new NotificationListAdapter(getContext(), notifsList, notifRef);
             listview.setAdapter(listAdapter);
 
             Toolbar toolbar = view.findViewById(R.id.topBar);
@@ -59,28 +61,33 @@ public class DisplayNotificationsFragment extends Fragment {
 
             getNotifsList();
 
+            if (notifsList.isEmpty()) {
+                TextView textView = view.findViewById(R.id.text_emptyList);
+                textView.setText(R.string.no_notifications);
+            }
         }
 
         return view;
     }
 
     /**
-     * Retrieves all the documents in a given user's collection of notifications. These documents
+     * Retrieves all the documents in the user's sub-collection of notifications. These documents
      * are used to create a list of Notification objects.
      */
     private void getNotifsList() {
-        reg = notifRef.addSnapshotListener((snapshot, error) -> {
+        reg = notifRef.addSnapshotListener(MetadataChanges.INCLUDE, (snapshot, error) -> {
             notifsList.clear();
             if (error != null) {
                 return;
             }
 
             if (snapshot != null && !snapshot.isEmpty()) {
-                for (DocumentSnapshot notifSnapshot : snapshot.getDocuments()) {
-                    String title = notifSnapshot.getString("title");
-                    String content = notifSnapshot.getString("content");
-                    if (title != null) {
-                        Notification notif = new Notification(title, content);
+                for (DocumentSnapshot notifDocument : snapshot.getDocuments()) {
+                    String notifId = notifDocument.getString("notifId");
+                    String title = notifDocument.getString("title");
+                    String content = notifDocument.getString("content");
+                    if (notifId != null && title != null && content != null) {
+                        Notification notif = new Notification(notifId, title, content);
                         notifsList.add(notif);
                     }
                 }
@@ -95,6 +102,17 @@ public class DisplayNotificationsFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        if (reg != null) {
+            reg.remove();
+        }
+    }
+
+    /**
+     * Removes listener once view is detached from fragment.
+     */
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
         if (reg != null) {
             reg.remove();
         }

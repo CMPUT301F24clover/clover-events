@@ -11,6 +11,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.example.luckyevent.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -160,7 +162,6 @@ public class CreateEventFragment extends Fragment {
         eventInfo.put("sampleSize", selectedSampleSize);
         eventInfo.put("currentWaitList", 0);
         eventInfo.put("organizerId", userID);
-        eventInfo.put("waitingList", Arrays.asList());
         eventInfo.put("status", "active");
         eventInfo.put("createdAt", System.currentTimeMillis());
 
@@ -170,6 +171,7 @@ public class CreateEventFragment extends Fragment {
                     String eventId = documentReference.getId();
                     addEventToProfile(userID, eventId);
                     generateQRCode(eventId);
+                    navigateToEventDetails(eventId);
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(getContext(), "Failed to create event", Toast.LENGTH_SHORT).show();
@@ -182,5 +184,20 @@ public class CreateEventFragment extends Fragment {
                 .update("myEvents", FieldValue.arrayUnion(eventID))
                 .addOnFailureListener(e ->
                         Toast.makeText(getContext(), "Failed to add event to profile", Toast.LENGTH_SHORT).show());
+    }
+
+    private void navigateToEventDetails(String eventId) {
+        EventDetailsFragment eventDetailsFragment = new EventDetailsFragment();
+
+        // Pass the facilityId to the next fragment
+        Bundle bundle = new Bundle();
+        bundle.putString("facilityId", eventId);
+        eventDetailsFragment.setArguments(bundle);
+
+        // Use FragmentTransaction to replace the current fragment
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.OrganizerMenuFragment, eventDetailsFragment);
+        transaction.addToBackStack(null);  // Optional: Add the transaction to the back stack so user can navigate back
+        transaction.commit();
     }
 }
