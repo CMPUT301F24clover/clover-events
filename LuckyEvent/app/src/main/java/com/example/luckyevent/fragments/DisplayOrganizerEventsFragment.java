@@ -22,37 +22,85 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
- * Displays a list of events created by the current organizer. If the organizer clicks on one of
- * the events, they are taken to a screen displaying the selected event's details.
+ * DisplayOrganizerEventsFragment displays a list of events created by the current organizer.
  *
- * @author Mmelve
- * @see EventListAdapter
- * @version 1
- * @since 1
+ * Features:
+ * - Displays all events associated with the logged-in organizer
+ * - Events are sorted by creation date
+ * - Provides navigation to detailed view of each event
+ * - Handles empty state display
+ * @author Mmelve, Tola
+ *
+ * The fragment integrates with Firebase Firestore to fetch event data and
+ * maintains a sorted list of events for display.
  */
 public class DisplayOrganizerEventsFragment extends Fragment {
-    private ArrayList<String> eventIdsList;
-    private ArrayList<String> eventNamesList;
-    private EventListAdapter listAdapter;
-    private FirebaseFirestore db;
-    private DocumentReference orgDocRef;
-    private String selectedEventId;
+    // Lists to store event data
+    private ArrayList<String> eventIdsList;        // Stores event IDs from user profile
+    private ArrayList<EventListAdapter.EventItem> eventItems;  // Stores complete event objects
+    private EventListAdapter listAdapter;          // Adapter for ListView display
 
+    // Firebase references
+    private FirebaseFirestore db;                  // Firestore database instance
+    private DocumentReference orgDocRef;           // Reference to organizer's profile document
+
+    // Navigation data
+    private String selectedEventId;                // Currently selected event for navigation
+
+    /**
+     * Creates and initializes the fragment's view hierarchy.
+     * Sets up the ListView, adapter, and Firebase connections.
+     */
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_screen, container, false);
 
-        ListView listView = view.findViewById(R.id.customListView);
-        eventNamesList = new ArrayList<>();
-        listAdapter = new EventListAdapter(getContext(), eventNamesList);
-        listView.setAdapter(listAdapter);
+        // Initialize ListView and adapter
+        setupListView(view);
 
+        // Set toolbar title
         Toolbar toolbar = view.findViewById(R.id.topBar);
         toolbar.setTitle("My Events");
 
+        // Initialize Firebase connection and load data
+        initializeFirebase();
+
+        // Show empty state if no events exist
+        if (eventItems.isEmpty()) {
+            TextView textView = view.findViewById(R.id.text_emptyList);
+            textView.setText("No events");
+        }
+
+        return view;
+    }
+
+    /**
+     * Sets up the ListView with its adapter and click listener
+     * @param view The root view containing the ListView
+     */
+    private void setupListView(View view) {
+        ListView listView = view.findViewById(R.id.customListView);
+        eventItems = new ArrayList<>();
+        listAdapter = new EventListAdapter(getContext(), eventItems);
+        listView.setAdapter(listAdapter);
+
+        // Setup click listener for navigation to event details
+        listView.setOnItemClickListener((parent, view1, position, id) -> {
+            selectedEventId = eventItems.get(position).getEventId();
+            goToEventDetails();
+        });
+    }
+
+    /**
+     * Initializes Firebase connections and starts data loading
+     * if user is authenticated
+     */
+    private void initializeFirebase() {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
             String organizerId = firebaseUser.getUid();
@@ -61,22 +109,11 @@ public class DisplayOrganizerEventsFragment extends Fragment {
 
             getEventIdsList();
         }
-
-        if (eventNamesList.isEmpty()) {
-            TextView textView = view.findViewById(R.id.text_emptyList);
-            textView.setText("No events");
-        }
-
-        listView.setOnItemClickListener((parent, view1, position, id) -> {
-            selectedEventId = eventIdsList.get(position);
-            goToEventDetails();
-        });
-
-        return view;
     }
 
     /**
-     * Retrieves the organizer's list of eventIds from their profile document.
+     * Retrieves the list of event IDs from the organizer's profile
+     * Triggers event details fetch if successful
      */
     private void getEventIdsList() {
         orgDocRef.get().addOnCompleteListener(task -> {
@@ -85,9 +122,10 @@ public class DisplayOrganizerEventsFragment extends Fragment {
                 if (snapshot.exists()) {
                     eventIdsList = (ArrayList<String>) snapshot.get("myEvents");
                     if (eventIdsList != null) {
-                        getEventNamesList();
+                        getEventDetails();
                     } else {
-                        Toast.makeText(getContext(), "myEvents list does not exist.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "myEvents list does not exist.",
+                                Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -95,18 +133,32 @@ public class DisplayOrganizerEventsFragment extends Fragment {
     }
 
     /**
-     * Uses the list of eventIds to get information about each event in the database. With this
-     * information, we can create a list of event names.
+     * Fetches detailed information for each event in the eventIdsList
+     * Updates the UI with sorted event items as they are retrieved
+     *
+     * Note: Events are sorted by creation timestamp to maintain consistent ordering
      */
-    private void getEventNamesList() {
-        eventNamesList.clear();
-        for (String id: eventIdsList) {
+    private void getEventDetails() {
+        eventItems.clear();
+        for (String id : eventIdsList) {
             db.collection("events").document(id).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     DocumentSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
-                        String eventName = (String) snapshot.get("eventName");
-                        eventNamesList.add(eventName);
+                        // Extract event details
+                        String eventName = snapshot.getString("eventName");
+                        Long createdAt = snapshot.getLong("createdAt");
+                        if (createdAt == null) {
+                            createdAt = System.currentTimeMillis(); // Fallback timestamp
+                        }
+
+                        // Create and add new event item
+                        EventListAdapter.EventItem eventItem =
+                                new EventListAdapter.EventItem(id, eventName, createdAt);
+                        eventItems.add(eventItem);
+
+                        // Sort events by creation time and update UI
+                        Collections.sort(eventItems);
                         listAdapter.notifyDataSetChanged();
                     }
                 }
@@ -115,8 +167,8 @@ public class DisplayOrganizerEventsFragment extends Fragment {
     }
 
     /**
-     * Transitions to the next fragment. A bundle containing the eventId is passed so that the
-     * next fragment can display the associated event's information.
+     * Navigates to the EventDetailsFragment for the selected event
+     * Passes the event ID through a bundle for the destination fragment
      */
     private void goToEventDetails() {
         Bundle bundle = new Bundle();
