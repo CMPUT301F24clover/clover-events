@@ -31,9 +31,20 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Displays the ui elements that are needed for the deletion of profiles by the administrator
+ * This fragments modifies the target document's fields to accomplish this
+ *
+ * @author Seyi
+ * @see UserSession
+ * @see AdminMenuActivity
+
+ * @version 1
+ * @since 1
+ */
 public class AdminProfilesFragment extends Fragment {
     private static final String TAG = "AdminProfileFragment";
-    private ArrayList<String> documentIds = new ArrayList<>();
     private FirebaseFirestore db;
     private List<Profile> userList;
     private ProfileListAdapter adapter;
@@ -44,17 +55,16 @@ public class AdminProfilesFragment extends Fragment {
         userList = new ArrayList<>();
         db = FirebaseFirestore.getInstance();
 
+        // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.admin_edit_profile_page, container, false);
+
+        // Initialize the variables according to their corresponding UI elements
         ListView listView = rootView.findViewById(R.id.profile_listview);
         SearchView searchView = rootView.findViewById(R.id.searchView);
         adapter = new ProfileListAdapter(requireContext(), userList);
         listView.setAdapter(adapter);
 
-        FirebaseStorage storage = FirebaseStorage.getInstance("gs://luckyevent-22fbd.firebasestorage.app");
-        StorageReference storageRef = storage.getReference().child("userProfilePics");
-
-
-
+        // Get all the documents that have their role field as entrant
         db.collection("loginProfile")
                 .whereEqualTo("role", "entrant")
                 .get()
@@ -62,6 +72,7 @@ public class AdminProfilesFragment extends Fragment {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
                         Log.d(TAG, "fetchProfiles: Got a profile");
                         List<DocumentSnapshot> documents = task.getResult().getDocuments();
+                        // For each document retrieved, use the fields to create a new profile and add that profile into a userList
                         for(DocumentSnapshot document :documents){
                             String userName = document.getString("userName");
                             String firstName = document.getString("firstName");
@@ -78,13 +89,17 @@ public class AdminProfilesFragment extends Fragment {
                 .addOnFailureListener(task -> {
                     Log.e(TAG, "fetchProfiles: Failed to get profile", task);
                 });
+
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            // By default when the query is submitted, filter the adapter by username
             @Override
             public boolean onQueryTextSubmit(String query) {
                 adapter.filterByUserName(query);
                 return true;
             }
 
+            // By default when the query text is changed, filter the adapter by username
             @Override
             public boolean onQueryTextChange(String newText) {
                 adapter.filterByUserName(newText);
@@ -96,29 +111,4 @@ public class AdminProfilesFragment extends Fragment {
         return rootView;
     }
 
-    public void fetchProfiles(){
-        for (String userName : documentIds) {
-            db.collection("loginProfile")
-                    .whereEqualTo("userName", userName)
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                            Log.d(TAG, "fetchProfiles: Got a profile");
-                            DocumentSnapshot document = task.getResult().getDocuments().get(0);
-                            String firstName = document.getString("firstName");
-                            String lastName = document.getString("lastName");
-                            String userId = document.getString("userId");
-
-                            userList.add(new Profile(userName, firstName, lastName, userId));
-                            adapter.notifyDataSetChanged();
-
-                            Log.d(TAG, "fetchProfiles: userList size = " + userList.size());
-                            Log.d(TAG, "fetchProfiles: adapter size = " + adapter.getCount());
-                        }
-                    })
-                    .addOnFailureListener(task -> {
-                        Log.e(TAG, "fetchProfiles: Failed to get profile", task);
-                    });
-        }
-    }
 }

@@ -57,7 +57,7 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
 
         firebaseDB = new FirebaseDB(this);
 
-        /**
+        /*
          * Takes the text from the fields provided and signs up the user as an organizer. The organizer sign up
          * functionality is handled by FirebaseDB's signup function. The user is redirected to the OrganizerMenuActivity
          * when successfully registered
@@ -88,11 +88,12 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
                     firebaseDB.signUp(userNameInput, passwordInput, firstNameInput, lastNameInput, "organizer", organizerNameInput, facilityCodeInput, new FirebaseDB.SignInCallback() {
                         @Override
                         public void onSuccess() {
-                            //gets the currently signed in user
+                            // Gets the currently signed in user
                             FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                             String userId = firebaseUser.getUid();
                             UserSession.getInstance().setUserId(userId);
 
+                            // Stores the user information into the UserSession class if the sign in was successful
                             db.collection("loginProfile")
                                     .whereEqualTo("userId", userId)
                                     .get()
@@ -125,8 +126,8 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
             }
         });
 
-        /**
-         *Navigates to the previous activity when pressed (OrganizerSignInActivity)
+        /*
+         * Navigates to the previous activity when pressed (OrganizerSignInActivity)
          */
         gobackButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -39,7 +39,7 @@ public class RegisterDeviceActivity extends AppCompatActivity {
         gobackButton = findViewById(R.id.previousIcon);
         firebaseDB = new FirebaseDB(this);
 
-        /**
+        /*
          * Registers the users device device when clicked. This is done with the help of the deviceSignIn
          * function from the FireBaseDB class. The class uses the device id to sign in if the id is in the database, otherwise
          * a new account is created. Successfully registering the device navigates to the next activity (MenuActivity)
@@ -57,7 +57,7 @@ public class RegisterDeviceActivity extends AppCompatActivity {
 
                         Intent intent = new Intent(RegisterDeviceActivity.this, MenuActivity.class);
                         startActivity(intent);
-                        finish(); // Optional
+                        finish();
                     }
 
                     @Override
@@ -68,7 +68,7 @@ public class RegisterDeviceActivity extends AppCompatActivity {
             }
         });
 
-        /**
+        /*
          * Goes back to the previous activity when clicked (RegisterDeviceActivity)
          */
         gobackButton.setOnClickListener(new View.OnClickListener() {
