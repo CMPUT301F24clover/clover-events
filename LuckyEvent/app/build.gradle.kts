@@ -35,6 +35,7 @@ android {
 
 dependencies {
     implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.core)
     implementation("com.github.bumptech.glide:glide:4.12.0")
@@ -57,10 +58,12 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
     implementation("com.google.firebase:firebase-firestore:24.5.0")
+    implementation("com.google.code.gson:gson:2.10.1")
     testImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.test:core:1.6.1")
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.test:rules:1.6.1")
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
