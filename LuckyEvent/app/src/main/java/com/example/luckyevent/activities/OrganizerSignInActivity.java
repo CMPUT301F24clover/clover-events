@@ -55,7 +55,7 @@ public class OrganizerSignInActivity extends AppCompatActivity {
         signInButton = findViewById(R.id.SignInButton);
         gobackButton = findViewById(R.id.previousIcon);
 
-        /**
+        /*
          *When clicked, this activity collects all the text provided in the field and signs in using FireBaseDB's
          * SignIn function. It navigates to the OrganizerMenuActivity when it has successfully registered
          */
@@ -132,7 +132,7 @@ public class OrganizerSignInActivity extends AppCompatActivity {
             }
         });
 
-        /**
+        /*
          *When clicked, this activity navigates to the OrganizerSignUpActivity. The user can sign up
          * as an organizer in that activity
          */
@@ -145,7 +145,7 @@ public class OrganizerSignInActivity extends AppCompatActivity {
             }
         });
 
-        /**
+        /*
          *When clicked, this activity navigates to the previous activity (LoginActivity)
          */
         gobackButton.setOnClickListener(new View.OnClickListener() {

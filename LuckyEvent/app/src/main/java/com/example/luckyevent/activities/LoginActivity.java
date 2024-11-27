@@ -29,7 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * @see UserSession
  * @see FirebaseDB
 
- * @version 1
+ * @version 2
  * @since 1
  */
 public class LoginActivity extends AppCompatActivity {
@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
 
         signInButton.setOnClickListener(new View.OnClickListener() {
             /**
-             *When clicked, the activity uses FireBaseDB's SignIn function to sign in the user using the
+             * When clicked, the activity uses FireBaseDB's SignIn function to sign in the user using the
              * fields provided. It navigates to the MenuActivity if it is successful in signing the user
              */
             @Override
@@ -95,7 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                     firebaseDB.signIn(userInput, passwordInput, new FirebaseDB.SignInCallback() {
                         @Override
                         public void onSuccess() {
-                            //gets the currently signed in user
+                            // Gets the user id of the currently signed in user and stores it for future reference
                             FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                             String userId = firebaseUser.getUid();
                             Log.d("LoginActivity", "User ID: " + userId);
@@ -106,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                                     .get()
                                     .addOnCompleteListener(task -> {
                                         if (task.isSuccessful() && !task.getResult().isEmpty()) {
-
+                                            // Gets the user details out of the target document and stores it for future refenrce
                                             DocumentSnapshot document = task.getResult().getDocuments().get(0);
                                             String firstName = document.getString("firstName");
                                             String userName = document.getString("userName");
@@ -115,12 +115,14 @@ public class LoginActivity extends AppCompatActivity {
                                             UserSession.getInstance().setFirstName(firstName);
                                             UserSession.getInstance().setUserName(userName);
 
+                                            // Retrieves the user's profile picture if the user is an entrant
                                             if (role.equals("entrant")) {
                                                 db.collection("profileImages")
                                                         .document(document.getString("userId"))
                                                         .get()
                                                         .addOnCompleteListener(task1 -> {
                                                             if (task1.isSuccessful() && task1.getResult() != null) {
+                                                                // Retrieves the image url from the target document and stores it for future refence
                                                                 DocumentSnapshot imageDocument = task1.getResult();
                                                                 String imageUrl = imageDocument.getString("imageUrl");
                                                                 UserSession.getInstance().setProfileUri(imageUrl);
@@ -165,7 +167,7 @@ public class LoginActivity extends AppCompatActivity {
         signUpButton = findViewById(R.id.SignUpButton);
         signUpButton.setOnClickListener(new View.OnClickListener(){
             /**
-             *Navigates to the EntrantSignUp Activity when clicked
+             * Navigates to the EntrantSignUp Activity when clicked
              */
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, EntrantSignUpActivity.class);
@@ -178,7 +180,7 @@ public class LoginActivity extends AppCompatActivity {
         registerText = findViewById(R.id.RegisterText);
         registerText.setOnClickListener(new View.OnClickListener() {
             /**
-             *Navigates to the RegisterDeviceActivity when clicked
+             * Navigates to the RegisterDeviceActivity when clicked
              */
             @Override
             public void onClick(View v) {
@@ -191,7 +193,7 @@ public class LoginActivity extends AppCompatActivity {
         organizerText = findViewById(R.id.OrganizerText);
         organizerText.setOnClickListener(new View.OnClickListener() {
             /**
-             *Navigates to the OrganizerSignInActivity when clicked
+             * Navigates to the OrganizerSignInActivity when clicked
              */
             @Override
             public void onClick(View v) {

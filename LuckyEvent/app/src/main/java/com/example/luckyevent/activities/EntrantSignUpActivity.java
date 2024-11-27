@@ -28,6 +28,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * This activity displays the ui elements needed for the registration of entrants into the system
+ * A profile picture is generated alongside the user's details, if profile picture is not provided
+ * The user's details and profile picture is stored via firestore and firebase storage
+ *
+ * @author Seyi
+ * @see FirebaseDB,UserSession
+ * @version 2
+ * @since 1
+ */
 public class EntrantSignUpActivity extends AppCompatActivity {
     private androidx.appcompat.widget.AppCompatButton signUpButton;
     private EditText userName;
@@ -43,7 +53,10 @@ public class EntrantSignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Initialize the firebaseDB variable
         firebaseDB = new FirebaseDB(this);
+
+        // Initialize the variables representing the ui elements
         setContentView(R.layout.screen_template_entrant_signup);
         userName = findViewById(R.id.SignUpUsernameInput);
         password = findViewById(R.id.SignUpPasswordInput);
@@ -53,6 +66,8 @@ public class EntrantSignUpActivity extends AppCompatActivity {
         profileImage = findViewById(R.id.profile_image);
 
         signUpButton = findViewById(R.id.SignUpButton);
+
+        // When clicked, check if the necessary fields filled and sign in
         signUpButton.setOnClickListener(view -> {
             String userNameInput = userName.getText().toString().trim();
             String passwordInput = password.getText().toString().trim();
@@ -71,11 +86,13 @@ public class EntrantSignUpActivity extends AppCompatActivity {
             }
         });
 
+        // When clicked go back to the previous activity (LoginActivity)
         gobackButton.setOnClickListener(v -> {
             startActivity(new Intent(EntrantSignUpActivity.this, LoginActivity.class));
             finish();
         });
 
+        // When clicked prompt the user to select
         FloatingActionButton addImageButton = findViewById(R.id.button_add_image);
         addImageButton.setOnClickListener(view -> {
             Intent intent = new Intent();
@@ -95,6 +112,12 @@ public class EntrantSignUpActivity extends AppCompatActivity {
         }
     }
 
+    /**
+    * This method generates a profile image using a the initials of user
+    * This was done with the help of the picasso api
+    * @param initials This a string that contains the first letter of the users username
+     * @param callback This is a callback that is used to inform other methods if the generate default image was successful
+    */
     public void generateDefaultProfileImage(String initials, ProfileImageCallback callback) {
         String avatarUrl = "https://ui-avatars.com/api/?name=" + initials + "&size=128&background=0D8ABC&color=fff";
 
@@ -127,16 +150,29 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * This method signs up the entrant by storing all the provided info into firestore and firebase storage
+     * FirebaseAuth is also utilized in the account creation process
+     * The user is redirected to the homepage if the sign up process was successful
+     * @param userName This string contains the username of the user
+     * @param password This sting contains the password inputted by the user
+     * @param firstName This string contains the user's firstname
+     * @param lastName This string contains the user's lastname
+     * @param initials This string contains the first letter of the user's username
+     */
     private void signUpUser(String userName, String password, String firstName, String lastName, String initials) {
         firebaseDB.signUp(userName, password, firstName, lastName, "entrant", null, null, new FirebaseDB.SignInCallback() {
             @Override
             public void onSuccess() {
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                // Stores the user's info into an instance of the user session class
+                //
                 UserSession.getInstance().setUserId(firebaseUser.getUid());
                 UserSession.getInstance().setFirstName(firstName);
                 UserSession.getInstance().setUserName(userName);
 
                 if (imageUri == null) {
+                    // Generates a default profile image if the user is unable to provide one
                     generateDefaultProfileImage(initials, new ProfileImageCallback() {
                         @Override
                         public void onImageGenerated(Uri generatedUri) {
@@ -145,10 +181,13 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                                 public void onUploadSuccess() {
                                     Log.e("EntrantSignUp", "Upload successful. Proceeding to sign up.");
                                     UserSession.getInstance().setProfileUri(generatedUri.toString());
+
+                                    // Handles the case where the user is an admin
                                     if (userName.toLowerCase().contains("admin".toLowerCase())) {
                                         startActivity(new Intent(EntrantSignUpActivity.this, AdminMenuActivity.class));
                                         finish();
-                                    } else {
+                                    }
+                                    else {
                                         startActivity(new Intent(EntrantSignUpActivity.this, MenuActivity.class));
                                         finish();
                                     }
@@ -168,12 +207,14 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                         }
                     });
                 } else {
+                    // Uses the provide profile picture to sign up the user
                     Log.e("EntrantSignUp", "imageUri:" + imageUri);
                     firebaseDB.uploadProfileToFirebase(imageUri, firebaseUser.getUid(), new FirebaseDB.UploadCallback() {
                         @Override
                         public void onUploadSuccess() {
                             UserSession.getInstance().setProfileUri(imageUri.toString());
 
+                            // Handles the case where the user is an admin
                             if (userName.toLowerCase().contains("admin".toLowerCase())) {
                                 startActivity(new Intent(EntrantSignUpActivity.this, AdminMenuActivity.class));
                                 finish();
@@ -198,6 +239,10 @@ public class EntrantSignUpActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This method uses the string provided to show a toast on the current screen
+     * @param message This is a string that contains the message that is to be displayed
+    * */
     private void showToast(String message) {
         new Handler(Looper.getMainLooper()).post(() ->
                 Toast.makeText(EntrantSignUpActivity.this, message, Toast.LENGTH_SHORT).show()
