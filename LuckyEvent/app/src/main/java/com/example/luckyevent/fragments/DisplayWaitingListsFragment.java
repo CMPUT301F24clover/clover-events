@@ -1,5 +1,6 @@
 package com.example.luckyevent.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.example.luckyevent.R;
 import com.example.luckyevent.WaitingList;
 import com.example.luckyevent.WaitingListAdapter;
+import com.example.luckyevent.activities.EntrantEventDetailsActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -51,13 +53,18 @@ public class DisplayWaitingListsFragment extends Fragment {
             String entrantId = firebaseUser.getUid();
             eventsJoinedRef = db.collection("loginProfile").document(entrantId).collection("eventsJoined");
 
+            Toolbar toolbar = view.findViewById(R.id.topBar);
+            toolbar.setTitle("My Waiting Lists");
+
             ListView listView = view.findViewById(R.id.customListView);
             waitingLists = new ArrayList<>();
             listAdapter = new WaitingListAdapter(getContext(), waitingLists);
             listView.setAdapter(listAdapter);
 
-            Toolbar toolbar = view.findViewById(R.id.topBar);
-            toolbar.setTitle("My Waiting Lists");
+            listView.setOnItemClickListener((parent, v, position, id) -> {
+                String selectedEventId = waitingLists.get(position).getEventId();
+                goToEventDetails(selectedEventId);
+            });
 
             getWaitingLists();
 
@@ -108,12 +115,18 @@ public class DisplayWaitingListsFragment extends Fragment {
             if (task.isSuccessful()) {
                 DocumentSnapshot snapshot = task.getResult();
                 if (snapshot.exists()) {
-                    WaitingList waitingList = new WaitingList((String) snapshot.get("eventName"), (String) snapshot.get("dateTime"), (String) snapshot.get("description"), status);
+                    WaitingList waitingList = new WaitingList(eventId, (String) snapshot.get("eventName"), (String) snapshot.get("dateTime"), (String) snapshot.get("description"), status);
                     waitingLists.add(waitingList);
                     listAdapter.notifyDataSetChanged();
                 }
             }
         });
+    }
+
+    private void goToEventDetails(String selectedEventId) {
+        Intent intent = new Intent(getActivity(), EntrantEventDetailsActivity.class);
+        intent.putExtra("eventId", selectedEventId);
+        startActivity(intent);
     }
 
     /**

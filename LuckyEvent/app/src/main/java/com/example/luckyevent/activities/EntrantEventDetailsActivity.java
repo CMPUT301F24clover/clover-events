@@ -1,9 +1,11 @@
 package com.example.luckyevent.activities;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,16 +15,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.luckyevent.QRDownloadService;
 import com.example.luckyevent.R;
 import com.example.luckyevent.fragments.ScanQrFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Transaction;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * EntrantEventDetailsActivity handles the display and interaction with event details for entrants.
@@ -35,7 +43,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * The activity integrates with Firebase Firestore for data persistence and
  * Google's location services for geolocation features.
  *
- * @author Aagam, Tola, Amna
+ * @author Aagam, Tola, Amna, Mmelve
  * @see ScanQrFragment
  * @version 2
  * @since 1
@@ -51,9 +59,16 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
     private TextView capacityView;
     private TextView descriptionView;
     private MaterialButton joinButton;
+    private MaterialButton leaveButton;
+    private MaterialButton acceptInviteButton;
+    private MaterialButton declineInviteButton;
+    private TextView invitationResponse;
 
     // Firebase and Location Services
     private FirebaseFirestore db;
+    private FirebaseUser user;
+    private String userId;
+    private CollectionReference eventsJoinedRef;
     private FusedLocationProviderClient fusedLocationClient;
 
     // Event Data
@@ -73,9 +88,8 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
 
         // Initialize Firebase and location services
         db = FirebaseFirestore.getInstance();
+        user = FirebaseAuth.getInstance().getCurrentUser();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        initializeViews();
 
         // Get and validate event ID from intent
         eventId = getIntent().getStringExtra("eventId");
@@ -85,21 +99,114 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
             return;
         }
 
+        initializeViews();
+
         loadEventDetails();
     }
 
     /**
-     * Initializes all UI components and sets up click listeners
+     * Initializes all UI components
      */
     private void initializeViews() {
+        Log.d(TAG, "Initializing views");
         eventTitleView = findViewById(R.id.textView_eventTitle);
         dateTimeView = findViewById(R.id.textView_dateTime);
         locationView = findViewById(R.id.textView_location);
         capacityView = findViewById(R.id.textView_capacity);
         descriptionView = findViewById(R.id.textView_description);
         joinButton = findViewById(R.id.button_join);
+        leaveButton = findViewById(R.id.button_leave);
+        acceptInviteButton = findViewById(R.id.button_acceptInvitation);
+        declineInviteButton = findViewById(R.id.button_declineInvitation);
+        invitationResponse = findViewById(R.id.textView_invitationResponse);
 
-        joinButton.setOnClickListener(v -> handleJoinButtonClick());
+        setButtons();
+    }
+
+    /**
+     * Finds the waiting list status of the user, which is used to determine which buttons should be
+     * made available to them.
+     */
+    private void setButtons() {
+        if (user != null) {
+            userId = user.getUid();
+            Log.d(TAG, "Here is the user ID: " + userId);
+            Log.d(TAG, "Here is the event ID: " + eventId);
+
+            eventsJoinedRef = db.collection("loginProfile").document(userId).collection("eventsJoined");
+
+            eventsJoinedRef.document(eventId).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "Task successful");
+                    if (task.getResult().exists()) {
+                        Log.d(TAG, "Task result exists");
+                        String status = task.getResult().getString("status");
+                        Log.d(TAG, "Here is the status: " + status);
+                        setButtonCases(status);
+                    } else {
+                        Log.d(TAG, "Task not successful");
+                        setButtonCases("n/a");
+                    }
+                }
+            });
+        } else {
+            setButtonsVisibility(View.VISIBLE, View.GONE, View.GONE, View.GONE, null);
+            joinButton.setOnClickListener(v -> Toast.makeText(this, "User must be logged in to join waiting list", Toast.LENGTH_SHORT).show());
+        }
+    }
+
+    /**
+     * Determines which buttons should be made available to the user based on their waiting list
+     * status. Also, sets up button click events so the user can interact with the waiting
+     * list/event.
+     * @param status The parameter that determines how the user can interact with the waiting list
+     *               and what buttons are made available to them.
+     */
+    private void setButtonCases(String status) {
+        switch (status) {
+            case "Waitlisted":
+                setButtonsVisibility(View.GONE, View.VISIBLE, View.GONE, View.GONE, null);
+                leaveButton.setOnClickListener(v -> leaveWaitListAlert());
+                break;
+            case "Chosen":
+                setButtonsVisibility(View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, null);
+                acceptInviteButton.setOnClickListener(v -> acceptInviteAlert());
+                declineInviteButton.setOnClickListener(v -> declineInviteAlert());
+                break;
+            case "Enrolled":
+                setButtonsVisibility(View.GONE, View.GONE, View.GONE, View.GONE, "Enrolled");
+                invitationResponse.setTextColor(ContextCompat.getColor(this, R.color.green));
+                break;
+            case "Declined":
+                setButtonsVisibility(View.GONE, View.GONE, View.GONE, View.GONE, "Declined");
+                invitationResponse.setTextColor(ContextCompat.getColor(this, R.color.black));
+                break;
+            case "n/a":
+                setButtonsVisibility(View.VISIBLE, View.GONE, View.GONE, View.GONE, null);
+                joinButton.setOnClickListener(v -> handleJoinButtonClick());
+                break;
+        }
+    }
+
+    /**
+     * Sets the visibility of all the buttons.
+     * @param joinButtonVisibility The visibility of the Join Waiting List button.
+     * @param leaveButtonVisibility The visibility of the Leave Waiting List button.
+     * @param acceptButtonVisibility The visibility of the Accept Invitation button.
+     * @param declineButtonVisibility The visibility of the Decline Invitation button.
+     * @param response The text that reiterates whether the user accepts or declines the invitation.
+     */
+    private void setButtonsVisibility(int joinButtonVisibility, int leaveButtonVisibility, int acceptButtonVisibility, int declineButtonVisibility, String response) {
+        joinButton.setVisibility(joinButtonVisibility);
+        leaveButton.setVisibility(leaveButtonVisibility);
+        acceptInviteButton.setVisibility(acceptButtonVisibility);
+        declineInviteButton.setVisibility(declineButtonVisibility);
+        if (response != null) {
+            invitationResponse.setText(response);
+            invitationResponse.setVisibility(View.VISIBLE);
+        } else {
+            invitationResponse.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -143,32 +250,6 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
         dateTimeView.setText(date);
         descriptionView.setText(description);
         capacityView.setText(String.format("Waiting List: %d/%d", currentWaitList, waitListSize));
-
-        // Check user's waiting list status
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        db.collection("events")
-                .document(eventId)
-                .collection("waitingList")
-                .document(userId)
-                .get()
-                .addOnSuccessListener(waitlistDoc -> {
-                    if (waitlistDoc.exists()) {
-                        joinButton.setEnabled(false);
-                        joinButton.setText("Already in Waiting List");
-                    } else {
-                        setupJoinButton();
-                    }
-                });
-    }
-
-    /**
-     * Configures join button state based on waiting list capacity
-     */
-    private void setupJoinButton() {
-        if (currentWaitList >= waitListSize) {
-            joinButton.setEnabled(false);
-            joinButton.setText("Waiting List Full");
-        }
     }
 
     /**
@@ -241,51 +322,139 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
     }
 
     /**
-     * Adds user to event waiting list using a Firestore transaction
-     * Updates both waiting list collection and event document atomically
+     * Adds user to event waiting list using a Firestore transaction.
+     * Updates the event's waiting list sub-collection, event document, and the user's events
+     * joined sub-collection atomically.
      *
-     * @param latitude User's latitude (null if geolocation not required)
-     * @param longitude User's longitude (null if geolocation not required)
+     * @param latitude User's latitude (null if geolocation not required).
+     * @param longitude User's longitude (null if geolocation not required).
      */
     private void joinWaitList(Double latitude, Double longitude) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        db.runTransaction((Transaction.Function<Void>) transaction -> {
+            // Prepare data that will be added to event's waiting list
+            Map<String, Object> waitingListEntry = new HashMap<>();
+            waitingListEntry.put("userId", userId);
+            if (latitude != null && longitude != null) {
+                waitingListEntry.put("latitude", latitude);
+                waitingListEntry.put("longitude", longitude);
+            }
 
-        // Prepare waiting list entry data
-        java.util.Map<String, Object> waitingListEntry = new java.util.HashMap<>();
-        waitingListEntry.put("userId", userId);
-        if (latitude != null && longitude != null) {
-            waitingListEntry.put("latitude", latitude);
-            waitingListEntry.put("longitude", longitude);
-        }
+            // Prepare data that will be added to a user's joined events
+            Map<String, Object> eventJoinedEntry = new HashMap<>();
+            eventJoinedEntry.put("eventId", eventId);
+            eventJoinedEntry.put("status", "Waitlisted");
 
-        // Execute transaction to update both documents atomically
-        db.runTransaction(transaction -> {
-            // Add to waitingList collection
-            transaction.set(
-                    db.collection("events")
-                            .document(eventId)
-                            .collection("waitingList")
-                            .document(userId),
-                    waitingListEntry
-            );
-
-            // Update waiting list counter
-            transaction.update(
-                    db.collection("events").document(eventId),
-                    "currentWaitList", FieldValue.increment(1)
-            );
+            // Execute transaction to update all documents atomically
+            DocumentReference eventRef = db.collection("events").document(eventId);
+            transaction.set(eventRef.collection("waitingList").document(userId), waitingListEntry);
+            transaction.update(eventRef, "currentWaitList", FieldValue.increment(1));
+            transaction.set(eventsJoinedRef.document(eventId), eventJoinedEntry);
 
             return null;
-        }).addOnSuccessListener(aVoid -> {
+        }).addOnSuccessListener(result -> {
+            Toast.makeText(EntrantEventDetailsActivity.this, "Successfully joined waiting list", Toast.LENGTH_SHORT).show();
+
             // Update UI on successful join
-            Toast.makeText(this, "Successfully joined waiting list", Toast.LENGTH_SHORT).show();
-            joinButton.setEnabled(false);
-            joinButton.setText("Already in Waiting List");
             currentWaitList++;
             capacityView.setText(String.format("Waiting List: %d/%d", currentWaitList, waitListSize));
-        }).addOnFailureListener(e -> {
-            Log.e(TAG, "Failed to join waiting list", e);
-            Toast.makeText(this, "Failed to join waiting list", Toast.LENGTH_SHORT).show();
-        });
+            setButtonCases("Waitlisted");
+        }).addOnFailureListener(e ->Toast.makeText(EntrantEventDetailsActivity.this, "Failed to join waiting list", Toast.LENGTH_SHORT).show());
+    }
+
+    /**
+     * Displays an alert confirming that a user wants to leave the waiting list.
+     */
+    private void leaveWaitListAlert() {
+        new AlertDialog.Builder(this)
+                .setTitle("Leave Waiting List Confirmation")
+                .setMessage("Are you sure you want to leave the waiting list?")
+                .setPositiveButton("Yes", ((dialog, which) -> leaveWaitList()))
+                .setNegativeButton("No", ((dialog, which) -> dialog.dismiss()))
+                .show();
+    }
+
+    /**
+     * Removes the user from the event's waiting list sub-collection, removes the event from the
+     * user's events joined sub-collection, and updates the number of entrants in the waiting list.
+     */
+    private void leaveWaitList() {
+        db.runTransaction((Transaction.Function<Void>) transaction -> {
+            DocumentReference eventRef = db.collection("events").document(eventId);
+            transaction.delete(eventRef.collection("waitingList").document(userId));
+            transaction.update(eventRef, "currentWaitList", FieldValue.increment(-1));
+            transaction.delete(eventsJoinedRef.document(eventId));
+            return null;
+        }).addOnSuccessListener(result -> {
+            Toast.makeText(EntrantEventDetailsActivity.this, "You have left the waiting list", Toast.LENGTH_SHORT).show();
+            currentWaitList--;
+            capacityView.setText(String.format("Waiting List: %d/%d", currentWaitList, waitListSize));
+            setButtonCases("n/a");
+        }).addOnFailureListener(e -> Toast.makeText(EntrantEventDetailsActivity.this, "Failed to leave the waitlist", Toast.LENGTH_SHORT).show());
+    }
+
+    /**
+     * Displays an alert confirming that a user wants to accept the invite to sign up for the event.
+     */
+    private void acceptInviteAlert() {
+        new AlertDialog.Builder(this)
+                .setTitle("Accept Invitation Confirmation")
+                .setMessage("Would you like to accept the invitation to sign up for the event?")
+                .setPositiveButton("Yes", ((dialog, which) -> acceptInvite()))
+                .setNegativeButton("No", ((dialog, which) -> dialog.dismiss()))
+                .show();
+    }
+
+    /**
+     * Updates the invitation status of the user in the event's chosen entrants sub-collection and
+     * the status of the event in the user's events joined sub-collection to reflect the accepted
+     * invite.
+     */
+    private void acceptInvite() {
+        db.runTransaction((Transaction.Function<Void>) transaction -> {
+            DocumentReference entrantRef = db.collection("events")
+                    .document(eventId).collection("chosenEntrants").document(userId);
+
+            DocumentReference joinedEventRef = eventsJoinedRef.document(eventId);
+
+            transaction.update(entrantRef, "invitationStatus", "Enrolled");
+            transaction.update(joinedEventRef, "status", "Enrolled");
+            return null;
+        }).addOnSuccessListener(result -> {
+            Toast.makeText(EntrantEventDetailsActivity.this, "You have accepted the invitation and signed up", Toast.LENGTH_SHORT).show();
+            setButtonCases("Enrolled");
+        }).addOnFailureListener(e -> Toast.makeText(EntrantEventDetailsActivity.this, "Failed to accept the invitation", Toast.LENGTH_SHORT).show());
+    }
+
+    /**
+     * Displays an alert confirming that a user wants to decline the invite to sign up for the event.
+     */
+    private void declineInviteAlert() {
+        new AlertDialog.Builder(this)
+                .setTitle("Decline Invitation Confirmation")
+                .setMessage("Are you sure you want to decline the invitation to sign up for the event?")
+                .setPositiveButton("Yes", ((dialog, which) -> declineInvite()))
+                .setNegativeButton("No", ((dialog, which) -> dialog.dismiss()))
+                .show();
+    }
+
+    /**
+     * Updates the invitation status of the user in the event's chosen entrants sub-collection and
+     * the status of the event in the user's events joined sub-collection to reflect the declined
+     * invite.
+     */
+    private void declineInvite() {
+        db.runTransaction((Transaction.Function<Void>) transaction -> {
+            DocumentReference entrantRef = db.collection("events")
+                    .document(eventId).collection("chosenEntrants").document(userId);
+
+            DocumentReference joinedEventRef = eventsJoinedRef.document(eventId);
+
+            transaction.update(entrantRef, "invitationStatus", "Declined");
+            transaction.update(joinedEventRef, "status", "Declined");
+            return null;
+        }).addOnSuccessListener(result -> {
+            Toast.makeText(EntrantEventDetailsActivity.this, "You have declined the invitation and signed up", Toast.LENGTH_SHORT).show();
+            setButtonCases("Declined");
+        }).addOnFailureListener(e -> Toast.makeText(EntrantEventDetailsActivity.this, "Failed to decline the invitation", Toast.LENGTH_SHORT).show());
     }
 }

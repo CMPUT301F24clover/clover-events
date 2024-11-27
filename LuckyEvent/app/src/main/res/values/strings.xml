@@ -55,6 +55,7 @@
     <string name="name">Name</string>
     <string name="edit_facility">Edit Facility</string>
     <string name="log_out">Log Out</string>
+    <string name="show_more">Show more 〉</string>
 
 
 </resources>
