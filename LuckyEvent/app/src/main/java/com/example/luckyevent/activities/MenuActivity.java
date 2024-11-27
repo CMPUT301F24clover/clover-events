@@ -41,8 +41,8 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
         bottomNavigationView = findViewById(R.id.bottomNavigationViewEntrant);
         db = FirebaseFirestore.getInstance();
 
-        /**
-         *When an element of the this bottomNavigationView is clicked, it navigates to it corresponding
+        /*
+         * When an element of the this bottomNavigationView is clicked, it navigates to it corresponding
          * fragment
          */
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -93,7 +93,7 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
                 .commit();
     }
     /**
-     *Uses the user id to find the profile id of a user. This profile id is passed onto the ViewProfileActivity
+     * Uses the user id to find the profile id of a user. This profile id is passed onto the ViewProfileActivity
      * before it is navigated to
      */
     private void findProfile() {
@@ -133,7 +133,7 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
     }
 
     /**
-     *Navigates to the ScanQrFragment when the camera_item is clicked
+     * Navigates to the ScanQrFragment when the camera_item is clicked
      */
     @Override
     public void onNavigateToScanQr() {
