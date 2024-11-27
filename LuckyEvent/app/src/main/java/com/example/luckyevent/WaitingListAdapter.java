@@ -51,34 +51,6 @@ public class WaitingListAdapter extends ArrayAdapter<WaitingList> {
         TextView textViewContent = view.findViewById(R.id.text_content);
         textViewContent.setText(waitingList.getEventDesc());
 
-        switch (waitingList.getWaitingListStatus()) {
-            case "Waitlisted": {
-                Button acceptButton = view.findViewById(R.id.button_acceptInvitation);
-                acceptButton.setVisibility(View.GONE);
-                Button declineButton = view.findViewById(R.id.button_declineInvitation);
-                declineButton.setVisibility(View.GONE);
-                TextView enrolledText = view.findViewById(R.id.text_enrolled);
-                enrolledText.setVisibility(View.GONE);
-                break;
-            }
-            case "Chosen": {
-                Button leaveButton = view.findViewById(R.id.button_leaveWaitingList);
-                leaveButton.setVisibility(View.GONE);
-                TextView enrolledText = view.findViewById(R.id.text_enrolled);
-                enrolledText.setVisibility(View.GONE);
-                break;
-            }
-            case "Enrolled": {
-                Button leaveButton = view.findViewById(R.id.button_leaveWaitingList);
-                leaveButton.setVisibility(View.GONE);
-                Button acceptButton = view.findViewById(R.id.button_acceptInvitation);
-                acceptButton.setVisibility(View.GONE);
-                Button declineButton = view.findViewById(R.id.button_declineInvitation);
-                declineButton.setVisibility(View.GONE);
-                break;
-            }
-        }
-
         return view;
     }
 }

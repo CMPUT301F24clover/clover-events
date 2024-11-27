@@ -53,6 +53,7 @@ public class CreateEventFragment extends Fragment {
 
     // UI Components
     private TextInputEditText eventName;
+    private TextInputEditText dueDate;
     private TextInputEditText date;
     private TextInputEditText description;
     private AutoCompleteTextView waitListSize;
@@ -106,7 +107,7 @@ public class CreateEventFragment extends Fragment {
         TextInputLayout eventNameLayout = rootView.findViewById(R.id.input_eventName);
         eventName = (TextInputEditText) eventNameLayout.getEditText();
 
-        TextInputLayout dateLayout = rootView.findViewById(R.id.input_date);
+        TextInputLayout dateLayout = rootView.findViewById(R.id.input_due_date);
         date = (TextInputEditText) dateLayout.getEditText();
 
         TextInputLayout descriptionLayout = rootView.findViewById(R.id.input_description);
@@ -266,7 +267,6 @@ public class CreateEventFragment extends Fragment {
                 .addOnFailureListener(e ->
                         Toast.makeText(getContext(), "Failed to add event to profile", Toast.LENGTH_SHORT).show());
     }
-
     /**
      * Navigates to the event details screen after successful event creation
      *
