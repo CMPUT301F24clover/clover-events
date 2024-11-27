@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.main_login);
         username = findViewById(R.id.usernameInput);
         password = findViewById(R.id.passwordInput);
         firebaseDB = new FirebaseDB(this);
@@ -111,9 +110,17 @@ public class LoginActivity extends AppCompatActivity {
                                             String firstName = document.getString("firstName");
                                             String userName = document.getString("userName");
                                             String role  = document.getString("role");
+                                            Boolean notificationsDisabled = document.getBoolean("notificationsDisabled");
+
+                                            // Handles the accounts that have been created before the 
+                                            if (notificationsDisabled == null){
+                                                notificationsDisabled = false;
+                                            }
+
                                             Log.d("LoginActivity", "firstName: " + firstName);
                                             UserSession.getInstance().setFirstName(firstName);
                                             UserSession.getInstance().setUserName(userName);
+                                            UserSession.getInstance().setNotificationDisabled(notificationsDisabled);
 
                                             // Retrieves the user's profile picture if the user is an entrant
                                             if (role.equals("entrant")) {

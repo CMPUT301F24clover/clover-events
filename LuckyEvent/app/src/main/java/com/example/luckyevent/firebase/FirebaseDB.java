@@ -87,6 +87,7 @@ public class FirebaseDB {
                                             loginMap.put("lastName", lastName);
                                             loginMap.put("userId", userId); // I stored the userId generated from the firebaseAuth
                                             loginMap.put("hasUserProfile", false);
+                                            loginMap.put("notificationsDisabled", false);
 
                                             if (userName.toLowerCase().contains("admin".toLowerCase())) {
                                                 loginMap.put("role", "admin");
@@ -225,6 +226,7 @@ public class FirebaseDB {
                                         loginMap.put("userId", userId);// I stored the userId generated from the firebaseAuth
                                         loginMap.put("role", "entrant");
                                         loginMap.put("hasUserProfile", false);
+                                        loginMap.put("notificationsDisabled", false);
                                         callback.onSuccess();
                                         db.collection("loginProfile").document(userId).set(loginMap)
                                                 .addOnCompleteListener(dbTask -> {

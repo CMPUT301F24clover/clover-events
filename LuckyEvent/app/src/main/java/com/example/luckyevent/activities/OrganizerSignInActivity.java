@@ -45,7 +45,7 @@ public class OrganizerSignInActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.screen_template_organizer_login);
+        setContentView(R.layout.organizer_login);
 
         db = FirebaseFirestore.getInstance();
         username = findViewById(R.id.usernameInput);
