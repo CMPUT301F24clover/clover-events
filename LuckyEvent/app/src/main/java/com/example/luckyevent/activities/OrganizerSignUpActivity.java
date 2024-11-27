@@ -44,7 +44,7 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
-        setContentView(R.layout.screen_template_organizer_signup);
+        setContentView(R.layout.organizer_signup);
 
         userName = findViewById(R.id.SignUpUsernameInput);
         password = findViewById(R.id.SignUpPasswordInput);

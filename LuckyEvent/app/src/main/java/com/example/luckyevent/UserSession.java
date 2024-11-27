@@ -15,6 +15,7 @@ public class UserSession {
     private String profileUri = null;
     private String lastName;
     private String userName;
+    private Boolean notificationDisabled;
     private UserSession() {}
 
     public static UserSession getInstance() {
@@ -54,6 +55,14 @@ public class UserSession {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public void setNotificationDisabled(boolean notificationDisabled) {
+        this.notificationDisabled = notificationDisabled;
+    }
+
+    public Boolean isNotificationDisabled() {
+        return notificationDisabled;
     }
 
     //The userId can be accessed by any activity like this:

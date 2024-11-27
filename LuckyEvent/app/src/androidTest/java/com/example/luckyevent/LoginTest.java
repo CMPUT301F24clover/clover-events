@@ -2,20 +2,12 @@ package com.example.luckyevent;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.RootMatchers.withDecorView;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import android.util.Log;
-import android.view.Menu;
-import android.widget.TextView;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.action.ViewActions;
@@ -25,8 +17,6 @@ import androidx.test.filters.LargeTest;
 
 import com.example.luckyevent.activities.LoginActivity;
 import com.example.luckyevent.activities.MenuActivity;
-import com.example.luckyevent.activities.OrganizerSignInActivity;
-import com.example.luckyevent.activities.OrganizerSignUpActivity;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,7 +24,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class LoginActivityTest {
+public class LoginTest {
 
     @Rule
     public ActivityScenarioRule<LoginActivity> scenario = new ActivityScenarioRule<>(LoginActivity.class);

@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.example.luckyevent.Notification;
 import com.example.luckyevent.NotificationListAdapter;
 import com.example.luckyevent.R;
+import com.example.luckyevent.UserSession;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -59,11 +60,19 @@ public class DisplayNotificationsFragment extends Fragment {
             Toolbar toolbar = view.findViewById(R.id.topBar);
             toolbar.setTitle("Notifications");
 
-            getNotifsList();
-
-            if (notifsList.isEmpty()) {
+            // If notifications are disabled, prevent the retrieval of the notification list
+            if (UserSession.getInstance().isNotificationDisabled()){
                 TextView textView = view.findViewById(R.id.text_emptyList);
-                textView.setText(R.string.no_notifications);
+                textView.setText(R.string.disable_notifications);
+            }
+
+            else {
+                getNotifsList();
+
+                if (notifsList.isEmpty()) {
+                    TextView textView = view.findViewById(R.id.text_emptyList);
+                    textView.setText(R.string.no_notifications);
+                }
             }
         }
 

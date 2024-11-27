@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -57,7 +56,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
         firebaseDB = new FirebaseDB(this);
 
         // Initialize the variables representing the ui elements
-        setContentView(R.layout.screen_template_entrant_signup);
+        setContentView(R.layout.entrant_signup);
         userName = findViewById(R.id.SignUpUsernameInput);
         password = findViewById(R.id.SignUpPasswordInput);
         firstName = findViewById(R.id.SignUpFirstNameInput);
@@ -73,7 +72,6 @@ public class EntrantSignUpActivity extends AppCompatActivity {
             String passwordInput = password.getText().toString().trim();
             String firstNameInput = firstName.getText().toString().trim();
             String lastNameInput = lastName.getText().toString().trim();
-            String initials = userNameInput.isEmpty() ? "" : String.valueOf(lastNameInput.charAt(0));
 
             if (userNameInput.isEmpty() || passwordInput.isEmpty()) {
                 String message = userNameInput.isEmpty() && passwordInput.isEmpty() ?
@@ -82,6 +80,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
 
                 showToast(message);
             } else {
+                String initials = String.valueOf(userNameInput.charAt(0));
                 signUpUser(userNameInput,passwordInput, firstNameInput,lastNameInput,initials);
             }
         });
@@ -188,6 +187,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
                                         finish();
                                     }
                                     else {
+                                        UserSession.getInstance().setNotificationDisabled(false);
                                         startActivity(new Intent(EntrantSignUpActivity.this, MenuActivity.class));
                                         finish();
                                     }
