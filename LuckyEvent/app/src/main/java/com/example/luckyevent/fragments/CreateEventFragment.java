@@ -247,7 +247,7 @@ public class CreateEventFragment extends Fragment {
                     String eventId = documentReference.getId();
                     addEventToProfile(userID, eventId);
                     generateQRCode(eventId);
-                    navigateToDisplayEvents(eventId);
+                    navigateToEventDetails(eventId);
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(getContext(), "Failed to create event", Toast.LENGTH_SHORT).show();
