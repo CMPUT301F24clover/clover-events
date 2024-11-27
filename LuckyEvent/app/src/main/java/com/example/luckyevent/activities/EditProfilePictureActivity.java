@@ -26,6 +26,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * This activity displays the ui elements needed for the editing and deletion of user profile images
+ * The selected image url is stored via firebase storage and firestore
+ *
+ * @author Seyi
+ * @see FirebaseDB,UserSession
+ * @version 1
+ * @since 1
+ */
 public class EditProfilePictureActivity extends AppCompatActivity {
     private ImageView profile;
     private Button changeProfilePictureButton;
@@ -43,10 +52,13 @@ public class EditProfilePictureActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         db = FirebaseFirestore.getInstance();
         super.onCreate(savedInstanceState);
+
+        // Sets the content view to the edit profile picture layout when the activity is created
         setContentView(R.layout.edit_profile_picture);
 
         documentID = getIntent().getStringExtra("profileID");
 
+        // Loads the retrieved image url into the screen's image view
         firebaseDB = new FirebaseDB(this);
         profile = findViewById(R.id.imageView);
         imageUrl = UserSession.getInstance().getProfileUri();
@@ -58,6 +70,7 @@ public class EditProfilePictureActivity extends AppCompatActivity {
         removeProfilePictureButton = findViewById(R.id.remove_profile_button);
         backButton = findViewById(R.id.imageButton);
 
+        // If the change profile picture button is clicked,
         changeProfilePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,6 +82,7 @@ public class EditProfilePictureActivity extends AppCompatActivity {
             }
         });
 
+        // When the remove profile picture button is clicked, replace the user's profile picture with default profile picture
         removeProfilePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,6 +104,7 @@ public class EditProfilePictureActivity extends AppCompatActivity {
             }
         });
 
+        // Navigates to the previous screen when clicked
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,14 +131,23 @@ public class EditProfilePictureActivity extends AppCompatActivity {
         }
     }
 
+    /**
+    * Generates a default profile picture when this method is called upon
+     * This was made possible with the help of the picasso api and custom url
+     * @param initials This a string that contains the first letter of the users username
+     * @param callback This is a callback that is used to inform other methods if the generate default image was successful
+    */
     public void generateDefaultProfileImage(String initials, DefaultProfileImageCallback callback) {
+        // The custom url used to generate an avatar for the user
         String avatarUrl = "https://ui-avatars.com/api/?name=" + initials + "&size=128&background=0D8ABC&color=fff";
 
+        // The picasso api generates an image by using the custom url provided
         Picasso.get()
                 .load(avatarUrl)
                 .into(new com.squareup.picasso.Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        // Load the image uri into the image view when the image is successfully generated
                         File file = new File(getFilesDir(), "default_profile_image.jpg");
                         try (FileOutputStream out = new FileOutputStream(file)) {
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -148,7 +172,10 @@ public class EditProfilePictureActivity extends AppCompatActivity {
                 });
     }
 
-
+    /**
+    * Updates the image urls stored on firestore and firebase storage
+     * The users id is used as the document name when storing the image url on firestore and firebase storage
+    */
     public void updateProfPic(){
         firebaseDB.updateProfilePicture(imageUri, UserSession.getInstance().getUserId(), new FirebaseDB.UpdateProfPicCallBack() {
             @Override
@@ -176,6 +203,7 @@ public class EditProfilePictureActivity extends AppCompatActivity {
         });
     }
 
+    // A call back used to inform other methods if the process was successfull
     public interface DefaultProfileImageCallback {
         void onImageGenerated(Uri imageUri);
         void onFailure();

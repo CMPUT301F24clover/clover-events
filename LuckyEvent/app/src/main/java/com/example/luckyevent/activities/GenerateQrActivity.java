@@ -1,7 +1,9 @@
 package com.example.luckyevent.activities;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
@@ -10,8 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.QRDownloadService;
 import com.example.luckyevent.R;
+import com.example.luckyevent.fragments.EventDetailsFragment;
 import com.example.luckyevent.fragments.ScanQrFragment;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -51,6 +55,7 @@ public class GenerateQrActivity extends AppCompatActivity {
     private int selectedWaitListSize;
     private int selectedSampleSize;
     private QRCodeGeneratedListener qrCodeGeneratedListener;
+    private MaterialCheckBox geolocationCheckbox;
 
     public interface QRCodeGeneratedListener {
         void onQRCodeGenerated(Bitmap qrBitmap, String eventId);
@@ -68,11 +73,15 @@ public class GenerateQrActivity extends AppCompatActivity {
         initializeViews();
         setupDropdowns();
         setupCreateEventButton();
+
     }
 
     private void initializeViews() {
         waitListSize = findViewById(R.id.waitingListSizeDropdown);
         sampleSize = findViewById(R.id.sampleSizeDropdown);
+        geolocationCheckbox = findViewById(R.id.geolocation_checkbox);
+        // set a default value
+        geolocationCheckbox.setChecked(false);
 
         TextInputLayout eventNameLayout = findViewById(R.id.input_eventName);
         eventName = (TextInputEditText) eventNameLayout.getEditText();
@@ -130,6 +139,55 @@ public class GenerateQrActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     *This function saves the inputted event info into firestore. An event id generated alongside for
+     * reference
+     */
+    private void saveEventInfoToFirestore() {
+        if (!validateInputs()) {
+            return;
+        }
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Show loading indicator
+        Toast.makeText(this, "Creating event...", Toast.LENGTH_SHORT).show();
+
+        String userID = user.getUid();
+        Map<String, Object> eventInfo = new HashMap<>();
+        eventInfo.put("eventName", eventName.getText().toString().trim());
+        eventInfo.put("date", date.getText().toString().trim());
+        eventInfo.put("description", description.getText().toString().trim());
+        eventInfo.put("waitListSize", selectedWaitListSize);
+        eventInfo.put("sampleSize", selectedSampleSize);
+        eventInfo.put("currentWaitList", 0);
+        eventInfo.put("organizerId", userID);
+        eventInfo.put("status", "active");
+        eventInfo.put("createdAt", System.currentTimeMillis());
+        //getting current state of checkbox
+        boolean isGeolocationRequired = geolocationCheckbox.isChecked();
+        eventInfo.put("geolocationRequired", geolocationCheckbox.isChecked());
+
+        //Add logging to verify the value
+        Log.d("GenerateQrActivity", "Geolocation Required: " + isGeolocationRequired);
+
+        firestore.collection("events")
+                .add(eventInfo)
+                .addOnSuccessListener(documentReference -> {
+                    String eventId = documentReference.getId();
+                    addEventToProfile(userID, eventId);
+                    generateQRCode(eventId);
+
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Failed to create event", Toast.LENGTH_SHORT).show();
+                });
+
+    }
+
     private void generateQRCode(String eventId) {
         try {
             // Create QR content with prefix for identification
@@ -160,42 +218,7 @@ public class GenerateQrActivity extends AppCompatActivity {
             Toast.makeText(this, "Failed to generate QR code", Toast.LENGTH_SHORT).show();
         }
     }
-  
 
-    /**
-     *This function saves the inputted event info into firestore. An event id generated alongside for
-     * reference
-     */
-    private void saveEventInfoToFirestore() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String userID = user.getUid();
-        Map<String, Object> eventInfo = new HashMap<>();
-        eventInfo.put("eventName", eventName.getText().toString().trim());
-        eventInfo.put("date", date.getText().toString().trim());
-        eventInfo.put("description", description.getText().toString().trim());
-        eventInfo.put("waitListSize", selectedWaitListSize);
-        eventInfo.put("sampleSize", selectedSampleSize);
-        eventInfo.put("currentWaitList", 0);
-        eventInfo.put("organizerId", userID);
-        eventInfo.put("status", "active");
-        eventInfo.put("createdAt", System.currentTimeMillis());
-
-        firestore.collection("events")
-                .add(eventInfo)
-                .addOnSuccessListener(documentReference -> {
-                    String eventId = documentReference.getId();
-                    addEventToProfile(userID, eventId);
-                    generateQRCode(eventId);
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to create event", Toast.LENGTH_SHORT).show();
-                });
-    }
 
     /**
      *This function adds the event id of an event to the profile document of the event creator.

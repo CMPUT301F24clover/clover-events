@@ -249,13 +249,14 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Geolocation Checkbox -->
-                    <CheckBox
+                    <com.google.android.material.checkbox.MaterialCheckBox
                         android:id="@+id/geolocation_checkbox"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/enable_geolocation"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/input_sampleSize"/>
+                        android:layout_marginTop="16dp"
+                        android:text="Enable Geolocation"
+                        app:layout_constraintTop_toBottomOf="@id/input_sampleSize"
+                        app:layout_constraintBottom_toTopOf="@id/button_createEvent"/>
 
                     <!-- Create Event Button -->
                     <com.google.android.material.button.MaterialButton
