@@ -40,7 +40,6 @@
         <activity android:name=".activities.RegisterDeviceActivity" />
         <activity android:name=".activities.OrganizerSignInActivity" />
         <activity android:name=".activities.OrganizerSignUpActivity"/>
-        <activity android:name=".activities.EntrantJoinWaitlistActivity"/>
         <activity android:name=".activities.MenuActivity"/>
         <activity android:name=".activities.ProfileView" />
         <activity android:name=".activities.EditProfileActivity" />

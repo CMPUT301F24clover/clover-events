@@ -8,16 +8,22 @@ package com.example.luckyevent;
  * @since 1
  */
 public class WaitingList {
+    private final String eventId;
     private String eventName;
     private String eventDateTime;
     private String eventDesc;
     private String waitingListStatus;
 
-    public WaitingList(String eventName, String eventDateTime, String eventDesc, String waitingListStatus) {
+    public WaitingList(String eventId, String eventName, String eventDateTime, String eventDesc, String waitingListStatus) {
+        this.eventId = eventId;
         this.eventName = eventName;
         this.eventDateTime = eventDateTime;
         this.eventDesc = eventDesc;
         this.waitingListStatus = waitingListStatus;
+    }
+
+    public String getEventId() {
+        return eventId;
     }
 
     public String getEventName() {
