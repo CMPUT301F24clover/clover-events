@@ -32,6 +32,7 @@ import java.util.Map;
 public class CreateEventFragment extends Fragment {
 
     private TextInputEditText eventName;
+    private TextInputEditText dueDate;
     private TextInputEditText date;
     private TextInputEditText description;
     private AutoCompleteTextView waitListSize;
@@ -65,7 +66,7 @@ public class CreateEventFragment extends Fragment {
         TextInputLayout eventNameLayout = rootView.findViewById(R.id.input_eventName);
         eventName = (TextInputEditText) eventNameLayout.getEditText();
 
-        TextInputLayout dateLayout = rootView.findViewById(R.id.input_date);
+        TextInputLayout dateLayout = rootView.findViewById(R.id.input_due_date);
         date = (TextInputEditText) dateLayout.getEditText();
 
         TextInputLayout descriptionLayout = rootView.findViewById(R.id.input_description);
@@ -171,7 +172,7 @@ public class CreateEventFragment extends Fragment {
                     String eventId = documentReference.getId();
                     addEventToProfile(userID, eventId);
                     generateQRCode(eventId);
-                    navigateToEventDetails(eventId);
+                    navigateToDisplayEvents(eventId);
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(getContext(), "Failed to create event", Toast.LENGTH_SHORT).show();
@@ -186,7 +187,7 @@ public class CreateEventFragment extends Fragment {
                         Toast.makeText(getContext(), "Failed to add event to profile", Toast.LENGTH_SHORT).show());
     }
 
-    private void navigateToEventDetails(String eventId) {
+    private void navigateToDisplayEvents(String eventId) {
         EventDetailsFragment eventDetailsFragment = new EventDetailsFragment();
 
         // Pass the facilityId to the next fragment
