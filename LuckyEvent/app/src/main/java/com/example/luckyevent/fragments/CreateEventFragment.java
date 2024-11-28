@@ -54,6 +54,7 @@ public class CreateEventFragment extends Fragment {
     // UI Components
     private TextInputEditText eventName;
     private TextInputEditText dueDate;
+    private TextInputEditText time;
     private TextInputEditText date;
     private TextInputEditText description;
     private AutoCompleteTextView waitListSize;
@@ -107,7 +108,13 @@ public class CreateEventFragment extends Fragment {
         TextInputLayout eventNameLayout = rootView.findViewById(R.id.input_eventName);
         eventName = (TextInputEditText) eventNameLayout.getEditText();
 
-        TextInputLayout dateLayout = rootView.findViewById(R.id.input_due_date);
+        TextInputLayout dueDateLayout = rootView.findViewById(R.id.input_due_date);
+        dueDate = (TextInputEditText) dueDateLayout.getEditText();
+
+        TextInputLayout timeLayout = rootView.findViewById(R.id.input_time);
+        time = (TextInputEditText) timeLayout.getEditText();
+
+        TextInputLayout dateLayout = rootView.findViewById(R.id.input_date);
         date = (TextInputEditText) dateLayout.getEditText();
 
         TextInputLayout descriptionLayout = rootView.findViewById(R.id.input_description);
@@ -164,6 +171,8 @@ public class CreateEventFragment extends Fragment {
      */
     private boolean validateInputs() {
         if (eventName.getText().toString().trim().isEmpty() ||
+                dueDate.getText().toString().trim().isEmpty() ||
+                time.getText().toString().trim().isEmpty() ||
                 date.getText().toString().trim().isEmpty() ||
                 description.getText().toString().trim().isEmpty() ||
                 waitListSize.getText().toString().trim().isEmpty() ||
@@ -230,6 +239,8 @@ public class CreateEventFragment extends Fragment {
         // Prepare event data
         Map<String, Object> eventInfo = new HashMap<>();
         eventInfo.put("eventName", eventName.getText().toString().trim());
+        eventInfo.put("dueDate", dueDate.getText().toString().trim());
+        eventInfo.put("time", time.getText().toString().trim());
         eventInfo.put("date", date.getText().toString().trim());
         eventInfo.put("description", description.getText().toString().trim());
         eventInfo.put("waitListSize", selectedWaitListSize);
