@@ -148,13 +148,16 @@ public class DisplayOrganizerEventsFragment extends Fragment {
                         // Extract event details
                         String eventName = snapshot.getString("eventName");
                         Long createdAt = snapshot.getLong("createdAt");
+                        String eventDate = snapshot.getString("date");
+                        String eventTime = snapshot.getString("time");
+                        String eventDesc = snapshot.getString("description");
                         if (createdAt == null) {
                             createdAt = System.currentTimeMillis(); // Fallback timestamp
                         }
 
                         // Create and add new event item
                         EventListAdapter.EventItem eventItem =
-                                new EventListAdapter.EventItem(id, eventName, createdAt);
+                                new EventListAdapter.EventItem(id, eventName, createdAt, eventDate, eventTime, eventDesc);
                         eventItems.add(eventItem);
 
                         // Sort events by creation time and update UI

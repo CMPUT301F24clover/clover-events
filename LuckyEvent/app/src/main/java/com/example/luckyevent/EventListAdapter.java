@@ -28,15 +28,20 @@ public class EventListAdapter extends ArrayAdapter<EventListAdapter.EventItem> {
         View view = convertView;
 
         if (view == null) {
-            view = LayoutInflater.from(context).inflate(R.layout.box_content, parent, false);
+            view = LayoutInflater.from(context).inflate(R.layout.box_content_organizereventlist, parent, false);
         }
 
         EventItem eventItem = eventItems.get(position);
 
         TextView textViewTitle = view.findViewById(R.id.text_title);
+        TextView textViewDate = view.findViewById(R.id.text_date);
+        TextView textViewTime = view.findViewById(R.id.text_time);
+        TextView textViewDescription = view.findViewById(R.id.text_description);
+
         textViewTitle.setText(eventItem.getEventName());
-        TextView textViewContent = view.findViewById(R.id.text_content);
-        textViewContent.setVisibility(View.GONE);
+        textViewDate.setText(eventItem.getEventDate());
+        textViewTime.setText(eventItem.getEventTime());
+        textViewDescription.setText(eventItem.getEventDesc());
 
         return view;
     }
@@ -45,11 +50,30 @@ public class EventListAdapter extends ArrayAdapter<EventListAdapter.EventItem> {
         private String eventId;
         private String eventName;
         private long createdAt;
+        private String eventDate;
+        private String eventTime;
+        private String eventDesc;
 
-        public EventItem(String eventId, String eventName, long createdAt) {
+        public EventItem(String eventId, String eventName, long createdAt, String eventDate,
+                         String eventTime, String eventDesc) {
             this.eventId = eventId;
             this.eventName = eventName;
             this.createdAt = createdAt;
+            this.eventDate = eventDate;
+            this.eventTime = eventTime;
+            this.eventDesc = eventDesc;
+        }
+
+        public String getEventDesc() {
+            return eventDesc;
+        }
+
+        public String getEventTime() {
+            return eventTime;
+        }
+
+        public String getEventDate() {
+            return eventDate;
         }
 
         public String getEventId() {
