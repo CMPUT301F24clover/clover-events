@@ -233,8 +233,6 @@ public class CreateEventFragment extends Fragment {
             return;
         }
 
-        Toast.makeText(getContext(), "Creating event...", Toast.LENGTH_SHORT).show();
-
         String userID = user.getUid();
         // Prepare event data
         Map<String, Object> eventInfo = new HashMap<>();
@@ -258,7 +256,8 @@ public class CreateEventFragment extends Fragment {
                     String eventId = documentReference.getId();
                     addEventToProfile(userID, eventId);
                     generateQRCode(eventId);
-                    navigateToEventDetails(eventId);
+                    //navigateToEventDetails(eventId);
+                    Toast.makeText(getContext(), "Event Created Successfully!", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(getContext(), "Failed to create event", Toast.LENGTH_SHORT).show();
@@ -282,7 +281,7 @@ public class CreateEventFragment extends Fragment {
      * Navigates to the event details screen after successful event creation
      *
      * @param eventId The ID of the created event
-     */
+
     private void navigateToEventDetails(String eventId) {
         EventDetailsFragment eventDetailsFragment = new EventDetailsFragment();
 
@@ -294,5 +293,5 @@ public class CreateEventFragment extends Fragment {
         transaction.replace(R.id.OrganizerMenuFragment, eventDetailsFragment);
         transaction.addToBackStack(null);
         transaction.commit();
-    }
+    }*/
 }
