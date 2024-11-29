@@ -23,7 +23,7 @@
         android:layout_height="80dp"
         android:gravity="center_vertical"
         android:padding="10dp"
-        android:text="All Facilities"
+        android:text="All Events"
         android:textColor="@color/white"
         android:textSize="22sp"
         android:textStyle="bold"
