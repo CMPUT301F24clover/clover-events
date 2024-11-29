@@ -174,15 +174,15 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
                 declineInviteButton.setOnClickListener(v -> declineInviteAlert());
                 break;
             case "Enrolled":
-                setButtonsVisibility(View.GONE, View.GONE, View.GONE, View.GONE, "You are enrolled");
+                setButtonsVisibility(View.GONE, View.GONE, View.GONE, View.GONE, "Enrolled");
                 invitationResponse.setTextColor(ContextCompat.getColor(this, R.color.green));
                 break;
             case "Declined":
-                setButtonsVisibility(View.GONE, View.GONE, View.GONE, View.GONE, "You have declined the invitation to sign up");
+                setButtonsVisibility(View.GONE, View.GONE, View.GONE, View.GONE, "Declined invitation");
                 invitationResponse.setTextColor(ContextCompat.getColor(this, R.color.black));
                 break;
             case "Cancelled":
-                setButtonsVisibility(View.GONE, View.GONE, View.GONE, View.GONE, "The event organizer has cancelled your invitation to sign up");
+                setButtonsVisibility(View.GONE, View.GONE, View.GONE, View.GONE, "Invite was cancelled");
                 invitationResponse.setTextColor(ContextCompat.getColor(this, R.color.black));
                 break;
             case "n/a":
