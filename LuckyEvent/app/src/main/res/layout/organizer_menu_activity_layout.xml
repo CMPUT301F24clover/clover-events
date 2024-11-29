@@ -9,18 +9,15 @@
 
     <FrameLayout
         android:id="@+id/OrganizerMenuFragment"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationViewOrganizer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationViewOrganizer"/>
+
     <include
         android:id="@+id/bottomNavigationViewOrganizer"
-        layout="@layout/organizer_bottom_bar"
-        />
-
-
-
+        layout="@layout/organizer_bottom_bar"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

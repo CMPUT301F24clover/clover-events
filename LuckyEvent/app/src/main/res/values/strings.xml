@@ -47,6 +47,16 @@
     <string name="your_facility_address">Your Facility Address</string>
     <string name="facility_phone_optional">Phone (optional)</string>
     <string name="_123_456_7890">(123) 456-7890</string>
-
-
+    <string name="edit_your_facility_profile">Edit Your Facility Profile</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="address">Address</string>
+    <string name="phone">Phone</string>
+    <string name="email">Email</string>
+    <string name="name">Name</string>
+    <string name="edit_facility">Edit Facility</string>
+    <string name="log_out">Log Out</string>
+    <string name="disable_notifications">Notfications Disabled</string>
+    <string name="show_more">Show more 〉</string>
+    <string name="due_date">Due Date</string>
+    <string name="date_of_the_event">Date of the Event</string>
 </resources>

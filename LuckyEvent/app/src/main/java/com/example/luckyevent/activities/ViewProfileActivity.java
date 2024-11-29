@@ -2,8 +2,10 @@ package com.example.luckyevent.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,7 +15,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.luckyevent.R;
 import com.example.luckyevent.UserSession;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implements the view profile functionality. displays the users information, such as name, email, and phone number.
@@ -28,6 +34,9 @@ public class ViewProfileActivity extends AppCompatActivity {
     private Button logOutButton;
     private ImageView profile;
     private String imageUrl;
+    private CheckBox enableNotificationsCheckBox;
+    private FirebaseFirestore db;
+    private String TAG  = "ViewProfileActivity";
 
     /**
      * Loads the profile information, implements logout, edit and back button functionality
@@ -38,12 +47,15 @@ public class ViewProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_profile);
 
+        db = FirebaseFirestore.getInstance();
+
         profile = findViewById(R.id.imageView);
         imageUrl = UserSession.getInstance().getProfileUri();
         if (imageUrl != null && !imageUrl.isEmpty()) {
             Picasso.get().load(imageUrl).into(profile);
         }
 
+        enableNotificationsCheckBox = findViewById(R.id.checkBox);
         nameText = findViewById(R.id.nameField);
         emailText = findViewById(R.id.emailField);
         phoneText = findViewById(R.id.phoneField);
@@ -94,5 +106,51 @@ public class ViewProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+        if(UserSession.getInstance().isNotificationDisabled()){
+            enableNotificationsCheckBox.setChecked(false);
+        }
+        else{
+            enableNotificationsCheckBox.setChecked(true);
+        }
+
+        // When clicked disable or enable the notification for the current user
+        // The initial state of this is stored in firestore
+        enableNotificationsCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(UserSession.getInstance().isNotificationDisabled()){
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("notificationsDisabled", false);
+                    db.collection("loginProfile").document(UserSession.getInstance().getUserId()).update(map)
+                            .addOnCompleteListener(dbTask -> {
+                                if (dbTask.isSuccessful()) {
+                                    enableNotificationsCheckBox.setChecked(true);
+                                    UserSession.getInstance().setNotificationDisabled(false);
+                                } else {
+                                    Log.e(TAG, "onClick: Failed to enable notifications");
+                                }
+                            });
+                }
+                else{
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("notificationsDisabled", true);
+                    db.collection("loginProfile").document(UserSession.getInstance().getUserId()).update(map)
+                            .addOnCompleteListener(dbTask -> {
+                                if (dbTask.isSuccessful()) {
+                                    enableNotificationsCheckBox.setChecked(false);
+                                    UserSession.getInstance().setNotificationDisabled(true);
+                                } else {
+                                    Log.e(TAG, "onClick: Failed to disable notifications");
+                                }
+                            });
+                }
+
+            }
+        });
+
+
+
     }
 }
