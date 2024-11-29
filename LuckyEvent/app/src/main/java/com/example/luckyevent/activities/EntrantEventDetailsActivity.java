@@ -174,11 +174,15 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
                 declineInviteButton.setOnClickListener(v -> declineInviteAlert());
                 break;
             case "Enrolled":
-                setButtonsVisibility(View.GONE, View.GONE, View.GONE, View.GONE, "Enrolled");
+                setButtonsVisibility(View.GONE, View.GONE, View.GONE, View.GONE, "You are enrolled");
                 invitationResponse.setTextColor(ContextCompat.getColor(this, R.color.green));
                 break;
             case "Declined":
-                setButtonsVisibility(View.GONE, View.GONE, View.GONE, View.GONE, "Declined");
+                setButtonsVisibility(View.GONE, View.GONE, View.GONE, View.GONE, "You have declined the invitation to sign up");
+                invitationResponse.setTextColor(ContextCompat.getColor(this, R.color.black));
+                break;
+            case "Cancelled":
+                setButtonsVisibility(View.GONE, View.GONE, View.GONE, View.GONE, "The event organizer has cancelled your invitation to sign up");
                 invitationResponse.setTextColor(ContextCompat.getColor(this, R.color.black));
                 break;
             case "n/a":
@@ -449,7 +453,7 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
 
             DocumentReference joinedEventRef = eventsJoinedRef.document(eventId);
 
-            transaction.update(entrantRef, "invitationStatus", "Declined");
+            transaction.update(entrantRef, "invitationStatus", "Declined", "findReplacement", true);
             transaction.update(joinedEventRef, "status", "Declined");
             return null;
         }).addOnSuccessListener(result -> {
