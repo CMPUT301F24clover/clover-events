@@ -2,6 +2,7 @@ package com.example.luckyevent;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,9 @@ import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Transaction;
 
 import java.util.ArrayList;
 
@@ -29,8 +33,10 @@ import java.util.ArrayList;
  * @since 1
  */
 public class ChosenEntrantListAdapter extends ArrayAdapter<Entrant> {
+    private final String TAG = "ChosenEntrantListAdapter";
     private ArrayList<Entrant> chosenEntrants;
     private Context context;
+    private FirebaseFirestore db;
     private CollectionReference chosenEntrantsRef;
     private String eventId;
 
@@ -50,6 +56,8 @@ public class ChosenEntrantListAdapter extends ArrayAdapter<Entrant> {
         if (view == null) {
             view = LayoutInflater.from(context).inflate(R.layout.box_content_entrant, parent, false);
         }
+
+        db = FirebaseFirestore.getInstance();
 
         Entrant entrant = chosenEntrants.get(position);
 
@@ -74,10 +82,16 @@ public class ChosenEntrantListAdapter extends ArrayAdapter<Entrant> {
             sampleNewEntrantButton.setVisibility(View.GONE);
 
             // cancel entrant that did not sign up
-            cancelEntrantButton.setOnClickListener(v -> chosenEntrantsRef.document(entrant.getEntrantId())
-                    .update("invitationStatus", "Cancelled")
-                    .addOnSuccessListener(aVoid -> Toast.makeText(context, "Entrant cancelled.", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e -> Toast.makeText(context, eventId, Toast.LENGTH_SHORT).show()));
+            cancelEntrantButton.setOnClickListener(v -> {
+                db.runTransaction((Transaction.Function<Void>) transaction -> {
+                    Log.d(TAG, "db transaction");
+                    transaction.update(chosenEntrantsRef.document(entrant.getEntrantId()), "invitationStatus", "Cancelled");
+                    transaction.update(chosenEntrantsRef.document(entrant.getEntrantId()), "findReplacement", true);
+                    transaction.update(db.collection("loginProfile").document(entrant.getEntrantId()).collection("eventsJoined").document(eventId), "status", "Cancelled");
+                    return null;
+                }).addOnSuccessListener(aVoid -> Toast.makeText(context, "Entrant cancelled.", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(context, eventId, Toast.LENGTH_SHORT).show());
+            });
         } else if (invitationStatus.equals("Enrolled")) {
             textViewContent.setTextColor(ContextCompat.getColor(context, R.color.green));
             cancelEntrantButton.setVisibility(View.GONE);
@@ -86,13 +100,24 @@ public class ChosenEntrantListAdapter extends ArrayAdapter<Entrant> {
             textViewContent.setTextColor(ContextCompat.getColor(context, R.color.red));
             cancelEntrantButton.setVisibility(View.GONE);
 
-            // sample new entrant if one declined or is cancelled
-            sampleNewEntrantButton.setOnClickListener(v -> {
-                // fix LotteryService class
-                Toast.makeText(context, "Sampling new entrant... ", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(context, LotteryService.class);
-                intent.putExtra("eventId", eventId);
-//                context.startService(intent);
+            chosenEntrantsRef.document(entrant.getEntrantId()).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot doc = task.getResult();
+                    if (doc.exists()) {
+                        if (doc.contains("findReplacement") && Boolean.TRUE.equals(doc.getBoolean("findReplacement"))) {
+                            sampleNewEntrantButton.setOnClickListener(v -> {
+                                // fix LotteryService class
+                                Toast.makeText(context, "Sampling new entrant... ", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(context, SampleOneEntrantService.class);
+                                intent.putExtra("eventId", eventId);
+                                intent.putExtra("userId", entrant.getEntrantId());
+                                context.startService(intent);
+                            });
+                        } else {
+                            sampleNewEntrantButton.setVisibility(View.GONE);
+                        }
+                    }
+                }
             });
         }
 

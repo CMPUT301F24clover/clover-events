@@ -17,21 +17,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Conducts the lottery: samples from the waiting list to get a list of winners and losers.
- *
- * @author Mmelve
- * @see Lottery
- * @see NotificationService
- * @version 2
- * @since 1
- */
-public class LotteryService extends Service {
-    private static final String TAG = "LotteryService";
+public class SampleOneEntrantService extends Service {
+    private static final String TAG = "SampleOneEntrantService";
     private String eventId;
     private String eventName;
+    private String userId;
     private ArrayList<String> entrantIdsList;
-    private int sampleSize;
     private Lottery lottery;
     private FirebaseFirestore db;
     private DocumentReference eventRef;
@@ -48,12 +39,15 @@ public class LotteryService extends Service {
         Log.d(TAG, "Service started");
 
         eventId = intent.getStringExtra("eventId");
+        userId = intent.getStringExtra("userId");
 
         db = FirebaseFirestore.getInstance();
         eventRef = db.collection("events").document(eventId);
         waitingListRef = eventRef.collection("waitingList");
 
-        startLottery();
+        getEventName();
+
+        startSample();
 
         return START_NOT_STICKY;
     }
@@ -69,12 +63,22 @@ public class LotteryService extends Service {
     }
 
     /**
+     * Retrieves the event name from the document of the given event.
+     */
+    private void getEventName() {
+        eventRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                DocumentSnapshot snapshot = task.getResult();
+                eventName = (String) snapshot.get("eventName");
+            }
+        });
+    }
+
+    /**
      * Retrieves the waiting list from the document of the given event and uses it to conduct the
      * lottery.
      */
-    private void startLottery() {
-        getSampleSize();
-
+    private void startSample() {
         waitingListRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 entrantIdsList = new ArrayList<>();
@@ -86,10 +90,10 @@ public class LotteryService extends Service {
                 }
 
                 if (entrantIdsList.isEmpty()) {
-                    Toast.makeText(this, "Waiting list is empty. Cannot initiate lottery.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Waiting list is empty. Cannot sample new entrant.", Toast.LENGTH_SHORT).show();
                     stopSelf();
                 } else {
-                    lottery = new Lottery(entrantIdsList, sampleSize);
+                    lottery = new Lottery(entrantIdsList, 1);
                     lottery.selectWinners();
                     setResult();
                 }
@@ -101,29 +105,7 @@ public class LotteryService extends Service {
     }
 
     /**
-     * Retrieves the event sample size from the document of the given event.
-     */
-    private void getSampleSize() {
-        eventRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult().exists()) {
-                DocumentSnapshot snapshot = task.getResult();
-                eventName = (String) snapshot.get("eventName");
-                try {
-                    sampleSize = (int) snapshot.get("sampleSize");
-                } catch (Exception e1) {
-                    try {
-                        sampleSize = Math.toIntExact((long) snapshot.get("sampleSize"));
-                    } catch (Exception e2) {
-                        Toast.makeText(this, "sampleSize type is invalid", Toast.LENGTH_SHORT).show();
-                        stopSelf();
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * Updates the database to reflect the lottery results.
+     * Updates the database to reflect the sample results.
      */
     private void setResult() {
         for (String winnersId : lottery.getWinners()) {
@@ -136,6 +118,7 @@ public class LotteryService extends Service {
                 transaction.set(eventRef.collection("chosenEntrants").document(winnersId), chosenEntrant);
                 transaction.delete(waitingListRef.document(winnersId));
                 transaction.update(db.collection("loginProfile").document(winnersId).collection("eventsJoined").document(eventId), "status", "Chosen");
+                transaction.update(eventRef.collection("chosenEntrants").document(userId), "findReplacement", false);
                 return null;
             }).addOnSuccessListener(result -> Log.d(TAG, "Successfully set lottery results in the database"))
             .addOnFailureListener(e -> Log.w(TAG, "Error setting lottery results in the database", e));
@@ -145,7 +128,7 @@ public class LotteryService extends Service {
     }
 
     /**
-     * Notifies all of the lottery participants of the results.
+     * Notifies the new sampled entrant
      */
     private void startNextActivity() {
         if (!lottery.getWinners().isEmpty()) {
@@ -155,14 +138,6 @@ public class LotteryService extends Service {
             intentWinners.putExtra("title", "Congratulations!");
             intentWinners.putExtra("description", String.format("You have been chosen to sign up for %s! Go to 'My Waiting Lists' to accept your invitation.", eventName));
             startService(intentWinners);
-            if (!lottery.getEntrants().isEmpty()) {
-                Intent intentLosers = new Intent(this, NotificationService.class);
-                intentLosers.putStringArrayListExtra("entrantIds", lottery.getEntrants());
-                intentLosers.putExtra("eventId", eventId);
-                intentLosers.putExtra("title", "Hello there!");
-                intentLosers.putExtra("description", String.format("We regret to inform you that you have not been chosen to sign up for %s. Thank you for your interest.", eventName));
-                startService(intentLosers);
-            }
         }
         stopSelf();
     }
