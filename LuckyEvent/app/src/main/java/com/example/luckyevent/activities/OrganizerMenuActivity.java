@@ -18,6 +18,7 @@ import com.example.luckyevent.fragments.CreateFacilityFragment;
 import com.example.luckyevent.fragments.DisplayFacilityFragment;
 import com.example.luckyevent.fragments.DisplayNotificationsFragment;
 import com.example.luckyevent.fragments.DisplayOrganizerEventsFragment;
+import com.example.luckyevent.fragments.EventSettingsFragment;
 import com.example.luckyevent.fragments.OrganizerHomePageFragment;
 //import com.example.luckyevent.fragments.CreateEventFragment;
 //import com.example.luckyevent.fragments.MyEventsFragment;
@@ -107,7 +108,11 @@ public class OrganizerMenuActivity extends AppCompatActivity implements Organize
             }
 
             else if (item.getItemId() == R.id.settings_item) {
-                Toast.makeText(this, "Settings fragment not yet implemented.", Toast.LENGTH_SHORT).show();
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.OrganizerMenuFragment, new EventSettingsFragment())
+                        .commit();
+                return true;
             }
             return false;
         });

@@ -18,6 +18,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Random;
+
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class EntrantSignUpTest {
@@ -32,27 +34,56 @@ public class EntrantSignUpTest {
     public void testEmptyUsernamePasswordFields() throws InterruptedException{
         navigateToSignUp();
         Thread.sleep(2000);
+
+        //
         onView(withId(R.id.SignUpButton)).perform(ViewActions.click());
         onView(withId(R.id.textView2)).check(matches(isDisplayed()));
 
+        // Use case where the user signs up without a password
         onView(withId(R.id.SignUpUsernameInput)).perform(replaceText("JohnDoe"), closeSoftKeyboard());
         onView(withId(R.id.SignUpButton)).perform(ViewActions.click());
+        // The test passes if the textview2 ("SignUp") is still displayed
         onView(withId(R.id.textView2)).check(matches(isDisplayed()));
 
-
+        // Use case where the user signs up without a username
         onView(withId(R.id.SignUpUsernameInput)).perform(replaceText(""), closeSoftKeyboard());
         onView(withId(R.id.SignUpPasswordInput)).perform(replaceText("clover1"), closeSoftKeyboard());
         onView(withId(R.id.SignUpButton)).perform(ViewActions.click());
+        // The test passes if the textview2 ("SignUp") is still displayed
         onView(withId(R.id.textView2)).check(matches(isDisplayed()));
 
     }
 
     @Test
     public void testInvalidPassword(){
+
+        navigateToSignUp();
         onView(withId(R.id.SignUpUsernameInput)).perform(replaceText("JohnDoe"), closeSoftKeyboard());
         onView(withId(R.id.SignUpPasswordInput)).perform(replaceText("clover"), closeSoftKeyboard());
         onView(withId(R.id.SignUpButton)).perform(ViewActions.click());
         onView(withId(R.id.textView2)).check(matches(isDisplayed()));
-
     }
+
+    @Test
+    public void testSignUpNavigation() throws InterruptedException{
+        navigateToSignUp();
+
+        Random rand = new Random();
+        int generatedNumber = rand.nextInt(1000);
+
+        // Create a new user to test the screen navigation
+        onView(withId(R.id.SignUpUsernameInput)).perform(replaceText("DummyUser" + Integer.toString(generatedNumber)), closeSoftKeyboard());
+        onView(withId(R.id.SignUpPasswordInput)).perform(replaceText("clover1"), closeSoftKeyboard());
+        onView(withId(R.id.SignUpFirstNameInput)).perform(replaceText("Dummy"), closeSoftKeyboard());
+        onView(withId(R.id.SignUpLastNameInput)).perform(replaceText("User"), closeSoftKeyboard());
+        onView(withId(R.id.SignUpButton)).perform(ViewActions.click());
+
+        // Wait for the homepage to load in
+        Thread.sleep(5000);
+
+        // The test passes if the toolbarTitle ("CommunityCenter") is displayed
+        onView(withId(R.id.toolbarTitle)).check(matches(isDisplayed()));
+    }
+
+
 }
