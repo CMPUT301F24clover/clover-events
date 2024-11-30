@@ -230,9 +230,17 @@ public class EventDetailsFragment extends Fragment {
         // Entrant Sampling/Lottery
         TextView sampleEntrants = view.findViewById(R.id.sample_entrant);
         sampleEntrants.setOnClickListener(v -> {
-            if (getActivity() != null && getContext() != null) {
-                startLotteryProcess(sampleEntrants);
-            }
+            db.collection("events").document(eventId).collection("chosenEntrants").get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    if (task.getResult().isEmpty()) {
+                        if (getActivity() != null) {
+                            startLotteryProcess(sampleEntrants);
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Lottery has already been conducted.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         });
 
         // Event Poster Management
