@@ -41,7 +41,7 @@ import com.google.firebase.firestore.QuerySnapshot;
  * activities are the organizer home page, events owned by the organizer, events settings and the create profile
  * section
  *
- * @author Tola
+ * @author Tola, Aagam
  * @see OrganizerSession
  * @version 1
  * @since 1
@@ -81,7 +81,30 @@ public class OrganizerMenuActivity extends AppCompatActivity implements Organize
             }
 
             else if (item.getItemId() == R.id.profile_item) {
-                Toast.makeText(this, "Profile fragment not yet implemented.", Toast.LENGTH_SHORT).show();
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                String userID = user.getUid();
+                DocumentReference facilityIDRef = firestore.collection("loginProfile").document(userID);
+                facilityIDRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document != null && document.contains("myFacility")) {
+                                getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.OrganizerMenuFragment, new DisplayFacilityFragment())
+                                        .addToBackStack(null)
+                                        .commit();
+                            } else {
+                                getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.OrganizerMenuFragment, new CreateFacilityFragment())
+                                        .addToBackStack(null)
+                                        .commit();
+                            }
+                        }
+                    }
+                });
             }
 
             else if (item.getItemId() == R.id.settings_item) {
@@ -98,7 +121,10 @@ public class OrganizerMenuActivity extends AppCompatActivity implements Organize
         bottomNavigationView.setSelectedItemId(R.id.home_item);
     }
 
-    // Implement OnOrganizerNavigateListener methods
+    /**
+     * This method navigates the organizer to create a new event page upon clicking
+     * the create event card
+     */
     @Override
     public void onNavigateToCreateEvent() {
         getSupportFragmentManager()
@@ -108,13 +134,26 @@ public class OrganizerMenuActivity extends AppCompatActivity implements Organize
                 .commit();
     }
 
+    /**
+     * This method navigates the organizer to view their active events upon clicking
+     * the My events card
+     */
     @Override
     public void onNavigateToMyEvents() {
         bottomNavigationView.setSelectedItemId(R.id.events_item);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.OrganizerMenuFragment, new DisplayOrganizerEventsFragment())
+                .commit();
     }
 
+    /**
+     * This method navigates the organizer to view their facility profile upon clicking
+     * the My Facility card
+     */
     @Override
     public void onNavigateToMyFacility() {
+        bottomNavigationView.setSelectedItemId(R.id.profile_item);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String userID = user.getUid();
         DocumentReference facilityIDRef = firestore.collection("loginProfile").document(userID);
@@ -130,6 +169,7 @@ public class OrganizerMenuActivity extends AppCompatActivity implements Organize
                                 .addToBackStack(null)
                                 .commit();
                     } else {
+                        Toast.makeText(getApplicationContext(), "No existing facility found. Please Create a new Facility.", Toast.LENGTH_SHORT).show();
                         getSupportFragmentManager()
                                 .beginTransaction()
                                 .replace(R.id.OrganizerMenuFragment, new CreateFacilityFragment())

@@ -13,9 +13,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import com.example.luckyevent.Event;
+import com.example.luckyevent.EventListAdapter;
 import com.example.luckyevent.R;
-import com.example.luckyevent.WaitingList;
-import com.example.luckyevent.WaitingListAdapter;
 import com.example.luckyevent.activities.EntrantEventDetailsActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,17 +27,17 @@ import com.google.firebase.firestore.ListenerRegistration;
 import java.util.ArrayList;
 
 /**
- * Displays a list of the waiting lists the current user has joined.
+ * Displays a list of the events the current user has joined.
  *
  * @author Mmelve
- * @see WaitingList
- * @see WaitingListAdapter
+ * @see Event
+ * @see EventListAdapter
  * @version 1
  * @since 1
  */
 public class DisplayWaitingListsFragment extends Fragment {
-    private ArrayList<WaitingList> waitingLists;
-    private WaitingListAdapter listAdapter;
+    private ArrayList<Event> waitingLists;
+    private EventListAdapter listAdapter;
     private FirebaseFirestore db;
     private CollectionReference eventsJoinedRef;
     private ListenerRegistration reg;
@@ -58,7 +58,7 @@ public class DisplayWaitingListsFragment extends Fragment {
 
             ListView listView = view.findViewById(R.id.customListView);
             waitingLists = new ArrayList<>();
-            listAdapter = new WaitingListAdapter(getContext(), waitingLists);
+            listAdapter = new EventListAdapter(getContext(), waitingLists);
             listView.setAdapter(listAdapter);
 
             listView.setOnItemClickListener((parent, v, position, id) -> {
@@ -79,8 +79,7 @@ public class DisplayWaitingListsFragment extends Fragment {
 
     /**
      * Retrieves information about which events a given user has joined and their waiting list
-     * status for each event. Each relevant document from the database is used to create a
-     * WaitingList object.
+     * for each event. Each relevant document from the database is used to create an Event object.
      */
     private void getWaitingLists() {
         reg = eventsJoinedRef.addSnapshotListener((snapshot, error) -> {
@@ -93,9 +92,8 @@ public class DisplayWaitingListsFragment extends Fragment {
 
                 for (DocumentSnapshot waitingListSnapshot : snapshot.getDocuments()) {
                     String eventId = waitingListSnapshot.getString("eventId");
-                    String status = waitingListSnapshot.getString("status");
-                    if (eventId != null && status != null) {
-                        getEventInfo(eventId, status);
+                    if (eventId != null) {
+                        getEventInfo(eventId);
                     }
                 }
             }
@@ -105,17 +103,17 @@ public class DisplayWaitingListsFragment extends Fragment {
 
     /**
      * Retrieves information about a given event from the database. Uses this data, along with the
-     * data received from getWaitingLists(), to create a WaitingList object. This object is then
-     * added to the list of WaitingList objects that will be displayed in a ListView.
+     * data received from getWaitingLists(), to create a Event object. This object is then
+     * added to the list of Event objects that will be displayed in a ListView.
      * @param eventId The document ID of an event in the events collection.
-     * @param status An attribute of a WaitingList object.
      */
-    private void getEventInfo(String eventId, String status) {
+    private void getEventInfo(String eventId) {
         db.collection("events").document(eventId).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot snapshot = task.getResult();
                 if (snapshot.exists()) {
-                    WaitingList waitingList = new WaitingList(eventId, (String) snapshot.get("eventName"), (String) snapshot.get("dateTime"), (String) snapshot.get("description"), status);
+                    String dateTime = String.format("%s · %s", snapshot.get("date"), snapshot.get("time"));
+                    Event waitingList = new Event(eventId, (String) snapshot.get("eventName"), dateTime, (String) snapshot.get("description"));
                     waitingLists.add(waitingList);
                     listAdapter.notifyDataSetChanged();
                 }
