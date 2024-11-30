@@ -10,8 +10,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.example.luckyevent.EventListAdapter;
 import com.example.luckyevent.R;
@@ -63,7 +65,7 @@ public class DisplayOrganizerEventsFragment extends Fragment {
         // Initialize ListView and adapter
         setupListView(view);
 
-        // Set toolbar title
+        // Set Toolbar title
         Toolbar toolbar = view.findViewById(R.id.topBar);
         toolbar.setTitle("My Events");
 
