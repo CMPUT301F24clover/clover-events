@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -44,14 +46,33 @@ public class CreateFacilityFragment extends Fragment {
     private MaterialButton createFacilityButton;
     private String facilityId;
 
+    /**
+     * Required empty constructor for Fragment initialization
+     */
     public CreateFacilityFragment() {
     }
 
+    /**
+     * Creates and initializes the fragment's view hierarchy
+     * Sets up UI components and event listeners
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.create_facility, container, false);
+
+        // Set Toolbar title
+        Toolbar toolbar = rootView.findViewById(R.id.topBar);
+        toolbar.setTitle("My Facility");
+        toolbar.setNavigationIcon(R.drawable.arrow_back);
+        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
+        // Enable the back button
+        if (((AppCompatActivity) requireActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
 
         initializeViews(rootView);
         setupCreateFacilityButton();
@@ -59,6 +80,12 @@ public class CreateFacilityFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * Initializes all UI components and Firebase instance
+     * Connects TextInputLayouts
+     *
+     * @param rootView The root view of the fragment
+     */
     private void initializeViews(View rootView) {
 
         TextInputLayout facilityNameLayout = rootView.findViewById(R.id.input_facilityName);
@@ -77,6 +104,10 @@ public class CreateFacilityFragment extends Fragment {
         firestore = FirebaseFirestore.getInstance();
     }
 
+    /**
+     * Sets up the create facility button click listener
+     * Validates inputs before proceeding with event creation
+     */
     private void setupCreateFacilityButton() {
         createFacilityButton.setOnClickListener(v -> {
             if (validateInputs()) {
@@ -85,6 +116,10 @@ public class CreateFacilityFragment extends Fragment {
         });
     }
 
+    /**
+     * Validates all required input fields
+     * @return true if all inputs are valid, false otherwise
+     */
     private boolean validateInputs() {
         if (facilityName.getText().toString().trim().isEmpty() ||
                 facilityEmail.getText().toString().trim().isEmpty() ||
@@ -97,6 +132,10 @@ public class CreateFacilityFragment extends Fragment {
         return true;
     }
 
+    /**
+     * Saves facility information to Firebase Firestore
+     * Creates new event document and updates user profile
+     */
     private void saveFacilityInfoToFirestore() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
@@ -132,14 +171,25 @@ public class CreateFacilityFragment extends Fragment {
                 });
     }
 
-    private void addFacilityToProfile(String userID, String eventID) {
+    /**
+     * Adds the created facility ID to the user's profile
+     *
+     * @param userID The ID of the current user
+     * @param facilityID The ID of the created event
+     */
+    private void addFacilityToProfile(String userID, String facilityID) {
         firestore.collection("loginProfile")
                 .document(userID)
-                .update("myFacility", eventID)
+                .update("myFacility", facilityID)
                 .addOnFailureListener(e ->
                         Toast.makeText(getContext(), "Failed to add Facility to profile", Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * Navigates to the display facility screen after successful facility creation
+     *
+     * @param facilityId The ID of the created event
+     */
     private void navigateToDisplayFacilityFragment(String facilityId) {
         DisplayFacilityFragment displayFacilityFragment = new DisplayFacilityFragment();
 

@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -44,15 +46,34 @@ public class EditFacilityFragment extends Fragment {
     private MaterialButton saveChangesButton;
     private String facilityID;
 
+    /**
+     * Required empty constructor for Fragment initialization
+     */
     public EditFacilityFragment(){
         // Empty Constructor
     }
 
+    /**
+     * Creates and initializes the fragment's view hierarchy
+     * Sets up UI components and event listeners
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.edit_facility, container, false);
+
+        // Set Toolbar title
+        Toolbar toolbar = rootView.findViewById(R.id.topBar);
+        toolbar.setTitle("My Facility");
+        toolbar.setNavigationIcon(R.drawable.arrow_back);
+        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
+        // Enable the back button
+        if (((AppCompatActivity) requireActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
 
         initializeViews(rootView);
         setupSaveChangesButton();
@@ -60,6 +81,12 @@ public class EditFacilityFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * Initializes all UI components and Firebase instance
+     * Connects TextInputLayouts
+     *
+     * @param rootView The root view of the fragment
+     */
     private void initializeViews(View rootView) {
 
         TextInputLayout editFacilityNameLayout = rootView.findViewById(R.id.input_editFacilityName);
@@ -78,6 +105,10 @@ public class EditFacilityFragment extends Fragment {
         firestore = FirebaseFirestore.getInstance();
     }
 
+    /**
+     * Sets up the save changes button click listener
+     * Validates inputs before proceeding with event creation
+     */
     private void setupSaveChangesButton() {
         saveChangesButton.setOnClickListener(v -> {
             if (validateInputs()) {
@@ -86,6 +117,10 @@ public class EditFacilityFragment extends Fragment {
         });
     }
 
+    /**
+     * Validates all required input fields
+     * @return true if all inputs are valid, false otherwise
+     */
     private boolean validateInputs() {
         if (editName.getText().toString().trim().isEmpty() ||
                 editEmail.getText().toString().trim().isEmpty() ||
@@ -98,6 +133,15 @@ public class EditFacilityFragment extends Fragment {
         return true;
     }
 
+    /**
+     * Updates the facility fields in Firestore with the data entered by the user.
+     *
+     * This method retrieves the current user's ID from Firebase Authentication, then fetches the user's
+     * associated facility ID from the "loginProfile" collection. Once the facility ID is retrieved, it
+     * updates the corresponding facility document with the user's input for Name, Email, Address, and Phone.
+     *
+     * If the user is not authenticated, a toast message is shown.
+     */
     private void updateFacilityFields() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
@@ -124,6 +168,19 @@ public class EditFacilityFragment extends Fragment {
         });
     }
 
+    /**
+     * Updates the facility details in Firestore with the provided information.
+     *
+     * This method updates the "Name", "Email", "Address", and "Phone" fields of the facility document
+     * in Firestore based on the given facility ID. Upon successful update, a success message is displayed
+     * and the user is navigated to the "DisplayFacilityFragment". If the update fails, an error message is shown.
+     *
+     * @param facilityID The ID of the facility document to be updated in Firestore.
+     * @param name The updated name of the facility.
+     * @param email The updated email of the facility.
+     * @param address The updated address of the facility.
+     * @param phone The updated phone number of the facility.
+     */
     private void updateFirestoreFacility(String facilityID, String name, String email, String address, String phone){
         firestore.collection("facilities")
                 .document(facilityID)
@@ -139,6 +196,11 @@ public class EditFacilityFragment extends Fragment {
                 });
     }
 
+    /**
+     * Navigates to the display facility screen after successful facility updation
+     *
+     * @param facilityID The ID of the created event
+     */
     private void navigateToDisplayFacilityFragment(String facilityID){
         DisplayFacilityFragment displayFacilityFragment = new DisplayFacilityFragment();
 
