@@ -23,13 +23,13 @@ public class TestViewProfile {
     // we first have to login to an account
     public void navigationToViewProfile(){
         // fill out sign in fields
-        onView(withId(R.id.usernameInput)).perform(ViewActions.typeText("testview123"));
-        onView(withId(R.id.passwordInput)).perform(ViewActions.typeText("test123"));
+        onView(withId(R.id.username_editText)).perform(ViewActions.typeText("testview123"));
+        onView(withId(R.id.password_editText)).perform(ViewActions.typeText("test123"));
 
         //click sign in
-        onView(withId(R.id.SignInButton)).perform(ViewActions.click());
+        onView(withId(R.id.sign_in_button)).perform(ViewActions.click());
         try {
-            Thread.sleep(2000);
+            Thread.sleep(5000);
         } catch (Exception e) {
             e.printStackTrace();
         }
