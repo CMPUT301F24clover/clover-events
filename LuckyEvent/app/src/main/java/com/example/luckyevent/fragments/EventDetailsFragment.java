@@ -17,7 +17,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckyevent.LotteryService;
-import com.example.luckyevent.QRDownloadService;
 import com.example.luckyevent.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -220,11 +219,9 @@ public class EventDetailsFragment extends Fragment {
         // QR Code Generation
         TextView qrCodeText = view.findViewById(R.id.event_qr_link);
         qrCodeText.setOnClickListener(v -> {
-            if (getContext() != null) {
-                Intent intent = new Intent(getContext(), QRDownloadService.class);
-                intent.putExtra("eventId", eventId);
-                getContext().startService(intent);
-            }
+            Bundle bundle = new Bundle();
+            bundle.putString("eventId", eventId);
+            goToQrCode(bundle);
         });
 
         // Entrant Sampling/Lottery
@@ -315,6 +312,21 @@ public class EventDetailsFragment extends Fragment {
         getParentFragmentManager()
                 .beginTransaction()
                 .replace(R.id.OrganizerMenuFragment, displayFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    /**
+     * Navigates to the QR Code management fragment
+     * @param bundle Bundle containing event information
+     */
+    private void goToQrCode(Bundle bundle){
+        QrDisplayFragment qrDisplayFragment = new QrDisplayFragment();
+        qrDisplayFragment.setArguments(bundle);
+
+        getParentFragmentManager()
+                .beginTransaction()
+                .replace(R.id.OrganizerMenuFragment, qrDisplayFragment)
                 .addToBackStack(null)
                 .commit();
     }
