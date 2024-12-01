@@ -1,6 +1,7 @@
 package com.example.luckyevent;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,96 +9,123 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Amna
+ * Adapter to use for displaying list of faciltites and functionality to remove faciltites and search by facility name
+ */
 public class FacilityListAdapter extends ArrayAdapter<Facility> {
     private List<Facility> originalList;
     private List<Facility> displayList;
-    private String TAG = "FacilityListAdapter";
+    private static final String TAG = "FacilityListAdapter";
     private FirebaseFirestore db;
 
-    public FacilityListAdapter(Context context, List<Facility> facilities){
+
+    /**
+     * initalize the adapter with the facilitates
+     * @param context
+     * @param facilities
+     */
+    public FacilityListAdapter(Context context, List<Facility> facilities) {
         super(context, 0, facilities);
-        this.originalList = facilities;
+        this.originalList = new ArrayList<>(facilities);
         this.displayList = new ArrayList<>(facilities);
+        this.db = FirebaseFirestore.getInstance();
+        Log.d(TAG, "adapter created with " + facilities.size() + " facilities.");
     }
+    public int getCount(){
+        return displayList.size(); // get the size of list
+    }
+
+    public Facility getItem(int position){
+        return displayList.get(position); // get position of the item
+    }
+
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        if (convertView == null){
+        if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.facility_box, parent, false);
         }
-        db = FirebaseFirestore.getInstance();
 
-        Facility facility = displayList.get(position);
-        TextView facilityNameTextView = convertView.findViewById(R.id.facName);
-        facilityNameTextView.setText(facility.getName());
 
-        TextView facilityAddressTextView = convertView.findViewById(R.id.facDescription);
-        facilityAddressTextView.setText(facility.getAddress());
-        Button removeFacility = convertView.findViewById(R.id.facRemoveButton);
+        Facility facility = getItem(position);
+        if (facility != null) {
+            TextView facilityNameTextView = convertView.findViewById(R.id.facName);
+            TextView facilityAddressTextView = convertView.findViewById(R.id.facDescription);
+            Button removeFacility = convertView.findViewById(R.id.facRemoveButton);
+            facilityNameTextView.setText(facility.getName());
+            facilityAddressTextView.setText(facility.getAddress());
 
-        // Here you can finish implementing the remove button stuff
-        removeFacility.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+            // Remove button functionality
+            removeFacility.setOnClickListener(view -> {
                 db.collection("facilities")
-                        .whereEqualTo("organizerId",facility.getOrganizerId())
+                        .whereEqualTo("organizerId", facility.getOrganizerId())
                         .get()
                         .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()){
-                                DocumentSnapshot doc = task.getResult().getDocuments().get(0);
-                                String docID = doc.getId();
-
-                                db.collection("facilities")
-                                        .document(docID)
-                                        .update("status","inactive")
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                                Toast.makeText(getContext(),"Facility Removed",Toast.LENGTH_SHORT).show();
-                                                displayList.remove(position);
-                                                notifyDataSetChanged();
-                                            }
+                            if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                                String docID = task.getResult().getDocuments().get(0).getId();
+                                db.collection("facilities").document(docID)
+                                        .delete()
+                                        .addOnSuccessListener(aVoid -> {
+                                            Toast.makeText(getContext(), "Facility Removed", Toast.LENGTH_SHORT).show();
+                                            displayList.remove(position); // remove the item from the display
+                                            notifyDataSetChanged();
                                         })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Toast.makeText(getContext(),"Facility was not removed due to an error",Toast.LENGTH_SHORT).show();
-                                            }
+                                        .addOnFailureListener(e -> {
+                                            Log.e(TAG, "unable to remove facility: ", e);
+                                            Toast.makeText(getContext(), "error removing the facility", Toast.LENGTH_SHORT).show();
                                         });
+                            } else {
+                                Log.e(TAG, "facility not found");
+                                Toast.makeText(getContext(), "Facility doesn't exist", Toast.LENGTH_SHORT).show();
                             }
                         });
-            }
-        });
+            });
+        } else {
+            Log.e(TAG, "Facility doesn't exist at: " + position);
+        }
         return convertView;
     }
 
-    public int getCount(){
-        return displayList.size();
-    }
-    public void filterByName(String query){
+    /**
+     * update the facility list and update the adapter
+     * @param newFacilties
+     */
+    public void updateList(List<Facility> newFacilties){
+        originalList.clear();
+        originalList.addAll(newFacilties); // update the list with the facilities
         displayList.clear();
-        if (query.isEmpty()){
+        displayList.addAll(newFacilties); // update the display with the facilities
+        notifyDataSetChanged(); // notify the adapter
+    }
+
+
+    /**
+     * filters the facilties by name for searching and updates the facilities shown in the display
+     * @param query // input from the search
+     */
+    public void filterByName(String query) {
+        Log.d(TAG, "Filtering facilities with query: " + query);
+        Log.d(TAG, "Original list size: " + originalList.size());
+        displayList.clear();
+        if (query.isEmpty()) {
             displayList.addAll(originalList);
         } else {
-            for (Facility facility : originalList){
-                if (facility.getName().toLowerCase().contains(query.toLowerCase())){
-                    displayList.add(facility);
+            // filter the results based on the search and make it not case sensitive
+            for (Facility facility : originalList) {
+                if (facility.getName().toLowerCase().contains(query.toLowerCase())) {
+                    displayList.add(facility); // display the results
                 }
             }
         }
-        notifyDataSetChanged();
+        notifyDataSetChanged(); // notify the adapter
     }
 }
+

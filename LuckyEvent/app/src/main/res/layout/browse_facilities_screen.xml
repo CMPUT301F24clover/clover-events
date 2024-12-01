@@ -33,17 +33,6 @@
         app:layout_constraintTop_toTopOf="@+id/toolbar3"
         app:layout_constraintVertical_bias="0.0" />
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/black"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
 
     <ImageButton
         android:id="@+id/imageButton"
@@ -60,15 +49,7 @@
         app:srcCompat="@drawable/arrow_back" />
 
 
-    <include
-        android:id="@+id/bottomNavigationViewAdmin"
-        layout="@layout/admin_bottom_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@+id/toolbar4"
-        app:layout_constraintBottom_toBottomOf="@+id/toolbar4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+
 
     <SearchView
         android:layout_width="350dp"
@@ -97,16 +78,14 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/facilitiesRecyclerView"
-        android:layout_width="0dp"
+    <ListView
+        android:id="@+id/facListView"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="16dp"
-        android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@+id/filterSpinner"
-        app:layout_constraintBottom_toTopOf="@+id/toolbar4"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/filterSpinner" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
