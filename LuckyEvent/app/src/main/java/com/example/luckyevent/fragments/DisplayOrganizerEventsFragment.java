@@ -69,6 +69,14 @@ public class DisplayOrganizerEventsFragment extends Fragment {
         // Set Toolbar title
         Toolbar toolbar = view.findViewById(R.id.topBar);
         toolbar.setTitle("My Events");
+        toolbar.setNavigationIcon(R.drawable.arrow_back);
+        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
+        // Enable the back button
+        if (((AppCompatActivity) requireActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
 
         // Initialize Firebase connection and load data
         initializeFirebase();
@@ -151,9 +159,7 @@ public class DisplayOrganizerEventsFragment extends Fragment {
                         // Extract event details
                         String eventName = snapshot.getString("eventName");
                         Long createdAt = snapshot.getLong("createdAt");
-                        String eventDate = snapshot.getString("date");
-                        String eventTime = snapshot.getString("time");
-                        String eventDateTime = String.format("%s · %s", eventDate, eventTime);
+                        String eventDateTime = snapshot.getString("dateAndTime");
                         String eventDesc = snapshot.getString("description");
                         if (createdAt == null) {
                             createdAt = System.currentTimeMillis(); // Fallback timestamp
