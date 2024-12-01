@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,6 +45,9 @@ public class DisplayOrganizerEventsFragment extends Fragment {
     private ArrayList<Event> events;               // Stores complete event objects
     private EventListAdapter listAdapter;          // Adapter for ListView display
 
+    // UI elements
+    private TextView textView;
+
     // Firebase references
     private FirebaseFirestore db;                  // Firestore database instance
     private DocumentReference orgDocRef;           // Reference to organizer's profile document
@@ -70,14 +72,11 @@ public class DisplayOrganizerEventsFragment extends Fragment {
         Toolbar toolbar = view.findViewById(R.id.topBar);
         toolbar.setTitle("My Events");
 
+        textView = view.findViewById(R.id.text_emptyList);
+        textView.setVisibility(View.GONE);
+
         // Initialize Firebase connection and load data
         initializeFirebase();
-
-        // Show empty state if no events exist
-        if (events.isEmpty()) {
-            TextView textView = view.findViewById(R.id.text_emptyList);
-            textView.setText("No events");
-        }
 
         return view;
     }
@@ -124,11 +123,12 @@ public class DisplayOrganizerEventsFragment extends Fragment {
                 DocumentSnapshot snapshot = task.getResult();
                 if (snapshot.exists()) {
                     eventIdsList = (ArrayList<String>) snapshot.get("myEvents");
-                    if (eventIdsList != null) {
+                    if (eventIdsList != null && !eventIdsList.isEmpty()) {
                         getEventDetails();
                     } else {
-                        Toast.makeText(getContext(), "myEvents list does not exist.",
-                                Toast.LENGTH_SHORT).show();
+                        // Show empty state if no events exist
+                        textView.setVisibility(View.VISIBLE);
+                        textView.setText("No events");
                     }
                 }
             }

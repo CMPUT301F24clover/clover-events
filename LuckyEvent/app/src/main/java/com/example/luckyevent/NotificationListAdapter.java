@@ -55,7 +55,11 @@ public class NotificationListAdapter extends ArrayAdapter<Notification> {
         // delete notification if user clicks on trash icon
         ImageView deleteNotif = view.findViewById(R.id.image_trash);
         deleteNotif.setOnClickListener(v -> notifRef.document(notif.getNotifId()).delete()
-                .addOnSuccessListener(aVoid -> Toast.makeText(context, "Notification deleted.", Toast.LENGTH_SHORT).show())
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "Notification deleted.", Toast.LENGTH_SHORT).show();
+                    notifs.remove(notif);
+                    notifyDataSetChanged();
+                })
                 .addOnFailureListener(e -> Toast.makeText(context, "Error deleting notification.", Toast.LENGTH_SHORT).show()));
 
         return view;

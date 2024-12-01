@@ -38,6 +38,7 @@ import java.util.ArrayList;
 public class DisplayNotificationsFragment extends Fragment {
     private ArrayList<Notification> notifsList;
     private NotificationListAdapter listAdapter;
+    private TextView textView;
     private CollectionReference notifRef;
     private ListenerRegistration reg;
 
@@ -60,19 +61,15 @@ public class DisplayNotificationsFragment extends Fragment {
             Toolbar toolbar = view.findViewById(R.id.topBar);
             toolbar.setTitle("Notifications");
 
+            textView = view.findViewById(R.id.text_emptyList);
+            textView.setVisibility(View.GONE);
+
             // If notifications are disabled, prevent the retrieval of the notification list
             if (UserSession.getInstance().isNotificationDisabled()){
-                TextView textView = view.findViewById(R.id.text_emptyList);
+                textView.setVisibility(View.VISIBLE);
                 textView.setText(R.string.disable_notifications);
-            }
-
-            else {
+            } else {
                 getNotifsList();
-
-                if (notifsList.isEmpty()) {
-                    TextView textView = view.findViewById(R.id.text_emptyList);
-                    textView.setText(R.string.no_notifications);
-                }
             }
         }
 
@@ -101,6 +98,9 @@ public class DisplayNotificationsFragment extends Fragment {
                     }
                 }
                 listAdapter.notifyDataSetChanged();
+            } else {
+                textView.setVisibility(View.VISIBLE);
+                textView.setText(R.string.no_notifications);
             }
         });
     }

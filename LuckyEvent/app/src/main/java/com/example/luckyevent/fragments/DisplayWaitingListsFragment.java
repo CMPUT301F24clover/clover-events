@@ -38,6 +38,7 @@ import java.util.ArrayList;
 public class DisplayWaitingListsFragment extends Fragment {
     private ArrayList<Event> waitingLists;
     private EventListAdapter listAdapter;
+    private TextView textView;
     private FirebaseFirestore db;
     private CollectionReference eventsJoinedRef;
     private ListenerRegistration reg;
@@ -56,6 +57,9 @@ public class DisplayWaitingListsFragment extends Fragment {
             Toolbar toolbar = view.findViewById(R.id.topBar);
             toolbar.setTitle("My Waiting Lists");
 
+            textView = view.findViewById(R.id.text_emptyList);
+            textView.setVisibility(View.GONE);
+
             ListView listView = view.findViewById(R.id.customListView);
             waitingLists = new ArrayList<>();
             listAdapter = new EventListAdapter(getContext(), waitingLists);
@@ -67,11 +71,6 @@ public class DisplayWaitingListsFragment extends Fragment {
             });
 
             getWaitingLists();
-
-            if (waitingLists.isEmpty()) {
-                TextView textView = view.findViewById(R.id.text_emptyList);
-                textView.setText("No waiting lists");
-            }
         }
 
         return view;
@@ -96,6 +95,9 @@ public class DisplayWaitingListsFragment extends Fragment {
                         getEventInfo(eventId);
                     }
                 }
+            } else {
+                textView.setVisibility(View.VISIBLE);
+                textView.setText("No waiting lists");
             }
         });
 

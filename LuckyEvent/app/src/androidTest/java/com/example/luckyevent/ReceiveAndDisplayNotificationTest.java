@@ -29,9 +29,30 @@ import java.util.Locale;
  * Tests if a user's notifications are displayed and regularly updated. Uses the following classes:
  * NotificationService and DisplayNotificationsFragment.
  *
- * IMPORTANT: test passes only if emulator loads fast enough
+ * IMPORTANT: test passes only if emulator is fast enough
  */
 public class ReceiveAndDisplayNotificationTest {
+    // data used for tests
+    private final String username = "testEntrantM";
+    private final String password = "entrantusedformmelvestesting";
+    private final String userId = "huDuiipQdhbZHDMEmi6UxySXiLq2";
+
+    private String createUniqueString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale.CANADA);
+        Date currentTime = Calendar.getInstance().getTime();
+        return sdf.format(currentTime);
+    }
+
+    private void startNotificationService(String uniqueString) {
+        ArrayList<String> userIdsList = new ArrayList<>();
+        userIdsList.add(userId);
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), NotificationService.class);
+        intent.putStringArrayListExtra("entrantIds", userIdsList);
+        intent.putExtra("eventId", "1234");
+        intent.putExtra("title", "Test");
+        intent.putExtra("description", uniqueString);
+        ApplicationProvider.getApplicationContext().startService(intent);
+    }
 
     @Rule
     public ActivityScenarioRule<LoginActivity> activityScenarioRule = new ActivityScenarioRule<>(LoginActivity.class);
@@ -39,33 +60,25 @@ public class ReceiveAndDisplayNotificationTest {
     @Test
     public void displayEntrantNotificationsTest() throws InterruptedException {
         // login and navigate to user notifications screen
-        onView(withId(R.id.usernameInput)).perform(ViewActions.typeText("JohnDoe"));
-        onView(withId(R.id.passwordInput)).perform(ViewActions.typeText("123456"));
+        onView(withId(R.id.usernameInput)).perform(ViewActions.typeText(username));
+        onView(withId(R.id.passwordInput)).perform(ViewActions.typeText(password));
         onView(withId(R.id.SignInButton)).perform(click());
-
         Thread.sleep(5000);
+
         onView(withId(R.id.notification_item))
                 .check(matches(isDisplayed()))
                 .perform(click());
 
-        // create a unique string to send to the user in a notification
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale.CANADA);
-        Date currentTime = Calendar.getInstance().getTime();
-        String uniqueText = sdf.format(currentTime);
+        // create a unique string that we will use to check if a new notification is displayed
+        String uniqueString = createUniqueString();
+        onView(withText(uniqueString)).check(doesNotExist());
 
-        onView(withText(uniqueText)).check(doesNotExist());
+        startNotificationService(uniqueString);
         Thread.sleep(5000);
 
-        // start NotificationService to send notification to the user
-        ArrayList<String> userIdsList = new ArrayList<>();
-        userIdsList.add("Bhs47JTuD3gwwlefhM8DnMrkTQT2");
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), NotificationService.class);
-        intent.putStringArrayListExtra("entrants", userIdsList);
-        intent.putExtra("title", "Test");
-        intent.putExtra("description", uniqueText);
-        ApplicationProvider.getApplicationContext().startService(intent);
+        onView(withText(uniqueString)).check(matches(isDisplayed()));
 
-        Thread.sleep(5000);
-        onView(withText(uniqueText)).check(matches(isDisplayed()));
+        // delete notification
+        onView(withId(R.id.image_trash)).perform(click());
     }
 }
