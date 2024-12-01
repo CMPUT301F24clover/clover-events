@@ -2,6 +2,7 @@ package com.example.luckyevent.activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +20,8 @@ import com.example.luckyevent.R;
 import com.example.luckyevent.fragments.ScanQrFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -101,6 +104,20 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
 
         initializeViews();
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String userID = user.getUid();
+        DocumentReference facilityIDRef = db.collection("loginProfile").document(userID);
+        facilityIDRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    String facilityID = document.getString("myFacility");
+                    getAddress(facilityID);
+                }
+            }
+        });
+
         loadEventDetails();
     }
 
@@ -178,7 +195,11 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
                 invitationResponse.setTextColor(ContextCompat.getColor(this, R.color.green));
                 break;
             case "Declined":
-                setButtonsVisibility(View.GONE, View.GONE, View.GONE, View.GONE, "Declined");
+                setButtonsVisibility(View.GONE, View.GONE, View.GONE, View.GONE, "Declined invitation");
+                invitationResponse.setTextColor(ContextCompat.getColor(this, R.color.black));
+                break;
+            case "Cancelled":
+                setButtonsVisibility(View.GONE, View.GONE, View.GONE, View.GONE, "Invite was cancelled");
                 invitationResponse.setTextColor(ContextCompat.getColor(this, R.color.black));
                 break;
             case "n/a":
@@ -207,6 +228,35 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
         } else {
             invitationResponse.setVisibility(View.GONE);
         }
+    }
+
+    /**
+     * Retrieves the address of a facility from Firestore and displays it in the specified TextView.
+     *
+     * This method fetches the "Address" field from the Firestore document corresponding to the given facility ID.
+     * If the address is found, it updates the provided TextView with the address. If the address is not found or
+     * if an error occurs during the retrieval, appropriate messages are shown to the user.
+     *
+     * @param facilityId The ID of the facility whose address is to be retrieved from Firestore.
+     */
+    private void getAddress(String facilityId){
+        db.collection("facilities")
+                .document(facilityId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            String location = document.getString("Address");
+                            locationView.setText(location != null ? location : "Location not set");
+                        } else {
+                            Toast.makeText(this, "Address not found", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Log.e("EntrantEventDetailsActivity", "Error getting document", task.getException());
+                        Toast.makeText(this, "Failed to load event address", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     /**
@@ -264,16 +314,37 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
         }
 
         if (geolocationRequired) {
-            // Check and request location permissions if needed
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        LOCATION_PERMISSION_REQUEST_CODE);
-            } else {
-                getCurrentLocationAndJoin();
-            }
+            // Create an AlertDialog to confirm if the user wants to proceed with geolocation
+            new AlertDialog.Builder(this)
+                    .setTitle("Warning:")
+                    .setMessage("Geo-location is required in order to join the waitlist. Do you want to continue?")
+                    .setPositiveButton("Join", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // If user confirms, check location permissions
+                            if (ContextCompat.checkSelfPermission(EntrantEventDetailsActivity.this,
+                                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                // Request location permissions
+                                ActivityCompat.requestPermissions(EntrantEventDetailsActivity.this,
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        LOCATION_PERMISSION_REQUEST_CODE);
+                            } else {
+                                // Permissions granted, proceed to get location and join
+                                getCurrentLocationAndJoin();
+                            }
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // If user cancels, do nothing
+                            dialog.dismiss();
+                        }
+                    })
+                    .create()
+                    .show();
         } else {
+            // If geolocation is not required, just join the waitlist directly
             joinWaitList(null, null);
         }
     }
@@ -449,7 +520,7 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
 
             DocumentReference joinedEventRef = eventsJoinedRef.document(eventId);
 
-            transaction.update(entrantRef, "invitationStatus", "Declined");
+            transaction.update(entrantRef, "invitationStatus", "Declined", "findReplacement", true);
             transaction.update(joinedEventRef, "status", "Declined");
             return null;
         }).addOnSuccessListener(result -> {

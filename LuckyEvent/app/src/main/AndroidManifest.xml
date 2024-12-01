@@ -34,7 +34,6 @@
 
         <activity android:name=".activities.EntrantEventDetailsActivity"
             android:exported="false"/>
-        <activity android:name=".activities.GenerateQrActivity"/>
         <activity android:name=".activities.HomePageActivity" />
         <activity android:name=".activities.EntrantSignUpActivity" />
         <activity android:name=".activities.RegisterDeviceActivity" />
@@ -53,6 +52,7 @@
         <service android:name=".LotteryService" />
         <service android:name=".QRDownloadService" />
         <service android:name=".NotificationService" />
+        <service android:name=".SampleOneEntrantService" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -39,10 +41,26 @@ public class DisplayFacilityFragment extends Fragment {
     private TextView facilityName, facilityEmail, facilityAddress, facilityPhone;
     private String facilityID;
 
+    /**
+     * Creates and initializes the fragment's view hierarchy
+     * Sets up UI components and event listeners
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.view_facility, container, false);
+
+        // Set Toolbar title
+        Toolbar toolbar = view.findViewById(R.id.topBar);
+        toolbar.setTitle("My Facility");
+        toolbar.setNavigationIcon(R.drawable.arrow_back);
+        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
+        // Enable the back button
+        if (((AppCompatActivity) requireActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
 
         db = FirebaseFirestore.getInstance();
 
@@ -75,6 +93,16 @@ public class DisplayFacilityFragment extends Fragment {
 
         return view;
     }
+
+    /**
+     * Fetches and displays the details of a facility from Firestore based on the provided facility ID.
+     *
+     * This method retrieves the facility information (Name, Email, Address, Phone) from the Firestore
+     * database and populates the corresponding UI fields. If the facility does not exist or an error occurs,
+     * an appropriate message is shown to the user.
+     *
+     * @param facilityID The ID of the facility whose details are to be fetched from Firestore.
+     */
     public void viewFacilityDetails(String facilityID){
         db.collection("facilities")
                 .document(facilityID)
@@ -102,6 +130,11 @@ public class DisplayFacilityFragment extends Fragment {
                 });
     }
 
+    /**
+     * Navigates to the edit facility screen after clicking the edit button
+     *
+     * @param facilityId The ID of the created event
+     */
     private void navigateToEditFacilityFragment(String facilityId) {
         EditFacilityFragment editFacilityFragment = new EditFacilityFragment();
 

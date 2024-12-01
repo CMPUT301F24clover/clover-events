@@ -23,20 +23,16 @@ public class Lottery implements Serializable {
         this.sampleSize = sampleSize;
     }
 
-    public void setEntrants(ArrayList<String> entrants) {
-        this.entrants = entrants;
-    }
-
-    public void setSampleSize(int sampleSize) {
-        this.sampleSize = sampleSize;
+    public ArrayList<String> getEntrants() {
+        return entrants;
     }
 
     public ArrayList<String> getWinners() {
         return winners;
     }
 
-    public ArrayList<String> getEntrants() {
-        return entrants;
+    public int getSampleSize() {
+        return sampleSize;
     }
 
     /**

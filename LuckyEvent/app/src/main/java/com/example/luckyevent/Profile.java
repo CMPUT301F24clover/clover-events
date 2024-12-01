@@ -1,18 +1,25 @@
 package com.example.luckyevent;
 
+/**
+ * A class representing a user's profile in the app.
+ *
+ * @author Seyi
+ * @version 1
+ * @since 1
+ */
 public class Profile {
     private String userName;
     private String firstName;
     private String lastName;
     private String userId;
 
-    public Profile(String userName, String firstName, String lastName, String userId){
+    public Profile(String userName, String firstName, String lastName, String userId) {
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.userId = userId;
     }
-    public void setUserName(String userName){
+    public void setUserName(String userName) {
         this.userName = userName;
     }
 
@@ -36,7 +43,7 @@ public class Profile {
         return lastName;
     }
 
-    public String getFullName(){
+    public String getFullName() {
         return firstName + " " + lastName;
     }
 

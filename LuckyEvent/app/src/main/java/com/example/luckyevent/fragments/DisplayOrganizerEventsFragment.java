@@ -10,9 +10,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
+import com.example.luckyevent.Event;
 import com.example.luckyevent.EventListAdapter;
 import com.example.luckyevent.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,7 +43,7 @@ import java.util.Collections;
 public class DisplayOrganizerEventsFragment extends Fragment {
     // Lists to store event data
     private ArrayList<String> eventIdsList;        // Stores event IDs from user profile
-    private ArrayList<EventListAdapter.EventItem> eventItems;  // Stores complete event objects
+    private ArrayList<Event> events;               // Stores complete event objects
     private EventListAdapter listAdapter;          // Adapter for ListView display
 
     // Firebase references
@@ -63,7 +66,7 @@ public class DisplayOrganizerEventsFragment extends Fragment {
         // Initialize ListView and adapter
         setupListView(view);
 
-        // Set toolbar title
+        // Set Toolbar title
         Toolbar toolbar = view.findViewById(R.id.topBar);
         toolbar.setTitle("My Events");
 
@@ -71,7 +74,7 @@ public class DisplayOrganizerEventsFragment extends Fragment {
         initializeFirebase();
 
         // Show empty state if no events exist
-        if (eventItems.isEmpty()) {
+        if (events.isEmpty()) {
             TextView textView = view.findViewById(R.id.text_emptyList);
             textView.setText("No events");
         }
@@ -85,13 +88,13 @@ public class DisplayOrganizerEventsFragment extends Fragment {
      */
     private void setupListView(View view) {
         ListView listView = view.findViewById(R.id.customListView);
-        eventItems = new ArrayList<>();
-        listAdapter = new EventListAdapter(getContext(), eventItems);
+        events = new ArrayList<>();
+        listAdapter = new EventListAdapter(getContext(), events);
         listView.setAdapter(listAdapter);
 
         // Setup click listener for navigation to event details
         listView.setOnItemClickListener((parent, view1, position, id) -> {
-            selectedEventId = eventItems.get(position).getEventId();
+            selectedEventId = events.get(position).getEventId();
             goToEventDetails();
         });
     }
@@ -139,7 +142,7 @@ public class DisplayOrganizerEventsFragment extends Fragment {
      * Note: Events are sorted by creation timestamp to maintain consistent ordering
      */
     private void getEventDetails() {
-        eventItems.clear();
+        events.clear();
         for (String id : eventIdsList) {
             db.collection("events").document(id).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
@@ -148,17 +151,20 @@ public class DisplayOrganizerEventsFragment extends Fragment {
                         // Extract event details
                         String eventName = snapshot.getString("eventName");
                         Long createdAt = snapshot.getLong("createdAt");
+                        String eventDate = snapshot.getString("date");
+                        String eventTime = snapshot.getString("time");
+                        String eventDateTime = String.format("%s · %s", eventDate, eventTime);
+                        String eventDesc = snapshot.getString("description");
                         if (createdAt == null) {
                             createdAt = System.currentTimeMillis(); // Fallback timestamp
                         }
 
-                        // Create and add new event item
-                        EventListAdapter.EventItem eventItem =
-                                new EventListAdapter.EventItem(id, eventName, createdAt);
-                        eventItems.add(eventItem);
+                        // Create and add new event
+                        Event event = new Event(id, eventName, createdAt, eventDateTime, eventDesc);
+                        events.add(event);
 
                         // Sort events by creation time and update UI
-                        Collections.sort(eventItems);
+                        Collections.sort(events);
                         listAdapter.notifyDataSetChanged();
                     }
                 }
