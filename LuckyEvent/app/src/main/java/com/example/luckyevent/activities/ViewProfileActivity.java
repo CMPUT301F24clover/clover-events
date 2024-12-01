@@ -107,46 +107,32 @@ public class ViewProfileActivity extends AppCompatActivity {
             }
         });
 
+        Boolean isNotificationDisabled = UserSession.getInstance().isNotificationDisabled();
+        enableNotificationsCheckBox.setChecked(!Boolean.TRUE.equals(isNotificationDisabled));
 
-        if(UserSession.getInstance().isNotificationDisabled()){
-            enableNotificationsCheckBox.setChecked(false);
-        }
-        else{
-            enableNotificationsCheckBox.setChecked(true);
-        }
 
         // When clicked disable or enable the notification for the current user
         // The initial state of this is stored in firestore
         enableNotificationsCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(UserSession.getInstance().isNotificationDisabled()){
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("notificationsDisabled", false);
-                    db.collection("loginProfile").document(UserSession.getInstance().getUserId()).update(map)
-                            .addOnCompleteListener(dbTask -> {
-                                if (dbTask.isSuccessful()) {
-                                    enableNotificationsCheckBox.setChecked(true);
-                                    UserSession.getInstance().setNotificationDisabled(false);
-                                } else {
-                                    Log.e(TAG, "onClick: Failed to enable notifications");
-                                }
-                            });
-                }
-                else{
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("notificationsDisabled", true);
-                    db.collection("loginProfile").document(UserSession.getInstance().getUserId()).update(map)
-                            .addOnCompleteListener(dbTask -> {
-                                if (dbTask.isSuccessful()) {
-                                    enableNotificationsCheckBox.setChecked(false);
-                                    UserSession.getInstance().setNotificationDisabled(true);
-                                } else {
-                                    Log.e(TAG, "onClick: Failed to disable notifications");
-                                }
-                            });
-                }
+                boolean currentState = Boolean.TRUE.equals(UserSession.getInstance().isNotificationDisabled());
+                Map<String, Object> map = new HashMap<>();
+                map.put("notificationsDisabled", !currentState);
 
+                db.collection("loginProfile")
+                        .document(UserSession.getInstance().getUserId())
+                        .update(map)
+                        .addOnCompleteListener(dbTask -> {
+                            if (dbTask.isSuccessful()) {
+                                enableNotificationsCheckBox.setChecked(currentState);
+                                UserSession.getInstance().setNotificationDisabled(!currentState);
+                            } else {
+                                // Revert checkbox state on failure
+                                enableNotificationsCheckBox.setChecked(!currentState);
+                                Log.e(TAG, "onClick: Failed to update notifications state");
+                            }
+                        });
             }
         });
 

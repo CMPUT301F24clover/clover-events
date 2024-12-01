@@ -112,8 +112,16 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    String facilityID = document.getString("myFacility");
-                    getAddress(facilityID);
+                    if (document.exists()){
+                        String facilityID = document.getString("myFacility");
+                        if (facilityID != null){
+                            getAddress(facilityID);
+                        }else{
+                            // Handle case where facility ID is null
+                            locationView.setText("Location not available");
+                        }
+                    }
+
                 }
             }
         });
@@ -240,6 +248,11 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
      * @param facilityId The ID of the facility whose address is to be retrieved from Firestore.
      */
     private void getAddress(String facilityId){
+        // Add null check at the start of the method
+        if (facilityId == null || facilityId.isEmpty()) {
+            locationView.setText("Location not available");
+            return;
+        }
         db.collection("facilities")
                 .document(facilityId)
                 .get()

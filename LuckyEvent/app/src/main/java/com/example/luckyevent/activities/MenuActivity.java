@@ -7,6 +7,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
+import com.example.luckyevent.UserSession;
 import com.example.luckyevent.fragments.DisplayNotificationsFragment;
 import com.example.luckyevent.fragments.DisplayWaitingListsFragment;
 import com.example.luckyevent.fragments.HomePageFragment;
@@ -109,6 +110,11 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
                         if (task.isSuccessful() && task.getResult() != null){
                             DocumentSnapshot doc = task.getResult();
                             if (doc.exists()){
+                                // Initialize notification preference in UserSession
+                                Boolean notificationDisabled = doc.getBoolean("notificationsDisabled");
+                                UserSession.getInstance().setNotificationDisabled(
+                                        notificationDisabled!= null ? notificationDisabled : false
+                                );
                                 Boolean hasUserProfile = doc.getBoolean("hasUserProfile");
                                 if (Boolean.TRUE.equals(hasUserProfile)){
                                     Intent intent = new Intent(MenuActivity.this,ViewProfileActivity.class);
