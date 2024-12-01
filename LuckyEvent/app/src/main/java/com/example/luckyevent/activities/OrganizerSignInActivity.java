@@ -37,7 +37,7 @@ public class OrganizerSignInActivity extends AppCompatActivity {
     private EditText password;
     private FirebaseDB firebaseDB;
     private FirebaseFirestore db;
-    private TextView registerText;
+    private TextView goBackText;
     private androidx.appcompat.widget.AppCompatButton signInButton;
     private androidx.appcompat.widget.AppCompatButton signUpButton;
     private ImageView gobackButton;
@@ -45,15 +45,17 @@ public class OrganizerSignInActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.organizer_login);
+        setContentView(R.layout.organizer_login_new);
 
         db = FirebaseFirestore.getInstance();
-        username = findViewById(R.id.usernameInput);
-        password = findViewById(R.id.passwordInput);
+        username = findViewById(R.id.username_editText);
+        password = findViewById(R.id.password_editText);
         firebaseDB = new FirebaseDB(this);
 
-        signInButton = findViewById(R.id.SignInButton);
+        signInButton = findViewById(R.id.sign_in_button);
         gobackButton = findViewById(R.id.previousIcon);
+        goBackText = findViewById(R.id.previous_textView);
+
 
         /*
          *When clicked, this activity collects all the text provided in the field and signs in using FireBaseDB's
@@ -136,7 +138,7 @@ public class OrganizerSignInActivity extends AppCompatActivity {
          *When clicked, this activity navigates to the OrganizerSignUpActivity. The user can sign up
          * as an organizer in that activity
          */
-        signUpButton = findViewById(R.id.SignUpButton);
+        signUpButton = findViewById(R.id.sign_up_button);
         signUpButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Intent intent = new Intent(OrganizerSignInActivity.this, OrganizerSignUpActivity.class);
@@ -149,6 +151,15 @@ public class OrganizerSignInActivity extends AppCompatActivity {
          *When clicked, this activity navigates to the previous activity (LoginActivity)
          */
         gobackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OrganizerSignInActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        goBackText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(OrganizerSignInActivity.this, LoginActivity.class);

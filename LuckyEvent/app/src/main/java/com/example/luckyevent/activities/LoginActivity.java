@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.luckyevent.R;
 import com.example.luckyevent.UserSession;
 import com.example.luckyevent.firebase.FirebaseDB;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -32,22 +33,25 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * @since 1
  */
 public class LoginActivity extends AppCompatActivity {
-    private EditText username;
-    private EditText password;
+    private TextInputEditText username;
+    private TextInputEditText password;
     private FirebaseDB firebaseDB;
     private FirebaseFirestore db;
     private TextView registerText;
     private TextView organizerText;
     private androidx.appcompat.widget.AppCompatButton signInButton;
     private androidx.appcompat.widget.AppCompatButton signUpButton;
+    private androidx.appcompat.widget.AppCompatButton organizerSignInButton;
+    private androidx.appcompat.widget.AppCompatButton continueAsGuestButton;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
-        setContentView(R.layout.main_login);
-        username = findViewById(R.id.usernameInput);
-        password = findViewById(R.id.passwordInput);
+        setContentView(R.layout.main_login_new);
+        username = findViewById(R.id.username_editText);
+        password = findViewById(R.id.password_editText);
         firebaseDB = new FirebaseDB(this);
 
         /* commented this out since the log out button isn't implemented
@@ -67,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
         */
 
 
-        signInButton = findViewById(R.id.SignInButton);
+        signInButton = findViewById(R.id.sign_in_button);
 
 
         signInButton.setOnClickListener(new View.OnClickListener() {
@@ -171,7 +175,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-        signUpButton = findViewById(R.id.SignUpButton);
+        signUpButton = findViewById(R.id.sign_up_button);
         signUpButton.setOnClickListener(new View.OnClickListener(){
             /**
              * Navigates to the EntrantSignUp Activity when clicked
@@ -184,8 +188,8 @@ public class LoginActivity extends AppCompatActivity {
 
         });
 
-        registerText = findViewById(R.id.RegisterText);
-        registerText.setOnClickListener(new View.OnClickListener() {
+        continueAsGuestButton = findViewById(R.id.continue_as_guest_button);
+        continueAsGuestButton.setOnClickListener(new View.OnClickListener() {
             /**
              * Navigates to the RegisterDeviceActivity when clicked
              */
@@ -197,8 +201,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        organizerText = findViewById(R.id.OrganizerText);
-        organizerText.setOnClickListener(new View.OnClickListener() {
+        organizerSignInButton = findViewById(R.id.sign_in_as_organizer_button);
+        organizerSignInButton.setOnClickListener(new View.OnClickListener() {
             /**
              * Navigates to the OrganizerSignInActivity when clicked
              */
