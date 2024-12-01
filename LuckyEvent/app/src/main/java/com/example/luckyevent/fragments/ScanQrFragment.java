@@ -104,6 +104,8 @@ public class ScanQrFragment extends Fragment {
     private void launchEventDetailsActivity(String eventId) {
         Intent intent = new Intent(getActivity(), EntrantEventDetailsActivity.class);
         intent.putExtra("eventId", eventId);
+        // Clear the back stack
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 }
