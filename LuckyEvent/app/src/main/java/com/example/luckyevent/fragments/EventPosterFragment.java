@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -154,6 +155,7 @@ public class EventPosterFragment extends Fragment {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
+                                Toast.makeText(getContext(), "Successfully deleted event poster!", Toast.LENGTH_SHORT).show();
                                 Log.d(Tag, "DocumentSnapshot successfully deleted!");
                                 poster.setImageResource(android.R.drawable.ic_menu_gallery); // Reset poster image
                             }
@@ -247,8 +249,10 @@ public class EventPosterFragment extends Fragment {
                             Map<String, Object> imageData = new HashMap<>();
                             imageData.put("PosterUrl", downloadUrl);
                             db.collection("eventPosters").document(eventId).set(imageData)
-                                    .addOnSuccessListener(aVoid ->
-                                            Log.e(Tag, "Image URL saved to Firestore"))
+                                    .addOnSuccessListener(aVoid -> {
+                                        Log.d(Tag, "Poster updated in Firestore");
+                                        Toast.makeText(getContext(), "Event poster updated successfully!", Toast.LENGTH_SHORT).show();
+                                    })
                                     .addOnFailureListener(e ->
                                             Log.e(Tag, "Failed to save URL to Firestore: " + e.getMessage()));
                         }).addOnFailureListener(e -> {

@@ -62,7 +62,8 @@ public class UserSession {
     }
 
     public Boolean isNotificationDisabled() {
-        return notificationDisabled;
+        // Return false as default if not set
+        return notificationDisabled != null ? notificationDisabled : false;
     }
 
     //The userId can be accessed by any activity like this:

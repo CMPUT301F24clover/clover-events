@@ -1,5 +1,7 @@
 package com.example.luckyevent.fragments;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +13,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -27,9 +31,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -54,8 +62,7 @@ public class CreateEventFragment extends Fragment {
     // UI Components
     private TextInputEditText eventName;
     private TextInputEditText dueDate;
-    private TextInputEditText time;
-    private TextInputEditText date;
+    private TextInputEditText dateAndTime;
     private TextInputEditText description;
     private AutoCompleteTextView waitListSize;
     private AutoCompleteTextView sampleSize;
@@ -66,7 +73,7 @@ public class CreateEventFragment extends Fragment {
     private FirebaseFirestore firestore;
 
     // Selected values for dropdowns
-    private int selectedWaitListSize;
+    private int selectedWaitListSize = -1;
     private int selectedSampleSize;
 
     /**
@@ -85,8 +92,21 @@ public class CreateEventFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.create_event, container, false);
 
+        // Set Toolbar title
+        Toolbar toolbar = rootView.findViewById(R.id.topBar);
+        toolbar.setTitle("Create Event");
+        toolbar.setNavigationIcon(R.drawable.arrow_back);
+        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
+        // Enable the back button
+        if (((AppCompatActivity) requireActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
+
         initializeViews(rootView);
         setupDropdowns();
+        setupClickListeners();
         setupCreateEventButton();
 
         return rootView;
@@ -111,11 +131,8 @@ public class CreateEventFragment extends Fragment {
         TextInputLayout dueDateLayout = rootView.findViewById(R.id.input_due_date);
         dueDate = (TextInputEditText) dueDateLayout.getEditText();
 
-        TextInputLayout timeLayout = rootView.findViewById(R.id.input_time);
-        time = (TextInputEditText) timeLayout.getEditText();
-
-        TextInputLayout dateLayout = rootView.findViewById(R.id.input_date);
-        date = (TextInputEditText) dateLayout.getEditText();
+        TextInputLayout dateLayout = rootView.findViewById(R.id.input_date_and_time);
+        dateAndTime = (TextInputEditText) dateLayout.getEditText();
 
         TextInputLayout descriptionLayout = rootView.findViewById(R.id.input_description);
         description = (TextInputEditText) descriptionLayout.getEditText();
@@ -154,6 +171,116 @@ public class CreateEventFragment extends Fragment {
     }
 
     /**
+     * Make date and time fields clickable and show respective DatePicker and TimePicker dialogs
+     */
+    private void setupClickListeners() {
+        dateAndTime.setFocusable(false);  // Prevent keyboard from appearing
+        dateAndTime.setOnClickListener(v -> showDateAndTimePicker(dateAndTime));
+
+        dueDate.setFocusable(false);  // Prevent keyboard from appearing
+        dueDate.setOnClickListener(v -> showDatePicker(dueDate));
+    }
+
+    /**
+     * Displays a date and time picker dialog for selecting a date and a time range (From - To)
+     * and sets the formatted result in the given {@link TextInputEditText} field.
+     * The method first presents a DatePickerDialog to allow the user to select a date. Once the date is selected,
+     * a TimePickerDialog is displayed to allow the user to select a "From" time. After the "From" time is selected,
+     * a second TimePickerDialog is shown to select the "To" time.
+     * @param dateAndTime The {@link TextInputEditText} in which the selected date and time range will be displayed.
+     * This field is updated with the formatted date and time string.
+     * The time is displayed in 12-hour format (AM/PM), and the leading zero for single-digit hours is removed
+     * where applicable (e.g., "08:00 AM" becomes "8:00 AM").
+     */
+    private void showDateAndTimePicker(final TextInputEditText dateAndTime){
+        // First, pick the date
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        // Create and show the DatePickerDialog
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year1, month1, dayOfMonth) -> {
+            // Format the selected date
+            Calendar selectedDate = Calendar.getInstance();
+            selectedDate.set(year1, month1, dayOfMonth);
+            SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());  // Date format
+            String formattedDate = sdf.format(selectedDate.getTime());
+
+            // Then, pick the time
+            int hour = selectedDate.get(Calendar.HOUR_OF_DAY);  // Use the date's current time for default
+            int minute = selectedDate.get(Calendar.MINUTE);
+
+            // Create the "From" time picker dialog
+            TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), (view1, hourOfDay, minute1) -> {
+                // Format the selected time
+                SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+                Calendar fromTime = Calendar.getInstance();
+                fromTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                fromTime.set(Calendar.MINUTE, minute1);
+                String fromFormatted = timeFormat.format(fromTime.getTime());
+
+                // Remove the leading zero for single-digit hours (if applicable)
+                int hourIn12 = fromTime.get(Calendar.HOUR); // Get the hour in 12-hour format
+                if (hourIn12 == 0) hourIn12 = 12; // Handle 12 AM case
+                String formattedFromTime = String.format("%d:%02d %s", hourIn12, minute1, fromFormatted.split(" ")[1]);
+
+                // Create the "To" time picker dialog
+                TimePickerDialog toTimePickerDialog = new TimePickerDialog(getContext(), (view2, hourOfDayTo, minute1To) -> {
+                    // Format the "To" time
+                    Calendar toTime = Calendar.getInstance();
+                    toTime.set(Calendar.HOUR_OF_DAY, hourOfDayTo);
+                    toTime.set(Calendar.MINUTE, minute1To);
+                    String toFormatted = timeFormat.format(toTime.getTime());
+
+                    // Remove the leading zero for single-digit hours (if applicable)
+                    int hourIn12To = toTime.get(Calendar.HOUR);
+                    if (hourIn12To == 0) hourIn12To = 12; // Handle 12 AM case
+                    String formattedToTime = String.format("%d:%02d %s", hourIn12To, minute1To, toFormatted.split(" ")[1]);
+
+                    // Combine the date and time range and set it to the TextInputEditText
+                    String dateTimeText = formattedDate+ " • " + formattedFromTime + " - " + formattedToTime;
+                    dateAndTime.setText(dateTimeText);
+
+                }, hour, minute, false);  // 12-hour format for "To" time
+                toTimePickerDialog.show();
+
+            }, hour, minute, false);  // 12-hour format for "From" time
+            timePickerDialog.show();
+
+        }, year, month, day);
+        datePickerDialog.show();
+    }
+
+    /**
+     * Displays a date picker dialog for selecting a due date and sets the formatted
+     * selected date in the given {@link TextInputEditText}.
+     * The selected date is formatted as "MMMM d, yyyy" and set to the provided
+     * {@link TextInputEditText} field once the user selects a date.
+     * @param dueDate The {@link TextInputEditText} where the formatted date will be displayed.
+     */
+    private void showDatePicker(final TextInputEditText dueDate) {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        // Create and show the DatePickerDialog
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year1, month1, dayOfMonth) -> {
+            // Format the selected date
+            Calendar selectedDate = Calendar.getInstance();
+            selectedDate.set(year1, month1, dayOfMonth);
+            SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());  // Set the desired format
+            String formattedDate = sdf.format(selectedDate.getTime());
+
+            // Set the formatted date to the target TextInputEditText
+            dueDate.setText(formattedDate);
+        }, year, month, day);
+
+        datePickerDialog.show();
+    }
+
+    /**
      * Sets up the create event button click listener
      * Validates inputs before proceeding with event creation
      */
@@ -172,10 +299,8 @@ public class CreateEventFragment extends Fragment {
     private boolean validateInputs() {
         if (eventName.getText().toString().trim().isEmpty() ||
                 dueDate.getText().toString().trim().isEmpty() ||
-                time.getText().toString().trim().isEmpty() ||
-                date.getText().toString().trim().isEmpty() ||
+                dateAndTime.getText().toString().trim().isEmpty() ||
                 description.getText().toString().trim().isEmpty() ||
-                waitListSize.getText().toString().trim().isEmpty() ||
                 sampleSize.getText().toString().trim().isEmpty()) {
 
             Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
@@ -238,9 +363,9 @@ public class CreateEventFragment extends Fragment {
         Map<String, Object> eventInfo = new HashMap<>();
         eventInfo.put("eventName", eventName.getText().toString().trim());
         eventInfo.put("dueDate", dueDate.getText().toString().trim());
-        eventInfo.put("time", time.getText().toString().trim());
-        eventInfo.put("date", date.getText().toString().trim());
+        eventInfo.put("dateAndTime", dateAndTime.getText().toString().trim());
         eventInfo.put("description", description.getText().toString().trim());
+        // If the waitList size is -1, it can occupy unlimited entrants
         eventInfo.put("waitListSize", selectedWaitListSize);
         eventInfo.put("sampleSize", selectedSampleSize);
         eventInfo.put("currentWaitList", 0);
@@ -256,7 +381,7 @@ public class CreateEventFragment extends Fragment {
                     String eventId = documentReference.getId();
                     addEventToProfile(userID, eventId);
                     generateQRCode(eventId);
-                    //navigateToEventDetails(eventId);
+                    navigateToMyEvents(eventId);
                     Toast.makeText(getContext(), "Event Created Successfully!", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
@@ -281,17 +406,17 @@ public class CreateEventFragment extends Fragment {
      * Navigates to the event details screen after successful event creation
      *
      * @param eventId The ID of the created event
-
-    private void navigateToEventDetails(String eventId) {
-        EventDetailsFragment eventDetailsFragment = new EventDetailsFragment();
+     */
+    private void navigateToMyEvents(String eventId) {
+        DisplayOrganizerEventsFragment displayOrganizerEventsFragment = new DisplayOrganizerEventsFragment();
 
         Bundle bundle = new Bundle();
-        bundle.putString("facilityId", eventId);
-        eventDetailsFragment.setArguments(bundle);
+        bundle.putString("eventId", eventId);
+        displayOrganizerEventsFragment.setArguments(bundle);
 
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.OrganizerMenuFragment, eventDetailsFragment);
+        transaction.replace(R.id.OrganizerMenuFragment, displayOrganizerEventsFragment);
         transaction.addToBackStack(null);
         transaction.commit();
-    }*/
+    }
 }

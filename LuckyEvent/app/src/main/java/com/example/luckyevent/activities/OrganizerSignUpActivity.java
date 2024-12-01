@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -28,7 +29,8 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
     private EditText facilityName;
     private EditText facilityCode;
     private FirebaseDB firebaseDB;
-    private ImageView gobackButton;
+    private ImageView goBackButton;
+    private TextView goBackText;
     private FirebaseFirestore db;
 
     /**
@@ -44,15 +46,16 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
-        setContentView(R.layout.organizer_signup);
+        setContentView(R.layout.organizer_signup_new);
 
-        userName = findViewById(R.id.SignUpUsernameInput);
-        password = findViewById(R.id.SignUpPasswordInput);
-        firstName = findViewById(R.id.SignUpFirstNameInput);
-        lastName = findViewById(R.id.SignUpLastNameInput);
-        facilityName = findViewById(R.id.SignUpFacilityNameInput);
-        facilityCode = findViewById(R.id.SignUpFacilityCodeInput);
-        gobackButton = findViewById(R.id.previousIcon);
+        userName = findViewById(R.id.username_editText);
+        password = findViewById(R.id.password_editText);
+        firstName = findViewById(R.id.firstname_editText);
+        lastName = findViewById(R.id.lastname_editText);
+        facilityName = findViewById(R.id.facility_code_editText);
+        facilityCode = findViewById(R.id.facility_code_editText);
+        goBackButton = findViewById(R.id.previousIcon);
+        goBackText = findViewById(R.id.textView7);
 
 
         firebaseDB = new FirebaseDB(this);
@@ -62,7 +65,7 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
          * functionality is handled by FirebaseDB's signup function. The user is redirected to the OrganizerMenuActivity
          * when successfully registered
          */
-        signUpButton = findViewById(R.id.SignUpButton);
+        signUpButton = findViewById(R.id.sign_in_button);
         signUpButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -129,7 +132,16 @@ public class OrganizerSignUpActivity extends AppCompatActivity {
         /*
          * Navigates to the previous activity when pressed (OrganizerSignInActivity)
          */
-        gobackButton.setOnClickListener(new View.OnClickListener() {
+        goBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OrganizerSignUpActivity.this, OrganizerSignInActivity.class);
+                startActivity(intent);
+                finish(); // Optional
+            }
+        });
+
+        goBackText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(OrganizerSignUpActivity.this, OrganizerSignInActivity.class);

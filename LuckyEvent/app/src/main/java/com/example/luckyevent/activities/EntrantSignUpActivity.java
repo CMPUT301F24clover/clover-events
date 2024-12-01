@@ -10,11 +10,13 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import com.example.luckyevent.R;
 import com.example.luckyevent.UserSession;
@@ -43,6 +45,7 @@ public class EntrantSignUpActivity extends AppCompatActivity {
     private EditText password;
     private EditText firstName;
     private EditText lastName;
+    private TextView goBackText;
     private FirebaseDB firebaseDB;
     private ImageView gobackButton;
     private ImageView profileImage;
@@ -56,15 +59,16 @@ public class EntrantSignUpActivity extends AppCompatActivity {
         firebaseDB = new FirebaseDB(this);
 
         // Initialize the variables representing the ui elements
-        setContentView(R.layout.entrant_signup);
-        userName = findViewById(R.id.SignUpUsernameInput);
-        password = findViewById(R.id.SignUpPasswordInput);
-        firstName = findViewById(R.id.SignUpFirstNameInput);
-        lastName = findViewById(R.id.SignUpLastNameInput);
-        gobackButton = findViewById(R.id.previousIcon);
+        setContentView(R.layout.entrant_signup_new);
+        userName = findViewById(R.id.username_editText);
+        password = findViewById(R.id.password_editText);
+        firstName = findViewById(R.id.firstname_editText);
+        lastName = findViewById(R.id.lastname_editText);
+        gobackButton = findViewById(R.id.previous_icon);
         profileImage = findViewById(R.id.profile_image);
+        goBackText = findViewById(R.id.previous_textView);
 
-        signUpButton = findViewById(R.id.SignUpButton);
+        signUpButton = findViewById(R.id.create_account_button);
 
         // When clicked, check if the necessary fields filled and sign in
         signUpButton.setOnClickListener(view -> {
@@ -91,8 +95,13 @@ public class EntrantSignUpActivity extends AppCompatActivity {
             finish();
         });
 
+        goBackText.setOnClickListener(v -> {
+            startActivity(new Intent(EntrantSignUpActivity.this, LoginActivity.class));
+            finish();
+        });
+
         // When clicked prompt the user to select
-        FloatingActionButton addImageButton = findViewById(R.id.button_add_image);
+        ImageView addImageButton = findViewById(R.id.button_add_image);
         addImageButton.setOnClickListener(view -> {
             Intent intent = new Intent();
             intent.setType("image/*");

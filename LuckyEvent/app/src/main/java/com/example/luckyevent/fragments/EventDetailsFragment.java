@@ -12,11 +12,18 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckyevent.LotteryService;
 import com.example.luckyevent.QRDownloadService;
 import com.example.luckyevent.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -34,7 +41,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * The fragment serves as a central hub for event organizers to manage all aspects
  * of their event and its participants.
  *
- * @author Amna, Mmelve, Seyi, Tola
+ * @author Amna, Mmelve, Seyi, Tola, Aagam
  * @version 1
  * @since 1
  */
@@ -53,12 +60,38 @@ public class EventDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.organizer_event_details, container, false);
         db = FirebaseFirestore.getInstance();
 
+        // Set Toolbar title
+        Toolbar toolbar = view.findViewById(R.id.topBar);
+        toolbar.setTitle("Event Details");
+        toolbar.setNavigationIcon(R.drawable.arrow_back);
+        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
+        // Enable the back button
+        if (((AppCompatActivity) requireActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
+
         // Validate arguments and event ID
         if (!validateArguments()) {
             return view;
         }
 
         Log.d(TAG, "Loading event details for eventId: " + eventId);
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String userID = user.getUid();
+        DocumentReference facilityIDRef = db.collection("loginProfile").document(userID);
+        facilityIDRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    String facilityID = document.getString("myFacility");
+                    getAddress(view,facilityID);
+                }
+            }
+        });
 
         // Load and display event details from Firestore
         loadEventDetails(view);
@@ -113,6 +146,37 @@ public class EventDetailsFragment extends Fragment {
     }
 
     /**
+     * Retrieves the address of a facility from Firestore and displays it in the specified TextView.
+     *
+     * This method fetches the "Address" field from the Firestore document corresponding to the given facility ID.
+     * If the address is found, it updates the provided TextView with the address. If the address is not found or
+     * if an error occurs during the retrieval, appropriate messages are shown to the user.
+     *
+     * @param view The parent view containing the TextView where the address will be displayed.
+     * @param facilityId The ID of the facility whose address is to be retrieved from Firestore.
+     */
+    private void getAddress(View view, String facilityId) {
+        db.collection("facilities")
+                .document(facilityId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            TextView eventLocation = view.findViewById(R.id.textView_location2);
+                            String location = document.getString("Address");
+                            eventLocation.setText(location != null ? location : "Location not set");
+                        } else {
+                            Toast.makeText(getContext(), "Address not found", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Log.e("EventDetailsFragment", "Error getting document", task.getException());
+                        Toast.makeText(getContext(), "Failed to load event address", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    /**
      * Updates the UI with event details from Firestore
      * Handles null values and potential exceptions
      *
@@ -130,14 +194,15 @@ public class EventDetailsFragment extends Fragment {
             // Extract data from document
             String name = document.getString("eventName");
             String description = document.getString("description");
-            String date = document.getString("date");
-            String waitListSize = document.getString("WaitListSize");
+            String date = document.getString("dateAndTime");
+            Long waitListSizeLong = document.getLong("currentWaitList");
+            int waitListSize = waitListSizeLong.intValue();
 
             // Update UI with data (using default values if null)
             eventTitle.setText(name != null ? name : "N/A");
             eventDescription.setText(description != null ? description : "No description available");
             eventDate.setText(date != null ? date : "Date not set");
-            eventSize.setText((waitListSize != null ? waitListSize : "0") + " Entrants in Waiting List:");
+            eventSize.setText(String.format("Entrants in Waiting List: %s", waitListSize));
         } catch (Exception e) {
             Log.e(TAG, "Error updating UI", e);
             Toast.makeText(getContext(), "Error displaying event details", Toast.LENGTH_SHORT).show();
@@ -165,9 +230,17 @@ public class EventDetailsFragment extends Fragment {
         // Entrant Sampling/Lottery
         TextView sampleEntrants = view.findViewById(R.id.sample_entrant);
         sampleEntrants.setOnClickListener(v -> {
-            if (getActivity() != null && getContext() != null) {
-                startLotteryProcess(sampleEntrants);
-            }
+            db.collection("events").document(eventId).collection("chosenEntrants").get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    if (task.getResult().isEmpty()) {
+                        if (getActivity() != null) {
+                            startLotteryProcess(sampleEntrants);
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Lottery has already been conducted.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         });
 
         // Event Poster Management

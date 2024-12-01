@@ -39,9 +39,9 @@ public class ReceiveAndDisplayNotificationTest {
     @Test
     public void displayEntrantNotificationsTest() throws InterruptedException {
         // login and navigate to user notifications screen
-        onView(withId(R.id.usernameInput)).perform(ViewActions.typeText("JohnDoe"));
-        onView(withId(R.id.passwordInput)).perform(ViewActions.typeText("123456"));
-        onView(withId(R.id.SignInButton)).perform(click());
+        onView(withId(R.id.username_editText)).perform(ViewActions.typeText("JohnDoe"));
+        onView(withId(R.id.password_editText)).perform(ViewActions.typeText("123456"));
+        onView(withId(R.id.sign_in_button)).perform(click());
 
         Thread.sleep(5000);
         onView(withId(R.id.notification_item))
