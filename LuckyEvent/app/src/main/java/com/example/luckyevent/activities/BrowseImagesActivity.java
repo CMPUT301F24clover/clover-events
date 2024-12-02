@@ -43,32 +43,50 @@ public class BrowseImagesActivity extends AppCompatActivity {
         db.collection("eventPosters").get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        HashMap<String, String> image = new HashMap<>();
-                        image.put("url", document.getString("url"));
-                        image.put("description", "Event Poster");
-                        image.put("id", document.getId());
-                        image.put("collection", "eventPosters");
-                        imageList.add(image);
+                        // Log the document data
+                        Log.d("FirestoreData", "Document data: " + document.getData());
+
+                        String url = document.getString("PosterUrl"); // Use the correct key
+                        if (url != null && !url.isEmpty()) {
+                            HashMap<String, String> image = new HashMap<>();
+                            image.put("url", url);
+                            image.put("description", "Event Poster");
+                            image.put("id", document.getId());
+                            image.put("collection", "eventPosters");
+                            imageList.add(image);
+                        } else {
+                            Log.e("FirestoreData", "No PosterUrl field found for eventPoster document " + document.getId());
+                        }
                     }
                     // Load profileImages collection
                     db.collection("profileImages").get()
                             .addOnSuccessListener(profileSnapshots -> {
                                 for (QueryDocumentSnapshot document : profileSnapshots) {
-                                    HashMap<String, String> image = new HashMap<>();
-                                    image.put("url", document.getString("url"));
-                                    image.put("description", "Profile Picture");
-                                    image.put("id", document.getId());
-                                    image.put("collection", "profileImages");
-                                    imageList.add(image);
+                                    // Log the document
+                                    Log.d("FirestoreData", "Document data: " + document.getData());
+
+                                    String url = document.getString("imageUrl");
+                                    if (url != null && !url.isEmpty()) {
+                                        HashMap<String, String> image = new HashMap<>();
+                                        image.put("url", url);
+                                        image.put("description", "Profile Picture");
+                                        image.put("id", document.getId());
+                                        image.put("collection", "profileImages");
+                                        imageList.add(image);
+                                    } else {
+                                        Log.e("FirestoreData", "No imageUrl field found for profileImages document " + document.getId());
+                                    }
                                 }
-                                // Log the number of images loaded
-                                Log.d("BrowseImagesActivity", "Loaded " + imageList.size() + " images.");
                                 adapter.notifyDataSetChanged();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(this, "Failed to load profile images", Toast.LENGTH_SHORT).show();
+                                Log.e("BrowseImagesActivity", "Error loading profile images", e);
                             });
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to load images", Toast.LENGTH_SHORT).show();
-                    Log.e("BrowseImagesActivity", "Error loading images", e);
+                    Toast.makeText(this, "Failed to load event posters", Toast.LENGTH_SHORT).show();
+                    Log.e("BrowseImagesActivity", "Error loading event posters", e);
                 });
     }
 

@@ -42,14 +42,14 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
         String imageUrl = imageInfo.get("url");
         String description = imageInfo.get("description");
 
-        // Log the image URL for debugging
+        // Log the image URL
         Log.d("ImageListAdapter", "Image URL: " + imageUrl);
 
-        // Load the image with Glide, including placeholder and error handling
+        // Loading the image with Glide
         Glide.with(context)
                 .load(imageUrl)
-                .placeholder(R.drawable.demo_profile)  // Add a placeholder image in drawable
-                .error(R.drawable.demo_profile)              // Add an error image in drawable
+                .placeholder(R.drawable.demo_profile)
+                .error(R.drawable.profile_icon)
                 .into(holder.imageView);
 
         holder.descriptionText.setText(description);
