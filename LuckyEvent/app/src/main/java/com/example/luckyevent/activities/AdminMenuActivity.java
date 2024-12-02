@@ -11,10 +11,6 @@ import com.example.luckyevent.fragments.AdminBrowseEvents;
 import com.example.luckyevent.fragments.AdminBrowseFacilities;
 import com.example.luckyevent.fragments.AdminHomePageFragment;
 import com.example.luckyevent.fragments.AdminProfilesFragment;
-import com.example.luckyevent.fragments.CreateEventFragment;
-import com.example.luckyevent.fragments.DisplayOrganizerEventsFragment;
-import com.example.luckyevent.fragments.HomePageFragment;
-import com.example.luckyevent.fragments.OrganizerHomePageFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 /**
