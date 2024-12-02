@@ -34,13 +34,11 @@
 
         <activity android:name=".activities.EntrantEventDetailsActivity"
             android:exported="false"/>
-        <activity android:name=".activities.HomePageActivity" />
         <activity android:name=".activities.EntrantSignUpActivity" />
         <activity android:name=".activities.RegisterDeviceActivity" />
         <activity android:name=".activities.OrganizerSignInActivity" />
         <activity android:name=".activities.OrganizerSignUpActivity"/>
         <activity android:name=".activities.MenuActivity"/>
-        <activity android:name=".activities.ProfileView" />
         <activity android:name=".activities.EditProfileActivity" />
         <activity android:name=".activities.ViewProfileActivity" />
         <activity android:name=".activities.RegisterProfileActivity" />

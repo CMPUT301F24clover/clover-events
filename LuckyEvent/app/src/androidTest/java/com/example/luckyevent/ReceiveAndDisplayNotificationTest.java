@@ -110,7 +110,7 @@ public class ReceiveAndDisplayNotificationTest {
     }
 
     @Test
-    public void displayEntrantNotificationsTest() throws InterruptedException {
+    public void displayEntrantNotificationsTest() throws InterruptedException {     
         login();
 
         // navigate to user notifications screen

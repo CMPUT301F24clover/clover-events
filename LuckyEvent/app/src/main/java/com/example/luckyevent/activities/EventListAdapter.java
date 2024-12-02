@@ -64,12 +64,19 @@ public class EventListAdapter extends ArrayAdapter<EventDisplay> {
         if (eventDisplay != null){
             TextView eventNameTextView = convertView.findViewById(R.id.eventName);
             TextView eventDescriptionTextView = convertView.findViewById(R.id.eventDescription);
+            TextView qrContentTextView = convertView.findViewById(R.id.eventQr);
+
             Button removeEventButton = convertView.findViewById(R.id.eventRemoveButton);
             Button removeQrCodeButton = convertView.findViewById(R.id.eventRemoveQrData);
 
-            //set the name and description
+            //set the name, qr code info, and description
             eventNameTextView.setText(eventDisplay.getEventName());
             eventDescriptionTextView.setText(eventDisplay.getDescription());
+            if (eventDisplay.getQr() != null && !eventDisplay.getQr().isEmpty()){
+                qrContentTextView.setText("QR data: " + eventDisplay.getQr());
+            } else {
+                qrContentTextView.setText("No Qr code for this event");
+            }
 
             //remove button stuff here:
             removeEventButton.setOnClickListener(view -> {
@@ -78,12 +85,12 @@ public class EventListAdapter extends ArrayAdapter<EventDisplay> {
                         .get()
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                                String docID = task.getResult().getDocuments().get(0).getId();
+                                String docID = task.getResult().getDocuments().get(0).getId(); // retrieve the item
                                 db.collection("events").document(docID)
-                                        .delete()
+                                        .delete()// delete the event from the database
                                         .addOnSuccessListener(aVoid -> {
                                             Toast.makeText(getContext(), "Event Removed", Toast.LENGTH_SHORT).show();
-                                            displayList.remove(position);
+                                            displayList.remove(position); // remove the item from the display
                                             notifyDataSetChanged();
                                         })
                                         .addOnFailureListener(e -> {
@@ -115,6 +122,9 @@ public class EventListAdapter extends ArrayAdapter<EventDisplay> {
                                                 @Override
                                                 public void onSuccess(Void unused) {
                                                     Toast.makeText(getContext(), "QR code removed", Toast.LENGTH_SHORT).show();
+                                                    eventDisplay.setQr("No Qr code for this event"); // change the qr content
+                                                    qrContentTextView.setText("No Qr code for this event");
+                                                    notifyDataSetChanged();
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {
@@ -155,22 +165,6 @@ public class EventListAdapter extends ArrayAdapter<EventDisplay> {
 
     }
 
-    /**
-     *  filters the event based on input in the search bar
-     * @param query // the input entered in the search
-     */
-    public void filterByName(String query){
-        displayList.clear();
-        if (query.isEmpty()){
-            displayList.addAll(originalList);
-        }else{
-            for (EventDisplay eventDisplay : originalList){
-                if (eventDisplay.getEventName().toLowerCase().contains(query.toLowerCase())){
-                    displayList.add(eventDisplay);
-                }
-            }
-        }
-        notifyDataSetChanged();
-    }
+
 
 }

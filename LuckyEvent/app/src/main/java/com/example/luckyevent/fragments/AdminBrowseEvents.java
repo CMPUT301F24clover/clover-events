@@ -1,11 +1,15 @@
 package com.example.luckyevent.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SearchView;
+import androidx.appcompat.widget.SearchView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +31,8 @@ public class AdminBrowseEvents extends Fragment {
     private List<EventDisplay> eventDisplayList;
     private EventListAdapter adapter;
     private String TAG = "AdminBrowseEvents";
+    private Button searchButton;
+    private EditText searchEditText;
 
     @Nullable
     @Override
@@ -37,10 +43,25 @@ public class AdminBrowseEvents extends Fragment {
         // here im inflating the fragment layout
         View rootView = inflater.inflate(R.layout.admin_browse_events, container, false);
         ListView listView = rootView.findViewById(R.id.eventListView);
+        searchButton = rootView.findViewById(R.id.search_event_button);
+        searchEditText = rootView.findViewById(R.id.searchEditText);
 
         //set up the adapter for the list view
         adapter = new EventListAdapter(requireContext(), eventDisplayList);
         listView.setAdapter(adapter);
+
+        // when they click on the search button get their input and call the searchEvents function
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String query = searchEditText.getText().toString().trim();
+                if (query.isEmpty()){
+                    Toast.makeText(getContext(), "Please enter a search first", Toast.LENGTH_SHORT).show();
+                }else{
+                    searchEvents(query);
+                }
+            }
+        });
 
         // retrieve the events from the database
         db.collection("events")
@@ -61,9 +82,10 @@ public class AdminBrowseEvents extends Fragment {
                                     String time = doc.getString("time");
                                     String orgID = doc.getString("organizerId");
                                     String status = doc.getString("status");
+                                    String qrContent = doc.contains("qrContent") ? doc.getString("qrContent") : "";
 
                                     // create and EventDisplay object and add it to the list
-                                    EventDisplay eventDisplay = new EventDisplay(eventName, description, date, dueDate, time, orgID, status);
+                                    EventDisplay eventDisplay = new EventDisplay(eventName, description, date, dueDate, time, orgID, status, qrContent);
                                     newEventDisplay.add(eventDisplay);
                                 } catch (Exception e){
                                     Toast.makeText(getContext(), "Error getting event data", Toast.LENGTH_SHORT).show();
@@ -77,22 +99,41 @@ public class AdminBrowseEvents extends Fragment {
                     }
                 });
 
-        // here I implemented the searching functionality
-        SearchView searchView = rootView.findViewById(R.id.search_bar);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                adapter.filterByName(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newQuery) {
-                adapter.filterByName(newQuery);
-                return true;
-            }
-        });
         return rootView;
+    }
+    // filter the results based on the search
+    private void searchEvents(String query){
+        db.collection("events")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
+                        List<EventDisplay> searchResults = new ArrayList<>();
+                        task.getResult().forEach(doc ->{
+                            String eventName = doc.getString("eventName");
+                            if (eventName != null && eventName.toLowerCase().contains(query.toLowerCase())){ // find the results that match the input
+                                String description = doc.getString("description");
+                                String date = doc.getString("date");
+                                String dueDate = doc.getString("dueDate");
+                                String time = doc.getString("time");
+                                String orgID = doc.getString("organizerId");
+                                String status = doc.getString("status");
+                                String qrContent = doc.contains("qrContent") ? doc.getString("qrContent") : "";
+
+                                // create a new eventDisplay object and add it to the results
+                                EventDisplay eventDisplay = new EventDisplay(eventName, description, date, dueDate, time, orgID, status, qrContent);
+                                searchResults.add(eventDisplay);
+
+                            }
+                        });
+                        adapter.updateList(searchResults);
+
+                        if (searchResults.isEmpty()){
+                            Toast.makeText(getContext(), "No events found", Toast.LENGTH_SHORT).show();
+                        }
+                    }else{
+                        Toast.makeText(getContext(), "Error searching", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
 }

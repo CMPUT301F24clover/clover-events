@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -29,6 +31,8 @@ public class AdminBrowseFacilities extends Fragment {
     private List<Facility> facilityList;
     private FacilityListAdapter adapter;
     private static final String TAG = "AdminBrowseFacilities";
+    private Button searchButton;
+    private EditText searchEditText;
 
 
     @Nullable
@@ -40,10 +44,24 @@ public class AdminBrowseFacilities extends Fragment {
         View rootView = inflater.inflate(R.layout.browse_facilities_screen, container, false);
         Log.d(TAG, "layout inflated");
         ListView listView = rootView.findViewById(R.id.facListView);
+        searchButton = rootView.findViewById(R.id.search_facility_button);
+        searchEditText = rootView.findViewById(R.id.searchEditText);
 
         // Initialize adapter and set it to the ListView
         adapter = new FacilityListAdapter(requireContext(), facilityList);
         listView.setAdapter(adapter);
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String query = searchEditText.getText().toString().trim();
+                if (query.isEmpty()){
+                    Toast.makeText(getContext(), "Please enter text before searching", Toast.LENGTH_SHORT).show();
+                } else{
+                    searchFacilties(query);
+                }
+            }
+        });
 
         // retrieve facilities from the database
         db.collection("facilities")
@@ -80,27 +98,38 @@ public class AdminBrowseFacilities extends Fragment {
                     }
                 });
 
-        // Set up SearchView for filtering
-        SearchView searchView = rootView.findViewById(R.id.search_bar);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                adapter.filterByName(query);
-                Log.d(TAG, "Search submitted: " + query);
-                return true;
-            }
-
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                adapter.filterByName(newText);
-                Log.d(TAG, "Search text changed: " + newText);
-                return true;
-            }
-        });
-
 
         return rootView;
+    }
+    private void searchFacilties(String query){
+        db.collection("facilities")
+                .get()
+                .addOnCompleteListener(task ->{
+                    if (task.isSuccessful()){
+                        List<Facility> resultsFacilties = new ArrayList<>();
+                        task.getResult().forEach(doc ->{
+                            String name = doc.getString("Name");
+                            if (name != null && name.toLowerCase().contains(query.toLowerCase())){
+                                String address = doc.getString("Address");
+                                String email = doc.getString("Email");
+                                String phone = doc.getString("Phone");
+                                long createdAt = doc.getLong("createdAt");
+                                String organizerId = doc.getString("organizerId");
+                                String status = doc.getString("status");
+
+                                // add the information to a facility object and add it to the list
+                                Facility facility = new Facility(name, address, email, phone, createdAt, organizerId, status);
+                                resultsFacilties.add(facility);
+                            }
+                        });
+                        adapter.updateList(resultsFacilties);
+                        if (resultsFacilties.isEmpty()){
+                            Toast.makeText(getContext(), "No events found", Toast.LENGTH_SHORT).show();
+                        }
+                    }else{
+                        Toast.makeText(getContext(), "Error searching", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }
 

@@ -19,7 +19,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.UserSession;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -27,6 +26,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Displays the setting options of the event that was selected by the user
+ * With the aid of this fragment, the user can change the wait list size and sample size,
+ * and enable or disable geolocation
+ *
+ * @author Seyi
+ * @version 1
+ * @since 1
+ */
 public class EventSettingDetailsFragment extends Fragment {
     private FirebaseFirestore db;
     private EditText waitingListSizeEditText;
@@ -56,6 +64,7 @@ public class EventSettingDetailsFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
 
+        // Initialize the ui elements needed for this fragment
         waitingListSizeEditText = rootView.findViewById(R.id.waiting_list_size_edit_text);
         sampleSizeEditText = rootView.findViewById(R.id.sample_size_edit_edit_text);
         geolocationCheckbox = rootView.findViewById(R.id.checkBox2);
@@ -65,6 +74,7 @@ public class EventSettingDetailsFragment extends Fragment {
         if (getArguments() != null) {
             String eventId = getArguments().getString("eventId");
 
+            // Retrieve the waitlist size, sample size and geolocation option for this event
             db.collection("events")
                     .document(eventId)
                     .get()
@@ -85,10 +95,12 @@ public class EventSettingDetailsFragment extends Fragment {
                         Log.e(TAG, "Error fetching myEvents: ", e);
                     });
 
+            // When this button is clicked, navigate to the event poster fragment
             updateEventPosterButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
+                    // Use the bundle to add the necessary arguments for the event poster fragment
                     Bundle bundle = new Bundle();
                     bundle.putString("eventId", eventId);
 
@@ -102,6 +114,7 @@ public class EventSettingDetailsFragment extends Fragment {
                 }
             });
 
+            // When this button is clicked, upload the changes made into firestore
             saveChangesButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -122,6 +135,7 @@ public class EventSettingDetailsFragment extends Fragment {
                         }
                     }
                     else{
+                        // Upload the changes to firestore
                         Map<String, Object> map = new HashMap<>();
                         map.put("waitListSize", waitingListSizeInput);
                         map.put("sampleSize", sampleSizeInput);
@@ -142,14 +156,15 @@ public class EventSettingDetailsFragment extends Fragment {
 
         }
 
-
-
-
-
-
-
         return rootView;
     }
+
+    /**
+     * Updates the screen to show the event details retrieved
+     * @param waitingListSize this is a number indicating the size of the event's waiting list
+     * @param sampleSize this is a number indicating the numbers of entrants sampled during the event's lotttery
+     * @param geolocationRequired this boolean indicates if geolocation information is need to join the event's waitlist
+     */
 
     public void updateScreen(Long waitingListSize, Long sampleSize, Boolean geolocationRequired) {
         if (waitingListSize != null) {

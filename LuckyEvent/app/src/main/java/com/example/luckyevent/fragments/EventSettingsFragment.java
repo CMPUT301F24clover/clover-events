@@ -29,6 +29,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Displays all the events owned by the owner into a single list.
+ * Clicking on one of these events navigates the user to its settings
+ * Each event displays its name, description and due date
+ *
+ * @author Seyi
+ * @version 1
+ * @since 1
+ */
 public class EventSettingsFragment extends Fragment {
     private FirebaseFirestore db;
     private ArrayList<EventSetting> eventList;
@@ -59,6 +68,7 @@ public class EventSettingsFragment extends Fragment {
         adapter = new EventSettingsListAdapter(getActivity(), getActivity(), eventList);
         listView.setAdapter(adapter);
 
+        // Get all the events owned by ths user
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         String organizerId = firebaseUser.getUid();
         db.collection("loginProfile")
@@ -82,6 +92,10 @@ public class EventSettingsFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * This method uses the event id provided to retrieve the event's details
+     * @param eventId this string the id used to identify an event
+     */
     private void fetchEventDetails(String eventId) {
         db.collection("events")
                 .document(eventId)
@@ -98,7 +112,9 @@ public class EventSettingsFragment extends Fragment {
                         }
 
                         else{
-                            EventSetting eventSetting = new EventSetting(eventId, eventName, eventDateTime, eventDescription);
+                            // Once the event is successfully retrieved we add it into the adapter
+                            EventSetting eventSetting = new EventSetting(eventId, eventName, eventDate, eventDescription);
+
                             eventList.add(eventSetting);
                             adapter.notifyDataSetChanged();
                         }

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#D3E1F1"
-    tools:context=".activities.OrganizerHomePageActivity">
+    tools:context=".activities.OrganizerMenuActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -105,14 +105,16 @@
                 android:backgroundTint="#F16159"
                 android:drawableTop="@drawable/settings_icon"
                 android:text="Event Settings" />
+
         </GridLayout>
+
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout3"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/round_layout"
         android:elevation="4dp"
         android:orientation="vertical"
@@ -127,36 +129,58 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_semibold"
             android:text="Events Overview"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             android:textColor="#000000"
             android:textSize="20sp" />
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/upcomingEventsTitle"
+            app:layout_constraintEnd_toEndOf="parent"
             android:paddingStart="8dp"
             android:paddingEnd="8dp">
 
             <TextView
-                android:id="@+id/eventTitle1"
-                android:layout_width="0dp"
+                android:id="@+id/eventTitle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 android:text="Summer Family Fun Day"
                 android:textColor="#000000"
                 android:textSize="16sp" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/eventDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/eventTitle"
+                android:text="July 15, 2024"
+                android:textColor="#606060"
+                android:textSize="14sp" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/waitlistInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     android:text="Waitlist: 45/50"
                     android:textColor="#000000"
                     android:textSize="14sp" />
@@ -165,21 +189,16 @@
                     android:id="@+id/selectedCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/waitlistInfo"
+                    app:layout_constraintStart_toStartOf="parent"
                     android:text="Selected: 20"
                     android:textColor="#000000"
                     android:textSize="14sp" />
-            </LinearLayout>
-        </LinearLayout>
 
-        <TextView
-            android:id="@+id/eventDate1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="July 15, 2024"
-            android:textColor="#606060"
-            android:textSize="14sp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

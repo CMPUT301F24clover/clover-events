@@ -1,6 +1,9 @@
 package com.example.luckyevent.fragments;
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,6 +79,7 @@ public class EditFacilityFragment extends Fragment {
         toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
 
         initializeViews(rootView);
+        fetchFacilityDetails();
         setupSaveChangesButton();
 
         return rootView;
@@ -131,6 +135,53 @@ public class EditFacilityFragment extends Fragment {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Fetches the facility details from Firestore and populates the input fields.
+     *
+     * This method retrieves the current user's facility ID from the "loginProfile" collection
+     * and then fetches the facility details from the "facilities" collection. The retrieved
+     * details (Name, Email, Address, and Phone) are displayed in the respective input fields.
+     *
+     * If the user is not authenticated or the fetch operation fails, appropriate messages
+     * are displayed to the user.
+     */
+    private void fetchFacilityDetails() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(getContext(), "User not authenticated", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String userID = user.getUid();
+        DocumentReference facilityIDRef = firestore.collection("loginProfile").document(userID);
+        facilityIDRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                DocumentSnapshot document = task.getResult();
+                facilityID = document.getString("myFacility");
+                if (facilityID != null) {
+                    // Fetch facility details based on facilityID
+                    firestore.collection("facilities").document(facilityID).get().addOnCompleteListener(facilityTask -> {
+                        if (facilityTask.isSuccessful() && facilityTask.getResult() != null) {
+                            DocumentSnapshot facilityDoc = facilityTask.getResult();
+                            if (facilityDoc.exists()) {
+                                // Populate the input fields with facility data
+                                editName.setText(facilityDoc.getString("Name"));
+                                editEmail.setText(facilityDoc.getString("Email"));
+                                editAddress.setText(facilityDoc.getString("Address"));
+                                editPhone.setText(facilityDoc.getString("Phone"));
+                            } else {
+                                Toast.makeText(getContext(), "Facility not found", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(getContext(), "Failed to fetch facility details", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            } else {
+                Toast.makeText(getContext(), "Failed to fetch facility ID", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**

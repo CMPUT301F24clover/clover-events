@@ -8,8 +8,10 @@ public class EventDisplay {
     private String orgID;
     private String dueDate;
     private String status;
+    private String qrContent;
 
-    public EventDisplay(String eventName, String description, String date, String time, String orgID, String dueDate, String status){
+
+    public EventDisplay(String eventName, String description, String date, String time, String orgID, String dueDate, String status, String qrContent ){
         this.eventName = eventName;
         this.description = description;
         this.date = date;
@@ -17,6 +19,15 @@ public class EventDisplay {
         this.orgID = orgID;
         this.dueDate = dueDate;
         this.status = status;
+        this.qrContent = qrContent;
+    }
+
+    public void setQr(String qr) {
+        this.qrContent = qrContent;
+    }
+
+    public String getQr() {
+        return qrContent;
     }
 
     public void setEventName(String eventName) {
