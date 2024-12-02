@@ -68,6 +68,8 @@ public class ProfileController {
                             DocumentSnapshot doc = task.getResult();
                             if (doc != null && doc.exists()) {
                                 HashMap<String, Object> data = new HashMap<>();
+                                data.put("firstName", firstName);
+                                data.put("lastName", lastName);
                                 data.put("Email", email);
                                 data.put("Phone Number", phoneNumber.isEmpty() ? "" : phoneNumber);
                                 data.put("hasUserProfile", true);
