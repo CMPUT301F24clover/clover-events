@@ -1,4 +1,4 @@
-package com.example.luckyevent;
+package com.example.luckyevent.shared;
 
 /**
  * A class representing an event.

@@ -1,4 +1,4 @@
-package com.example.luckyevent;
+package com.example.luckyevent.organizer.conductLottery;
 
 import java.io.Serializable;
 import java.util.ArrayList;

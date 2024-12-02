@@ -16,9 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-import com.example.luckyevent.LotteryService;
-import com.example.luckyevent.QRDownloadService;
+import com.example.luckyevent.organizer.conductLottery.LotteryService;
 import com.example.luckyevent.R;
+import com.example.luckyevent.organizer.displayEntrantsScreen.DisplayEntrantsFragment;
+import com.example.luckyevent.organizer.displayEntrantsScreen.DisplayWaitlistedEntrantsFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -87,8 +88,16 @@ public class EventDetailsFragment extends Fragment {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    String facilityID = document.getString("myFacility");
-                    getAddress(view,facilityID);
+                    if (document.exists()){
+                        String facilityID = document.getString("myFacility");
+                        TextView locationView = view.findViewById(R.id.textView_location2);
+                        if (facilityID != null){
+                            getAddress(locationView, facilityID);
+                        }else{
+                            // Handle case where facility ID is null
+                            locationView.setText("Location not available");
+                        }
+                    }
                 }
             }
         });
@@ -152,10 +161,15 @@ public class EventDetailsFragment extends Fragment {
      * If the address is found, it updates the provided TextView with the address. If the address is not found or
      * if an error occurs during the retrieval, appropriate messages are shown to the user.
      *
-     * @param view The parent view containing the TextView where the address will be displayed.
+     * @param locationView The textview that will display the location of the event if it exists.
      * @param facilityId The ID of the facility whose address is to be retrieved from Firestore.
      */
-    private void getAddress(View view, String facilityId) {
+    private void getAddress(TextView locationView, String facilityId) {
+        // Add null check at the start of the method
+        if (facilityId == null || facilityId.isEmpty()) {
+            locationView.setText("Location not available");
+            return;
+        }
         db.collection("facilities")
                 .document(facilityId)
                 .get()
@@ -163,9 +177,8 @@ public class EventDetailsFragment extends Fragment {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            TextView eventLocation = view.findViewById(R.id.textView_location2);
                             String location = document.getString("Address");
-                            eventLocation.setText(location != null ? location : "Location not set");
+                            locationView.setText(location != null ? location : "Location not set");
                         } else {
                             Toast.makeText(getContext(), "Address not found", Toast.LENGTH_SHORT).show();
                         }
@@ -220,15 +233,13 @@ public class EventDetailsFragment extends Fragment {
         // QR Code Generation
         TextView qrCodeText = view.findViewById(R.id.event_qr_link);
         qrCodeText.setOnClickListener(v -> {
-            if (getContext() != null) {
-                Intent intent = new Intent(getContext(), QRDownloadService.class);
-                intent.putExtra("eventId", eventId);
-                getContext().startService(intent);
-            }
+            Bundle bundle = new Bundle();
+            bundle.putString("eventId", eventId);
+            goToQrCode(bundle);
         });
 
         // Entrant Sampling/Lottery
-        TextView sampleEntrants = view.findViewById(R.id.sample_entrant);
+        TextView sampleEntrants = view.findViewById(R.id.sample_entrants);
         sampleEntrants.setOnClickListener(v -> {
             db.collection("events").document(eventId).collection("chosenEntrants").get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
@@ -278,9 +289,9 @@ public class EventDetailsFragment extends Fragment {
     private void setupButtons(View view, String eventId) {
         // Configure each button with appropriate parameters
         setupListButton(view, R.id.waiting_list_button, "Waiting List", eventId, null, true);
-        setupListButton(view, R.id.chosen_entrant_button, "List of Chosen Entrants", eventId, null, false);
-        setupListButton(view, R.id.enrolled_entrant_button, "List of Enrolled Entrants", eventId, "Enrolled", false);
-        setupListButton(view, R.id.cancelled_entrant_button, "List of Cancelled Entrants", eventId, "Cancelled", false);
+        setupListButton(view, R.id.chosen_entrant_button, "Chosen Entrants", eventId, null, false);
+        setupListButton(view, R.id.enrolled_entrant_button, "Enrolled Entrants", eventId, "Enrolled", false);
+        setupListButton(view, R.id.cancelled_entrant_button, "Cancelled Entrants", eventId, "Cancelled", false);
     }
 
     /**
@@ -291,7 +302,7 @@ public class EventDetailsFragment extends Fragment {
         Button button = view.findViewById(buttonId);
         button.setOnClickListener(v -> {
             Fragment fragment = isWaitingList ?
-                    new DisplayEventWaitingListFragment() :
+                    new DisplayWaitlistedEntrantsFragment() :
                     new DisplayEntrantsFragment();
 
             Bundle bundle = new Bundle();
@@ -315,6 +326,21 @@ public class EventDetailsFragment extends Fragment {
         getParentFragmentManager()
                 .beginTransaction()
                 .replace(R.id.OrganizerMenuFragment, displayFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    /**
+     * Navigates to the QR Code management fragment
+     * @param bundle Bundle containing event information
+     */
+    private void goToQrCode(Bundle bundle){
+        QrDisplayFragment qrDisplayFragment = new QrDisplayFragment();
+        qrDisplayFragment.setArguments(bundle);
+
+        getParentFragmentManager()
+                .beginTransaction()
+                .replace(R.id.OrganizerMenuFragment, qrDisplayFragment)
                 .addToBackStack(null)
                 .commit();
     }

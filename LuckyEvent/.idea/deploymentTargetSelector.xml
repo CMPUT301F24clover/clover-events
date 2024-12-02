@@ -13,18 +13,6 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="RegisterProfileTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="TestViewProfile">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="AdminBrowseEventsTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="AdminBrowseFacilityTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
     </selectionStates>
   </component>
 </project>

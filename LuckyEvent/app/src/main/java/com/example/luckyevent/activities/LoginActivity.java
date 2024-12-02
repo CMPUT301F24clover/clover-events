@@ -32,6 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * @version 2
  * @since 1
  */
+
 public class LoginActivity extends AppCompatActivity {
     private TextInputEditText username;
     private TextInputEditText password;

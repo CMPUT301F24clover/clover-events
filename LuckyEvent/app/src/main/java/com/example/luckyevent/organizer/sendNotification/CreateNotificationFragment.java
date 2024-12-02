@@ -1,4 +1,4 @@
-package com.example.luckyevent.fragments;
+package com.example.luckyevent.organizer.sendNotification;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 
-import com.example.luckyevent.NotificationService;
 import com.example.luckyevent.R;
 
 import java.util.ArrayList;
@@ -76,7 +75,6 @@ public class CreateNotificationFragment extends DialogFragment {
                 }
 
                 if (!entrantIdsList.isEmpty()) {
-                    Toast.makeText(getContext(), "Sending notification...", Toast.LENGTH_SHORT).show();
                     addNotif(entrantIdsList, title, description);
                 } else {
                     Toast.makeText(getContext(), "No one to send notification to.", Toast.LENGTH_SHORT).show();

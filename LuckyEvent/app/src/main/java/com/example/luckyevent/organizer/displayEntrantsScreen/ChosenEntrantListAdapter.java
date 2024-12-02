@@ -1,4 +1,4 @@
-package com.example.luckyevent;
+package com.example.luckyevent.organizer.displayEntrantsScreen;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,7 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
-import com.bumptech.glide.Glide;
+import com.example.luckyevent.R;
+import com.example.luckyevent.SampleOneEntrantService;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
