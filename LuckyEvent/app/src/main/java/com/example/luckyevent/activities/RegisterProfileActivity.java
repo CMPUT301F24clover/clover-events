@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
+import com.example.luckyevent.UserSession;
 
 /**
  * @author Amna
@@ -81,6 +82,7 @@ public class RegisterProfileActivity extends AppCompatActivity {
 
                     //in case theres errors going from this activity to the viewProfileActivity use toast messages to prevent the app from crashing
                     try {
+                        UserSession.getInstance().setLastName(lastName);
                         Intent intent = new Intent(RegisterProfileActivity.this, ViewProfileActivity.class);
                         intent.putExtra("profileID", documentID);
                         startActivity(intent);

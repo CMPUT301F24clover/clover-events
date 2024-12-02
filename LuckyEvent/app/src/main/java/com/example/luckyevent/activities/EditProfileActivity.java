@@ -98,6 +98,10 @@ public class EditProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(EditProfileActivity.this, EditProfilePictureActivity.class);
                 intent.putExtra("profileID",documentID);
+                String name = nameEdit.getText().toString();
+                String[] fullName = name.split(" ");
+                String lastName = fullName[1];
+                intent.putExtra("lastName",lastName);
                 startActivity(intent);
             }
         });
@@ -121,6 +125,7 @@ public class EditProfileActivity extends AppCompatActivity {
             String phoneNumber = phoneEdit.getText().toString();
             //call the profile controller to update to profile information using editProfile
             profileController.editProfile(documentID, firstName, lastName, email, phoneNumber);
+            UserSession.getInstance().setLastName(lastName);
             Toast.makeText(EditProfileActivity.this, "Profile saved successfully", Toast.LENGTH_SHORT).show();
 
             // once the profile is updated bring the user back to the view profile page to display the new information
