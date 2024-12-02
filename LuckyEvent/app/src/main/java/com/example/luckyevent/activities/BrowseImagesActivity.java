@@ -61,6 +61,8 @@ public class BrowseImagesActivity extends AppCompatActivity {
                                     image.put("collection", "profileImages");
                                     imageList.add(image);
                                 }
+                                // Log the number of images loaded
+                                Log.d("BrowseImagesActivity", "Loaded " + imageList.size() + " images.");
                                 adapter.notifyDataSetChanged();
                             });
                 })
