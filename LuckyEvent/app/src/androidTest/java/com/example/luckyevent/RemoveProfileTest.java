@@ -16,14 +16,13 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 import static org.junit.Assert.assertEquals;
 
-import android.content.res.Resources;
 import android.view.KeyEvent;
 import android.widget.TextView;
 
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
-import com.example.luckyevent.activities.LoginActivity;
+import com.example.luckyevent.shared.LoginActivity;
 
 import org.junit.Rule;
 import org.junit.Test;

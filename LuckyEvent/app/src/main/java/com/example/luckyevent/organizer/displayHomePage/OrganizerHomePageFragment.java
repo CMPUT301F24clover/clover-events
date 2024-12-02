@@ -1,4 +1,4 @@
-package com.example.luckyevent.organizer;
+package com.example.luckyevent.organizer.displayHomePage;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,9 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.luckyevent.OrganizerSession;
 import com.example.luckyevent.R;
-import com.example.luckyevent.activities.OrganizerMenuActivity;
+import com.example.luckyevent.organizer.OrganizerMenuActivity;
 
 /**
  * Displays a welcome message, brief details of organizer owned events and it also gives the organizer the ability

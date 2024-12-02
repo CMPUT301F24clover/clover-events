@@ -1,4 +1,4 @@
-package com.example.luckyevent.activities;
+package com.example.luckyevent.entrant;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,11 +7,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.UserSession;
 import com.example.luckyevent.entrant.displayNotifsScreen.DisplayNotificationsFragment;
-import com.example.luckyevent.entrant.DisplayJoinedEventsFragment;
-import com.example.luckyevent.entrant.HomePageFragment;
-import com.example.luckyevent.entrant.ScanQrFragment;
+import com.example.luckyevent.entrant.displayProfileScreen.RegisterProfileActivity;
+import com.example.luckyevent.entrant.displayProfileScreen.ViewProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,7 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * activities are the entrant home page, entrant profile section, scan qr code section  and the notifications page
  *
  * @author Amna, Mmelve, Seyi, Divij
- * @see com.example.luckyevent.UserSession
+ * @see UserSession
  * @version 2
  * @since 1
  */
@@ -117,12 +115,12 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
                                 );
                                 Boolean hasUserProfile = doc.getBoolean("hasUserProfile");
                                 if (Boolean.TRUE.equals(hasUserProfile)){
-                                    Intent intent = new Intent(MenuActivity.this,ViewProfileActivity.class);
+                                    Intent intent = new Intent(MenuActivity.this, ViewProfileActivity.class);
                                     intent.putExtra("profileID",userID);
                                     startActivity(intent);
                                 } else{
                                     Toast.makeText(MenuActivity.this,"No profile found, please register your profile",Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(MenuActivity.this,RegisterProfileActivity.class);
+                                    Intent intent = new Intent(MenuActivity.this, RegisterProfileActivity.class);
                                     intent.putExtra("profileID",userID);
                                     startActivity(intent);
                                 }

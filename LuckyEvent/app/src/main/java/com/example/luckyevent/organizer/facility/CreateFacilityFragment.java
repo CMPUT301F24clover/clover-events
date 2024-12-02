@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.activities.OrganizerMenuActivity;
+import com.example.luckyevent.organizer.OrganizerMenuActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;

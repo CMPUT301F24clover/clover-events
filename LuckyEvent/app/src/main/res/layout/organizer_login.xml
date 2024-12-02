@@ -10,7 +10,7 @@
     android:elevation="4dp"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".activities.OrganizerSignInActivity">
+    tools:context=".organizer.loginSection.OrganizerSignInActivity">
 
     <ImageView
         android:id="@+id/previousIcon"

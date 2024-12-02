@@ -24,7 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LuckyEvent"
         tools:targetApi="31">
-        <activity android:name=".activities.LoginActivity"
+        <activity android:name=".shared.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,16 +34,16 @@
 
         <activity android:name=".activities.EntrantEventDetailsActivity"
             android:exported="false"/>
-        <activity android:name=".activities.EntrantSignUpActivity" />
-        <activity android:name=".activities.RegisterDeviceActivity" />
-        <activity android:name=".activities.OrganizerSignInActivity" />
-        <activity android:name=".activities.OrganizerSignUpActivity"/>
-        <activity android:name=".activities.MenuActivity"/>
-        <activity android:name=".activities.EditProfileActivity" />
-        <activity android:name=".activities.ViewProfileActivity" />
-        <activity android:name=".activities.RegisterProfileActivity" />
-        <activity android:name=".activities.EditProfilePictureActivity"/>
-        <activity android:name=".activities.OrganizerMenuActivity"
+        <activity android:name=".entrant.loginSection.EntrantSignUpActivity" />
+        <activity android:name=".entrant.loginSection.RegisterDeviceActivity" />
+        <activity android:name=".organizer.loginSection.OrganizerSignInActivity" />
+        <activity android:name=".organizer.loginSection.OrganizerSignUpActivity"/>
+        <activity android:name=".entrant.MenuActivity"/>
+        <activity android:name=".entrant.displayProfileScreen.EditProfileActivity" />
+        <activity android:name=".entrant.displayProfileScreen.ViewProfileActivity" />
+        <activity android:name=".entrant.displayProfileScreen.RegisterProfileActivity" />
+        <activity android:name=".entrant.displayProfileScreen.EditProfilePictureActivity"/>
+        <activity android:name=".organizer.OrganizerMenuActivity"
             android:exported="false"/>
         <activity android:name=".admin.AdminMenuActivity"/>
         <service android:name=".organizer.conductLottery.LotteryService" />

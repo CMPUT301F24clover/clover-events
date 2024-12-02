@@ -12,10 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.luckyevent.Profile;
-import com.example.luckyevent.ProfileListAdapter;
 import com.example.luckyevent.R;
-import com.example.luckyevent.UserSession;
+import com.example.luckyevent.entrant.UserSession;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 

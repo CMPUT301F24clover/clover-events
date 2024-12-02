@@ -1,18 +1,18 @@
-package com.example.luckyevent.activities;
+package com.example.luckyevent.organizer;
 
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.luckyevent.OrganizerSession;
+import com.example.luckyevent.organizer.displayHomePage.OrganizerSession;
 import com.example.luckyevent.R;
 import com.example.luckyevent.organizer.eventCreation.CreateEventFragment;
 import com.example.luckyevent.organizer.facility.CreateFacilityFragment;
 import com.example.luckyevent.organizer.facility.DisplayFacilityFragment;
 import com.example.luckyevent.organizer.eventDetails.DisplayOrganizerEventsFragment;
 import com.example.luckyevent.organizer.eventSettings.EventSettingsFragment;
-import com.example.luckyevent.organizer.OrganizerHomePageFragment;
+import com.example.luckyevent.organizer.displayHomePage.OrganizerHomePageFragment;
 //import com.example.luckyevent.organizer.eventCreation.CreateEventFragment;
 //import com.example.luckyevent.fragments.MyEventsFragment;
 //import com.example.luckyevent.fragments.MyFacilityFragment;

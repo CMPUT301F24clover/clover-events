@@ -18,8 +18,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.activities.OrganizerMenuActivity;
-import com.example.luckyevent.activities.OrganizerSignInActivity;
+import com.example.luckyevent.organizer.OrganizerMenuActivity;
+import com.example.luckyevent.organizer.loginSection.OrganizerSignInActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;

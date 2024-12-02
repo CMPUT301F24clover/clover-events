@@ -1,4 +1,4 @@
-package com.example.luckyevent.activities;
+package com.example.luckyevent.entrant.loginSection;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,8 +14,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.UserSession;
+import com.example.luckyevent.entrant.MenuActivity;
+import com.example.luckyevent.entrant.UserSession;
 import com.example.luckyevent.firebase.FirebaseDB;
+import com.example.luckyevent.shared.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
