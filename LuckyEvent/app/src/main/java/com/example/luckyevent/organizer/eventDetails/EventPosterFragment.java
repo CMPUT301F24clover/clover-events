@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckyevent.R;
@@ -61,6 +63,18 @@ public class EventPosterFragment extends Fragment {
         eventId = getArguments().getString("eventId");
         storage = FirebaseStorage.getInstance("gs://luckyevent-22fbd.firebasestorage.app");
         db = FirebaseFirestore.getInstance();
+
+        // Set Toolbar title
+        Toolbar toolbar = view.findViewById(R.id.topBar);
+        toolbar.setTitle("Event Poster");
+        toolbar.setNavigationIcon(R.drawable.arrow_back);
+        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
+        // Enable the back button
+        if (((AppCompatActivity) requireActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
 
         // Check if this event has a poster document in the eventPosters collection
         db.collection("eventPosters").document(eventId)
