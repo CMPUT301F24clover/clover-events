@@ -134,6 +134,10 @@ public class DisplayJoinedEventsFragment extends Fragment {
         });
     }
 
+    /**
+     * Prepares the intent for the next activity, which displays the selected event's details.
+     * @param selectedEventId The event ID of the selected event.
+     */
     private void goToEventDetails(String selectedEventId) {
         Intent intent = new Intent(getActivity(), EntrantEventDetailsActivity.class);
         intent.putExtra("eventId", selectedEventId);
