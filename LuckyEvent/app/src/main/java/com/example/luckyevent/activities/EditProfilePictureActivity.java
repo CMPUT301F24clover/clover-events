@@ -181,6 +181,7 @@ public class EditProfilePictureActivity extends AppCompatActivity {
      * The users id is used as the document name when storing the image url on firestore and firebase storage
     */
     public void updateProfPic(){
+        Log.e("EditProfilePictureActivity", "updateProfPic: userId = " +UserSession.getInstance().getUserId());
         firebaseDB.updateProfilePicture(imageUri, UserSession.getInstance().getUserId(), new FirebaseDB.UpdateProfPicCallBack() {
             @Override
             public void onUpdateSuccess() {
