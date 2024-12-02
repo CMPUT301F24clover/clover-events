@@ -35,6 +35,9 @@ public class HomePageFragment extends Fragment {
 
     public interface OnNavigateListener {
         void onNavigateToScanQr();
+        void onNavigateToWaitingList();
+        void onNavigateToNotifications();
+        void onNavigateToProfile();
     }
 
     @Override
@@ -76,6 +79,34 @@ public class HomePageFragment extends Fragment {
                 }
             }
         });
+        Button waitingListButton = view.findViewById(R.id.waitinglistButton);
+        waitingListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (navigateListener != null) {
+                    navigateListener.onNavigateToWaitingList();
+                }
+            }
+        });
+        Button notficationButton = view.findViewById(R.id.notificationsButton);
+        notficationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (navigateListener != null) {
+                    navigateListener.onNavigateToNotifications();
+                }
+            }
+        });
+        Button profileButton = view.findViewById(R.id.profileButton);
+        profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (navigateListener != null) {
+                    navigateListener.onNavigateToProfile();
+                }
+            }
+        });
+
 
         return view;
     }
