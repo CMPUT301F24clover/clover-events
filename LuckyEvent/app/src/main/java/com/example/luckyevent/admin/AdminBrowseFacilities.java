@@ -1,4 +1,4 @@
-package com.example.luckyevent.fragments;
+package com.example.luckyevent.admin;
 
 
 import android.os.Bundle;
@@ -9,13 +9,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.example.luckyevent.Facility;
-import com.example.luckyevent.FacilityListAdapter;
+import com.example.luckyevent.organizer.facility.Facility;
+import com.example.luckyevent.organizer.facility.FacilityListAdapter;
 import com.example.luckyevent.R;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;

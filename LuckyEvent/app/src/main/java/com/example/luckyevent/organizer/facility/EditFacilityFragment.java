@@ -1,9 +1,6 @@
-package com.example.luckyevent.fragments;
-
-import static android.content.ContentValues.TAG;
+package com.example.luckyevent.organizer.facility;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

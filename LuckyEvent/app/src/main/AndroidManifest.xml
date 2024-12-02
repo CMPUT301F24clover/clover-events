@@ -45,8 +45,7 @@
         <activity android:name=".activities.EditProfilePictureActivity"/>
         <activity android:name=".activities.OrganizerMenuActivity"
             android:exported="false"/>
-        <activity android:name=".activities.AdminMenuActivity"/>
-        <activity android:name=".activities.OrganizerHomePageActivity"/>
+        <activity android:name=".admin.AdminMenuActivity"/>
         <service android:name=".organizer.conductLottery.LotteryService" />
         <service android:name=".organizer.sendNotification.NotificationService" />
         <service android:name=".organizer.SampleReplacementService" />

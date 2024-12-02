@@ -1,4 +1,4 @@
-package com.example.luckyevent.fragments;
+package com.example.luckyevent.organizer.eventCreation;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -18,7 +18,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.organizer.DisplayOrganizerEventsFragment;
+import com.example.luckyevent.organizer.eventDetails.DisplayOrganizerEventsFragment;
+import com.example.luckyevent.organizer.eventDetails.QrDisplayFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;

@@ -1,4 +1,4 @@
-package com.example.luckyevent;
+package com.example.luckyevent.organizer.eventSettings;
 
 /**
  * A class used to store the details of an event

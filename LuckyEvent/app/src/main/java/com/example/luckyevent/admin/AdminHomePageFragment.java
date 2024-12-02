@@ -1,4 +1,4 @@
-package com.example.luckyevent.fragments;
+package com.example.luckyevent.admin;
 
 import android.content.Intent;
 import android.os.Bundle;
