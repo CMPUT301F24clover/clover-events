@@ -15,6 +15,12 @@
         android:icon="@drawable/baseline_event_24"
         android:title="Events" />
 
+    <item
+        android:id="@+id/facility_item"
+        android:icon="@drawable/facility"
+        android:title="Facilities" />
+
+
 
 
 

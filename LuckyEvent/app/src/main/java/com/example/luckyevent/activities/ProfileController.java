@@ -67,33 +67,27 @@ public class ProfileController {
                         if (task.isSuccessful()){
                             DocumentSnapshot doc = task.getResult();
                             if (doc != null && doc.exists()) {
-                                // get the first and last name from the document
-                                String dbfirstName = doc.getString("firstName");
-                                String dblastName = doc.getString("lastName");
-                                if (firstName.equals(dbfirstName) && lastName.equals(dblastName)) {
-                                    // check if the name the user entered matches the one in the db
-                                    HashMap<String, Object> data = new HashMap<>();
-                                    data.put("Email", email);
-                                    data.put("Phone Number", phoneNumber.isEmpty() ? "" : phoneNumber);
-                                    data.put("hasUserProfile", true);
-                                    //update the fields in the db document
-                                    doc.getReference().update(data)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void unused) {
-                                                    Toast.makeText(context, "Profile registered successfully", Toast.LENGTH_SHORT).show();
-                                                    onSuccessListener.onSuccess(doc.getId());
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Toast.makeText(context, "Unable to register Profile", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                } else {
-                                    Toast.makeText(context,"The entered name does not match the one on your login profile. Please use that one",Toast.LENGTH_SHORT).show();
-                                }
+                                HashMap<String, Object> data = new HashMap<>();
+                                data.put("firstName", firstName);
+                                data.put("lastName", lastName);
+                                data.put("Email", email);
+                                data.put("Phone Number", phoneNumber.isEmpty() ? "" : phoneNumber);
+                                data.put("hasUserProfile", true);
+                                //update the fields in the db document
+                                doc.getReference().update(data)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                                Toast.makeText(context, "Profile registered successfully", Toast.LENGTH_SHORT).show();
+                                                onSuccessListener.onSuccess(doc.getId());
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Toast.makeText(context, "Unable to register Profile", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
 
                             }else{
                                 Toast.makeText(context,"No profile match this name",Toast.LENGTH_SHORT).show();
