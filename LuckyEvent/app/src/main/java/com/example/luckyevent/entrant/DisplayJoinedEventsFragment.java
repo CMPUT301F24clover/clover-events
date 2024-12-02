@@ -82,13 +82,12 @@ public class DisplayJoinedEventsFragment extends Fragment {
      */
     private void getWaitingLists() {
         reg = eventsJoinedRef.addSnapshotListener((snapshot, error) -> {
+            waitingLists.clear();
             if (error != null) {
                 return;
             }
 
             if (snapshot != null && !snapshot.isEmpty()) {
-                waitingLists.clear();
-
                 for (DocumentSnapshot waitingListSnapshot : snapshot.getDocuments()) {
                     String eventId = waitingListSnapshot.getString("eventId");
                     if (eventId != null) {
@@ -116,8 +115,20 @@ public class DisplayJoinedEventsFragment extends Fragment {
                 if (snapshot.exists()) {
                     String dateTime = snapshot.getString("dateAndTime");
                     Event waitingList = new Event(eventId, (String) snapshot.get("eventName"), dateTime, (String) snapshot.get("description"));
-                    waitingLists.add(waitingList);
-                    listAdapter.notifyDataSetChanged();
+
+                    // avoid duplicate entries
+                    boolean exists = false;
+                    for (Event event : waitingLists) {
+                        if (event.getEventId().equals(eventId)) {
+                            exists = true;
+                            break;
+                        }
+                    }
+
+                    if (!exists) {
+                        waitingLists.add(waitingList);
+                        listAdapter.notifyDataSetChanged();
+                    }
                 }
             }
         });

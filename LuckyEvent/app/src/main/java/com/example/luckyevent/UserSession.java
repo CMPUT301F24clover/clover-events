@@ -66,6 +66,14 @@ public class UserSession {
         return notificationDisabled != null ? notificationDisabled : false;
     }
 
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
     //The userId can be accessed by any activity like this:
     //String userId = UserSession.getInstance().getUserId();
 

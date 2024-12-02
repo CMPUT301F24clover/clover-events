@@ -20,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.CaptureActivity;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
+
 /**
  * Displays a screen that allows the user to scan generated QR codes. On successfully scanning the QR code the user
  * is redirected to a screen containing the event details. The Scan QR feature was made possible using
@@ -30,10 +31,6 @@ import com.journeyapps.barcodescanner.ScanOptions;
  * @version 2
  * @since 1
  */
-
-
-
-
 public class ScanQrFragment extends Fragment {
     private static final String TAG = "ScanQrFragment";
     private static final String QR_PREFIX = "LuckyEvent_";

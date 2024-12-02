@@ -312,7 +312,11 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
         eventTitleView.setText(eventName);
         dateTimeView.setText(dateTime);
         descriptionView.setText(description);
-        capacityView.setText(String.format("Waiting List: %d/%d", currentWaitList, waitListSize));
+        if (waitListSize == -1) {
+            capacityView.setText(String.format("Waiting List: %d", currentWaitList));
+        } else {
+            capacityView.setText(String.format("Waiting List: %d/%d", currentWaitList, waitListSize));
+        }
     }
 
     /**
@@ -440,7 +444,11 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
 
             // Update UI on successful join
             currentWaitList++;
-            capacityView.setText(String.format("Waiting List: %d/%d", currentWaitList, waitListSize));
+            if (waitListSize == -1) {
+                capacityView.setText(String.format("Waiting List: %d", currentWaitList));
+            } else {
+                capacityView.setText(String.format("Waiting List: %d/%d", currentWaitList, waitListSize));
+            }
             setButtonCases("Waitlisted");
         }).addOnFailureListener(e ->Toast.makeText(EntrantEventDetailsActivity.this, "Failed to join waiting list", Toast.LENGTH_SHORT).show());
     }
@@ -469,9 +477,13 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
             transaction.delete(eventsJoinedRef.document(eventId));
             return null;
         }).addOnSuccessListener(result -> {
-            Toast.makeText(EntrantEventDetailsActivity.this, "You have left the waiting list", Toast.LENGTH_SHORT).show();
+            Toast.makeText(EntrantEventDetailsActivity.this, "Left the waiting list", Toast.LENGTH_SHORT).show();
             currentWaitList--;
-            capacityView.setText(String.format("Waiting List: %d/%d", currentWaitList, waitListSize));
+            if (waitListSize == -1) {
+                capacityView.setText(String.format("Waiting List: %d", currentWaitList));
+            } else {
+                capacityView.setText(String.format("Waiting List: %d/%d", currentWaitList, waitListSize));
+            }
             setButtonCases("n/a");
         }).addOnFailureListener(e -> Toast.makeText(EntrantEventDetailsActivity.this, "Failed to leave the waitlist", Toast.LENGTH_SHORT).show());
     }
@@ -504,7 +516,7 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
             transaction.update(joinedEventRef, "status", "Enrolled");
             return null;
         }).addOnSuccessListener(result -> {
-            Toast.makeText(EntrantEventDetailsActivity.this, "You have accepted the invitation and signed up", Toast.LENGTH_SHORT).show();
+            Toast.makeText(EntrantEventDetailsActivity.this, "Accepted the invitation and signed up for the event", Toast.LENGTH_SHORT).show();
             setButtonCases("Enrolled");
         }).addOnFailureListener(e -> Toast.makeText(EntrantEventDetailsActivity.this, "Failed to accept the invitation", Toast.LENGTH_SHORT).show());
     }
@@ -537,7 +549,7 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
             transaction.update(joinedEventRef, "status", "Declined");
             return null;
         }).addOnSuccessListener(result -> {
-            Toast.makeText(EntrantEventDetailsActivity.this, "You have declined the invitation and signed up", Toast.LENGTH_SHORT).show();
+            Toast.makeText(EntrantEventDetailsActivity.this, "Declined the invitation", Toast.LENGTH_SHORT).show();
             setButtonCases("Declined");
         }).addOnFailureListener(e -> Toast.makeText(EntrantEventDetailsActivity.this, "Failed to decline the invitation", Toast.LENGTH_SHORT).show());
     }
