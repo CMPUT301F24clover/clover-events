@@ -114,7 +114,7 @@ public class DisplayWaitingListsFragment extends Fragment {
             if (task.isSuccessful()) {
                 DocumentSnapshot snapshot = task.getResult();
                 if (snapshot.exists()) {
-                    String dateTime = String.format("%s · %s", snapshot.get("date"), snapshot.get("time"));
+                    String dateTime = snapshot.getString("dateAndTime");
                     Event waitingList = new Event(eventId, (String) snapshot.get("eventName"), dateTime, (String) snapshot.get("description"));
                     waitingLists.add(waitingList);
                     listAdapter.notifyDataSetChanged();

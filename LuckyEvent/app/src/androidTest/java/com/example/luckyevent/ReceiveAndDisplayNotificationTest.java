@@ -8,14 +8,21 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import android.content.Context;
 import android.content.Intent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import com.example.luckyevent.activities.LoginActivity;
 
+import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -26,26 +33,47 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Tests if a user's notifications are displayed and regularly updated. Uses the following classes:
+ * Tests if a user can view and receive notifications. Uses the following classes:
  * NotificationService and DisplayNotificationsFragment.
  *
  * IMPORTANT: test passes only if emulator is fast enough
  */
 public class ReceiveAndDisplayNotificationTest {
-    // data used for tests
-    private final String username = "testEntrantM";
-    private final String password = "entrantusedformmelvestesting";
-    private final String userId = "huDuiipQdhbZHDMEmi6UxySXiLq2";
 
+    /**
+     * Logs into the application.
+     */
+    private void login() throws InterruptedException {
+        String username = "testEntrantM";
+        String password = "entrantusedformmelvestesting";
+
+        onView(withId(R.id.username_editText)).perform(ViewActions.typeText(username), hideKeyboard());
+        Thread.sleep(1000);
+        onView(withId(R.id.password_editText)).perform(ViewActions.typeText(password), hideKeyboard());
+        Thread.sleep(1000);
+        onView(withId(R.id.sign_in_button)).perform(click());
+        Thread.sleep(5000);
+    }
+
+    /**
+     * Creates a unique string using the current date and time.
+     * @return A string of the current date and time.
+     */
     private String createUniqueString() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale.CANADA);
         Date currentTime = Calendar.getInstance().getTime();
         return sdf.format(currentTime);
     }
 
+    /**
+     * Starts the notification service.
+     * @param uniqueString A string that will be used as the notification's message.
+     */
     private void startNotificationService(String uniqueString) {
+        String userId = "huDuiipQdhbZHDMEmi6UxySXiLq2";
         ArrayList<String> userIdsList = new ArrayList<>();
         userIdsList.add(userId);
+
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), NotificationService.class);
         intent.putStringArrayListExtra("entrantIds", userIdsList);
         intent.putExtra("eventId", "1234");
@@ -59,12 +87,9 @@ public class ReceiveAndDisplayNotificationTest {
 
     @Test
     public void displayEntrantNotificationsTest() throws InterruptedException {
-        // login and navigate to user notifications screen
-        onView(withId(R.id.usernameInput)).perform(ViewActions.typeText(username));
-        onView(withId(R.id.passwordInput)).perform(ViewActions.typeText(password));
-        onView(withId(R.id.SignInButton)).perform(click());
-        Thread.sleep(5000);
+        login();
 
+        // navigate to user notifications screen
         onView(withId(R.id.notification_item))
                 .check(matches(isDisplayed()))
                 .perform(click());
@@ -80,5 +105,28 @@ public class ReceiveAndDisplayNotificationTest {
 
         // delete notification
         onView(withId(R.id.image_trash)).perform(click());
+    }
+
+    /**
+     * Hides the keyboard immediately after typing.
+     */
+    private static ViewAction hideKeyboard() {
+        return new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return ViewMatchers.isAssignableFrom(View.class);
+            }
+
+            @Override
+            public String getDescription() {
+                return null;
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        };
     }
 }

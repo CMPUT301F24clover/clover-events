@@ -52,7 +52,7 @@
                         android:layout_marginTop="8dp"
                         android:text="Event QR Code "
                         android:textColor="@color/blue"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         app:layout_constraintHorizontal_bias="0.087"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/event_poster_link" />
@@ -66,13 +66,13 @@
                         android:onClick="onClick"
                         android:textColor="@color/blue"
                         android:clickable="true"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         app:layout_constraintHorizontal_bias="0.083"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView_description2" />
 
                     <TextView
-                        android:id="@+id/sample_entrant"
+                        android:id="@+id/sample_entrants"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
@@ -80,7 +80,7 @@
                         android:onClick="onClick"
                         android:clickable="true"
                         android:textColor="@color/green"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         app:layout_constraintHorizontal_bias="0.09"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/event_qr_link" />
@@ -112,7 +112,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:textSize="16sp"
-                        android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="@+id/icon_capacity"
                         app:layout_constraintStart_toEndOf="@+id/icon_capacity"
                         app:layout_constraintTop_toTopOf="@+id/icon_capacity"
@@ -134,7 +133,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:textSize="16sp"
-                        android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="@+id/icon_location"
                         app:layout_constraintStart_toEndOf="@+id/icon_location"
                         app:layout_constraintTop_toTopOf="@+id/icon_location"
@@ -157,7 +155,6 @@
                         android:layout_marginStart="12dp"
                         android:layout_marginBottom="2dp"
                         android:textSize="16sp"
-                        android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="@+id/icon_calendar"
                         app:layout_constraintStart_toEndOf="@+id/icon_calendar"
                         app:layout_constraintTop_toTopOf="@+id/icon_calendar"

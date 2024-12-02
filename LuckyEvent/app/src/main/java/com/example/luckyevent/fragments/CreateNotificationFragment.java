@@ -76,7 +76,6 @@ public class CreateNotificationFragment extends DialogFragment {
                 }
 
                 if (!entrantIdsList.isEmpty()) {
-                    Toast.makeText(getContext(), "Sending notification...", Toast.LENGTH_SHORT).show();
                     addNotif(entrantIdsList, title, description);
                 } else {
                     Toast.makeText(getContext(), "No one to send notification to.", Toast.LENGTH_SHORT).show();

@@ -12,8 +12,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
@@ -43,6 +46,10 @@ import java.util.List;
  * - Interactive map using Leaflet.js
  *
  * @author Tola, Mmelve
+ * @see Entrant
+ * @see EntrantListAdapter
+ * @version 1
+ * @since 1
  */
 public class DisplayEventWaitingListFragment extends Fragment {
     private static final String TAG = "WaitingListFragment";
@@ -92,6 +99,25 @@ public class DisplayEventWaitingListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.organizer_waitinglist, container, false);
+
+        Toolbar toolbar = view.findViewById(R.id.topBar);
+        toolbar.setTitle("Waiting List");
+
+        // set up back button
+        toolbar.setNavigationIcon(R.drawable.arrow_back);
+        AppCompatActivity activity = (AppCompatActivity) requireActivity();
+        activity.setSupportActionBar(toolbar);
+        if (activity.getSupportActionBar() != null) {
+            activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                requireActivity().getSupportFragmentManager().popBackStack();  // Optional: Navigate back
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
+        toolbar.setNavigationOnClickListener(v -> callback.handleOnBackPressed());
 
         if (getArguments() != null) {
             String eventId = getArguments().getString("eventId");

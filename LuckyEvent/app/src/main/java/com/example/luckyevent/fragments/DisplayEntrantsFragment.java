@@ -8,8 +8,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
@@ -24,7 +26,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -56,12 +57,29 @@ public class DisplayEntrantsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_of_entrants_screen, container, false);
 
+        Toolbar toolbar = view.findViewById(R.id.topBar);
+
+        // set up back button
+        toolbar.setNavigationIcon(R.drawable.arrow_back);
+        AppCompatActivity activity = (AppCompatActivity) requireActivity();
+        activity.setSupportActionBar(toolbar);
+        if (activity.getSupportActionBar() != null) {
+            activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                requireActivity().getSupportFragmentManager().popBackStack();  // Optional: Navigate back
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
+        toolbar.setNavigationOnClickListener(v -> callback.handleOnBackPressed());
+
         if (getArguments() != null) {
             String screenTitle = getArguments().getString("screenTitle");
             String eventId = getArguments().getString("eventId");
             String invitationStatus = getArguments().getString("invitationStatus", "n/a");
 
-            Toolbar toolbar = view.findViewById(R.id.topBar);
             toolbar.setTitle(screenTitle);
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
