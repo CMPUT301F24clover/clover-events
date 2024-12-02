@@ -35,11 +35,11 @@ import java.util.List;
 /**
  * Displays the ui elements that are needed for the deletion of profiles by the administrator
  * This fragments modifies the target document's fields to accomplish this
+ * The ProfileListAdapter also allows the admin to browse the profile elements
  *
  * @author Seyi
  * @see UserSession
  * @see AdminMenuActivity
-
  * @version 1
  * @since 1
  */

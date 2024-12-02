@@ -21,6 +21,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class implementing the list adapter for a list of profiles.
+ *
+ * @author Seyi
+ * @see Profile
+ * @version 1
+ * @since 1
+ */
 public class ProfileListAdapter extends ArrayAdapter<Profile> {
     private List<Profile> originalList;
     private List<Profile> displayList;
@@ -43,6 +51,7 @@ public class ProfileListAdapter extends ArrayAdapter<Profile> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.profile_item, parent, false);
         }
 
+        //Initialize firestore and all the ui elements needed
         db = FirebaseFirestore.getInstance();
         displayList.addAll(originalList);
         Profile profile = displayList.get(position);
@@ -54,9 +63,11 @@ public class ProfileListAdapter extends ArrayAdapter<Profile> {
         fullnameTextView.setText(profile.getFullName());
 
         MaterialButton removeProfileButton = convertView.findViewById(R.id.remove_profile_button);
+        //When clicked, remove all traces of the entrants profile
         removeProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Get the document id of the entrant and remove all fields relating to their profile
                 db.collection("loginProfile")
                         .whereEqualTo("userId", profile.getUserId())
                         .get()
@@ -100,6 +111,10 @@ public class ProfileListAdapter extends ArrayAdapter<Profile> {
         return originalList.get(position);
     }
 
+    /**
+     * Filters the display list according to the entrant's username by using the query given
+     * @param query this string represents the target username we are looking for
+     */
     public void filterByUserName(String query){
         displayList.clear();
         if (query.isEmpty()) {
@@ -114,6 +129,10 @@ public class ProfileListAdapter extends ArrayAdapter<Profile> {
         notifyDataSetChanged();
     }
 
+    /**
+     * Filters the display list according to the entrant's first name by using the query given
+     * @param query this string represents the target username we are looking for
+     */
     public void filterByFirstName(String query) {
             for (Profile profile : originalList) {
                 if (profile.getFirstName().toLowerCase().contains(query)) {
@@ -123,6 +142,10 @@ public class ProfileListAdapter extends ArrayAdapter<Profile> {
         notifyDataSetChanged();
     }
 
+    /**
+     * Filters the display list according to the entrant's last name by using the query given
+     * @param query this string represents the target username we are looking for
+     */
     public void filterByLastName(String query) {
         for (Profile profile : originalList) {
             if (profile.getLastName().toLowerCase().contains(query)) {

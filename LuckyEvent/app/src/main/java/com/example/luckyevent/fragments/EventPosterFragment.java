@@ -120,6 +120,10 @@ public class EventPosterFragment extends Fragment {
         return view;
     }
 
+    /**
+     * After the poster image has been selected, we load the poster image into the imageview
+     * and upload the selected event poster to firestore and firebase storage
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

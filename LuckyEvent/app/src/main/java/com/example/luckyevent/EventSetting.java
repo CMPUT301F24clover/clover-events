@@ -1,5 +1,12 @@
 package com.example.luckyevent;
 
+/**
+ * A class used to store the details of an event
+ *
+ * @author Seyi
+ * @version 1
+ * @since 1
+ */
 public class EventSetting {
     private String eventName;
     private String eventDate;

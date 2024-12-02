@@ -38,12 +38,12 @@ public class ScanQRTest {
     @Test
     public void testScanQRFlow() {
         // Clear focus first
-        onView(withId(R.id.usernameInput)).perform(ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.username_editText)).perform(ViewActions.closeSoftKeyboard());
 
         // Login
-        onView(withId(R.id.usernameInput)).perform(ViewActions.typeText("ayesha.b"), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.passwordInput)).perform(ViewActions.typeText("123456"), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.SignInButton)).perform(ViewActions.click());
+        onView(withId(R.id.username_editText)).perform(ViewActions.typeText("ayesha.b"), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.password_editText)).perform(ViewActions.typeText("123456"), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.sign_in_button)).perform(ViewActions.click());
 
         // Wait for login and activity transition
         try {
