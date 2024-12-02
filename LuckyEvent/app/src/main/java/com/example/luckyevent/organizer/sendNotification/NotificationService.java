@@ -1,4 +1,4 @@
-package com.example.luckyevent;
+package com.example.luckyevent.organizer.sendNotification;
 
 import android.app.Service;
 import android.content.Intent;
@@ -82,7 +82,7 @@ public class NotificationService extends Service {
                     .set(notif)
                     .addOnSuccessListener(aVoid -> {
                         Log.d(TAG, "Notification successfully written!");
-                        showToast("Notification sent!");
+                        showToast("Entrants have been notified!");
                     })
                     .addOnFailureListener(e -> {
                         Log.w(TAG, "Error writing notification", e);

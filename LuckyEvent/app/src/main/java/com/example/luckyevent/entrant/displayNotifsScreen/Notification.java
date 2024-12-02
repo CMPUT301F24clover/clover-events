@@ -1,4 +1,4 @@
-package com.example.luckyevent;
+package com.example.luckyevent.entrant.displayNotifsScreen;
 
 /**
  * A class representing a user notification.

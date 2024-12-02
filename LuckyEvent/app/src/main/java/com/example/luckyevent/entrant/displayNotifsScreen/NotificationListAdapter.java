@@ -1,4 +1,4 @@
-package com.example.luckyevent;
+package com.example.luckyevent.entrant.displayNotifsScreen;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.luckyevent.R;
 import com.google.firebase.firestore.CollectionReference;
 
 import java.util.ArrayList;

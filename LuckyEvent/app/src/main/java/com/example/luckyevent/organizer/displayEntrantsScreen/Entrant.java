@@ -1,4 +1,4 @@
-package com.example.luckyevent;
+package com.example.luckyevent.organizer.displayEntrantsScreen;
 
 /**
  * A class representing an entrant.

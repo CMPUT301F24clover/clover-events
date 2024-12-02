@@ -1,4 +1,4 @@
-package com.example.luckyevent.fragments;
+package com.example.luckyevent.entrant;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,8 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-import com.example.luckyevent.Event;
-import com.example.luckyevent.EventListAdapter;
+import com.example.luckyevent.shared.Event;
+import com.example.luckyevent.shared.EventListAdapter;
 import com.example.luckyevent.R;
 import com.example.luckyevent.activities.EntrantEventDetailsActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,7 +35,7 @@ import java.util.ArrayList;
  * @version 1
  * @since 1
  */
-public class DisplayWaitingListsFragment extends Fragment {
+public class DisplayJoinedEventsFragment extends Fragment {
     private ArrayList<Event> waitingLists;
     private EventListAdapter listAdapter;
     private TextView textView;

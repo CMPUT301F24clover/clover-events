@@ -21,6 +21,7 @@ import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import com.example.luckyevent.activities.LoginActivity;
+import com.example.luckyevent.organizer.sendNotification.NotificationService;
 
 import org.hamcrest.Matcher;
 import org.junit.Rule;

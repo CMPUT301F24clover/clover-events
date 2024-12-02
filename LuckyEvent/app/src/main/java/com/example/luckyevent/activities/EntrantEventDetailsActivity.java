@@ -17,7 +17,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.fragments.ScanQrFragment;
+import com.example.luckyevent.entrant.ScanQrFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;

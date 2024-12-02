@@ -1,4 +1,4 @@
-package com.example.luckyevent.fragments;
+package com.example.luckyevent.entrant.displayNotifsScreen;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,8 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-import com.example.luckyevent.Notification;
-import com.example.luckyevent.NotificationListAdapter;
 import com.example.luckyevent.R;
 import com.example.luckyevent.UserSession;
 import com.google.firebase.auth.FirebaseAuth;

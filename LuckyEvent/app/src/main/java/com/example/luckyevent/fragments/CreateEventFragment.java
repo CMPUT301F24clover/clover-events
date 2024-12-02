@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.luckyevent.R;
+import com.example.luckyevent.organizer.DisplayOrganizerEventsFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
@@ -50,7 +51,6 @@ import java.util.Map;
  * The fragment integrates with Firebase for data persistence and uses ZXing for QR code generation.
  *
  * @author Aagam, Tola, Amna
- * @see ScanQrFragment
  * @see QrDisplayFragment
  * @version 2
  * @since 1

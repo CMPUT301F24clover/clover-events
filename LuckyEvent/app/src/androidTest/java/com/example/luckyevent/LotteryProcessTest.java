@@ -10,9 +10,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.is;
-
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
@@ -55,6 +52,7 @@ import java.util.concurrent.CountDownLatch;
  * Tests the lottery process and if the organizer can interact with their various entrants lists.
  * User stories being tested:
  * viewAndNotifyWaitlistedEntrantsTest - US 02.02.01, US 02.07.01
+ * lotteryProcessTest - US 01.04.01, US 01.04.02, US 02.05.01, US 02.05.02, US 02.06.01, US 02.07.02
  *
  */
 @RunWith(AndroidJUnit4.class)
@@ -119,6 +117,30 @@ public class LotteryProcessTest {
                 });
     }
 
+    /**
+     * Adds entrant to event waiting list using a Firestore transaction.
+     * Updates the event's waiting list sub-collection and the entrant's events.
+     * @param entrantId ID of the entrant joining the waiting list.
+     */
+    private void addToWaitlist(String entrantId) {
+        db.runTransaction((Transaction.Function<Void>) transaction -> {
+            // prepare data that will be added to event's waiting list
+            Map<String, Object> waitingListEntry = new HashMap<>();
+            waitingListEntry.put("userId", entrantId);
+
+            // prepare data that will be added to a user's joined events
+            Map<String, Object> eventJoinedEntry = new HashMap<>();
+            eventJoinedEntry.put("eventId", eventId);
+            eventJoinedEntry.put("status", "Waitlisted");
+
+            // execute transaction to update all documents
+            transaction.set(db.collection("events").document(eventId).collection("waitingList").document(entrantId), waitingListEntry);
+            transaction.set(db.collection("loginProfile").document(entrantId).collection("eventsJoined").document(eventId), eventJoinedEntry);
+
+            return null;
+        }).addOnFailureListener(e -> Log.e(TAG, "Failed to add entrant", e));
+    }
+
     @After
     public void tearDown() {
         db.runTransaction((Transaction.Function<Void>) transaction -> {
@@ -154,30 +176,6 @@ public class LotteryProcessTest {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         };
-    }
-
-    /**
-     * Adds entrant to event waiting list using a Firestore transaction.
-     * Updates the event's waiting list sub-collection and the entrant's events.
-     * @param entrantId ID of the entrant joining the waiting list.
-     */
-    private void addToWaitlist(String entrantId) {
-        db.runTransaction((Transaction.Function<Void>) transaction -> {
-            // prepare data that will be added to event's waiting list
-            Map<String, Object> waitingListEntry = new HashMap<>();
-            waitingListEntry.put("userId", entrantId);
-
-            // prepare data that will be added to a user's joined events
-            Map<String, Object> eventJoinedEntry = new HashMap<>();
-            eventJoinedEntry.put("eventId", eventId);
-            eventJoinedEntry.put("status", "Waitlisted");
-
-            // execute transaction to update all documents
-            transaction.set(db.collection("events").document(eventId).collection("waitingList").document(entrantId), waitingListEntry);
-            transaction.set(db.collection("loginProfile").document(entrantId).collection("eventsJoined").document(eventId), eventJoinedEntry);
-
-            return null;
-        }).addOnFailureListener(e -> Log.e(TAG, "Failed to add entrant", e));
     }
 
     /**
@@ -236,7 +234,7 @@ public class LotteryProcessTest {
         try {
             onView(withText(entrantName)).check(matches(isDisplayed()));
             winnerIds.add(entrantId);
-        } catch (AssertionError e) {
+        } catch (Exception e) {
             loserIds.add(entrantId);
         }
     }
@@ -295,9 +293,7 @@ public class LotteryProcessTest {
         entrantIds.add(entrantCId);
         checkNotifSent(entrantIds, notifDesc);
 
-        onView(withId(R.id.home_item))
-                .check(matches(isDisplayed()))
-                .perform(click());
+        pressBack();
     }
 
     @Test
@@ -313,25 +309,37 @@ public class LotteryProcessTest {
                 .perform(click());
         Thread.sleep(5000);
 
-        // navigate to event screen
-        onView(withId(R.id.text_showMore))
+        // navigate to the newly created event screen
+        onView(withText(eventName))
                 .check(matches(isDisplayed()))
                 .perform(click());
         Thread.sleep(2000);
 
+        // view empty list of chosen entrants then go back
+        onView(withId(R.id.chosen_entrant_button))
+                .check(matches(isDisplayed()))
+                .perform(click());
+        Thread.sleep(1000);
+
+        onView(withText("No entrants"))
+                .check(matches(isDisplayed()));
+        pressBack();
+        Thread.sleep(1000);
+
+        // start the lottery
         onView(withId(R.id.sample_entrants))
                 .check(matches(isDisplayed()))
                 .perform(click());
-        Thread.sleep(2000);
+        Thread.sleep(10000);
 
-        // view list of chosen entrants
+        // view entrant in chosen entrants list
         onView(withId(R.id.chosen_entrant_button))
                 .check(matches(isDisplayed()))
                 .perform(click());
         Thread.sleep(5000);
 
-        onView(withId(R.id.text_title))
-                .check(matches(withText(anyOf(is("Test Entrant A"), is("Test Entrant B"), is("Test Entrant C")))));
+        onView(withId(R.id.button_cancelEntrant))
+                .check(matches(isDisplayed()));
 
         // check if winners and losers were notified of lottery results
         ArrayList<String> winnerIds = new ArrayList<>();
@@ -341,6 +349,26 @@ public class LotteryProcessTest {
         addEntrantToRelevantList("Test Entrant C", entrantCId, winnerIds, loserIds);
         checkNotifSent(winnerIds, String.format("You have been chosen to sign up for %s! Go to 'My Waiting Lists' to accept your invitation.", eventName));
         checkNotifSent(loserIds, String.format("We regret to inform you that you have not been chosen to sign up for %s. Thank you for your interest.", eventName));
+
+        // create and send notification
+        String notifDesc = createUniqueString();
+        onView(withId(R.id.create_notification_fab)).perform(click());
+        onView(withId(R.id.edit_notif_title))
+                .inRoot(isDialog())
+                .check(matches(isDisplayed()))
+                .perform(ViewActions.typeText("Testing US 02.07.02"), hideKeyboard());
+        Thread.sleep(1000);
+        onView(withId(R.id.edit_notif_desc))
+                .inRoot(isDialog())
+                .check(matches(isDisplayed()))
+                .perform(ViewActions.typeText(notifDesc), hideKeyboard());
+        Thread.sleep(1000);
+        onView(withText("Confirm"))
+                .inRoot(isDialog())
+                .perform(click());
+
+        // check if notification was sent
+        checkNotifSent(winnerIds, notifDesc);
 
         pressBack();
         Thread.sleep(5000);

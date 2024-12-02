@@ -16,8 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-import com.example.luckyevent.LotteryService;
+import com.example.luckyevent.organizer.conductLottery.LotteryService;
 import com.example.luckyevent.R;
+import com.example.luckyevent.organizer.displayEntrantsScreen.DisplayEntrantsFragment;
+import com.example.luckyevent.organizer.displayEntrantsScreen.DisplayWaitlistedEntrantsFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -300,7 +302,7 @@ public class EventDetailsFragment extends Fragment {
         Button button = view.findViewById(buttonId);
         button.setOnClickListener(v -> {
             Fragment fragment = isWaitingList ?
-                    new DisplayEventWaitingListFragment() :
+                    new DisplayWaitlistedEntrantsFragment() :
                     new DisplayEntrantsFragment();
 
             Bundle bundle = new Bundle();

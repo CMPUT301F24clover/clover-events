@@ -6,6 +6,8 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.luckyevent.organizer.conductLottery.Lottery;
+import com.example.luckyevent.organizer.sendNotification.NotificationService;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;

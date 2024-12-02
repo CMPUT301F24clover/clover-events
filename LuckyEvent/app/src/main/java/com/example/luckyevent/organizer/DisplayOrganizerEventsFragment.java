@@ -1,4 +1,4 @@
-package com.example.luckyevent.fragments;
+package com.example.luckyevent.organizer;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,10 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
-import com.example.luckyevent.Event;
-import com.example.luckyevent.EventListAdapter;
+import com.example.luckyevent.fragments.EventDetailsFragment;
+import com.example.luckyevent.shared.Event;
+import com.example.luckyevent.shared.EventListAdapter;
 import com.example.luckyevent.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,16 +28,19 @@ import java.util.Collections;
 
 /**
  * DisplayOrganizerEventsFragment displays a list of events created by the current organizer.
- *
  * Features:
  * - Displays all events associated with the logged-in organizer
  * - Events are sorted by creation date
  * - Provides navigation to detailed view of each event
  * - Handles empty state display
- * @author Mmelve, Tola
- *
  * The fragment integrates with Firebase Firestore to fetch event data and
  * maintains a sorted list of events for display.
+ *
+ * @author Mmelve, Tola
+ * @see Event
+ * @see EventListAdapter
+ * @version 2
+ * @since 1
  */
 public class DisplayOrganizerEventsFragment extends Fragment {
     // Lists to store event data

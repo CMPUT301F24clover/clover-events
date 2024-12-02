@@ -45,12 +45,12 @@
         <activity android:name=".activities.ViewProfileActivity" />
         <activity android:name=".activities.RegisterProfileActivity" />
         <activity android:name=".activities.EditProfilePictureActivity"/>
-        <activity android:name = ".activities.OrganizerMenuActivity"
+        <activity android:name=".activities.OrganizerMenuActivity"
             android:exported="false"/>
         <activity android:name=".activities.AdminMenuActivity"/>
-        <activity android:name = ".activities.OrganizerHomePageActivity"/>
-        <service android:name=".LotteryService" />
-        <service android:name=".NotificationService" />
+        <activity android:name=".activities.OrganizerHomePageActivity"/>
+        <service android:name=".organizer.conductLottery.LotteryService" />
+        <service android:name=".organizer.sendNotification.NotificationService" />
         <service android:name=".SampleOneEntrantService" />
         <meta-data
             android:name="preloaded_fonts"

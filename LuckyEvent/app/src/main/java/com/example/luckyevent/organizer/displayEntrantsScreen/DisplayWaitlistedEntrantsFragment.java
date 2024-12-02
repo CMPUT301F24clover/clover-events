@@ -1,4 +1,4 @@
-package com.example.luckyevent.fragments;
+package com.example.luckyevent.organizer.displayEntrantsScreen;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -20,9 +20,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
-import com.example.luckyevent.Entrant;
-import com.example.luckyevent.EntrantListAdapter;
 import com.example.luckyevent.R;
+import com.example.luckyevent.organizer.sendNotification.CreateNotificationFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
@@ -51,7 +50,7 @@ import java.util.List;
  * @version 1
  * @since 1
  */
-public class DisplayEventWaitingListFragment extends Fragment {
+public class DisplayWaitlistedEntrantsFragment extends Fragment {
     private static final String TAG = "WaitingListFragment";
 
     // Lists to store entrant data
