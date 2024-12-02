@@ -49,15 +49,14 @@ import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * Tests the lottery process and if the organizer can interact with their various entrants lists.
- * User stories being tested:
- * viewAndNotifyWaitlistedEntrantsTest - US 02.02.01, US 02.07.01
- * lotteryProcessTest - US 01.04.01, US 01.04.02, US 02.05.01, US 02.05.02, US 02.06.01, US 02.07.02
+ * Tests if the organizer can cancel an entrant and replace them by sampling a new one.
+ * User stories being tested: US 02.05.03 (and US 01.05.01 by extension), US 02.06.02, US 02.06.04,
+ * US 02.07.03
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class LotteryProcessTest {
-    private final String TAG = "LotteryProcessTest";
+public class SampleReplacementEntrantTest {
+    private final String TAG = "SampleReplacementEntrantTest";
     private final String organizerId = "VNIdMpz3pyXAgNZ9F3tnSzW52B03";
     private String eventId;
     private String eventName;
@@ -77,7 +76,7 @@ public class LotteryProcessTest {
         CountDownLatch latch = new CountDownLatch(1);
         Random random = new Random();
         int randomNum = random.nextInt(100);
-        eventName = "Test Lottery" + randomNum;
+        eventName = "Test Sample Replacement" + randomNum;
 
         // prepare event data for database
         Map<String, Object> eventInfo = new HashMap<>();
@@ -87,7 +86,7 @@ public class LotteryProcessTest {
         eventInfo.put("description", "This event is for testing purposes only.");
         eventInfo.put("waitListSize", -1);
         eventInfo.put("sampleSize", 1);
-        eventInfo.put("currentWaitList", 3);
+        eventInfo.put("currentWaitList", 1);
         eventInfo.put("organizerId", organizerId);
         eventInfo.put("createdAt", System.currentTimeMillis());
         eventInfo.put("geolocationRequired", false);
@@ -105,10 +104,35 @@ public class LotteryProcessTest {
                             .document(organizerId)
                             .update("myEvents", FieldValue.arrayUnion(eventId));
 
-                    // add entrants to event's waiting list
-                    addToWaitlist(entrantAId);
-                    addToWaitlist(entrantBId);
-                    addToWaitlist(entrantCId);
+                    // add entrant to event's chosen entrants list
+                    db.runTransaction((Transaction.Function<Void>) transaction -> {
+                        // prepare data that will be added to event's chosen entrants sub-collection
+                        Map<String, Object> chosenEntrantEntry = new HashMap<>();
+                        chosenEntrantEntry.put("userId", entrantAId);
+                        chosenEntrantEntry.put("invitationStatus", "Pending");
+
+                        // prepare data that will be added to Entrant A's joined events
+                        Map<String, Object> eventJoinedEntryChosen = new HashMap<>();
+                        eventJoinedEntryChosen.put("eventId", eventId);
+                        eventJoinedEntryChosen.put("status", "Chosen");
+
+                        // prepare data that will be added to event's waiting list
+                        Map<String, Object> waitingListEntry = new HashMap<>();
+                        waitingListEntry.put("userId", entrantBId);
+
+                        // prepare data that will be added to Entrant B's joined events
+                        Map<String, Object> eventJoinedEntryWaitlisted = new HashMap<>();
+                        eventJoinedEntryWaitlisted.put("eventId", eventId);
+                        eventJoinedEntryWaitlisted.put("status", "Waitlisted");
+
+                        // execute transaction to update all documents
+                        transaction.set(db.collection("events").document(eventId).collection("chosenEntrants").document(entrantAId), chosenEntrantEntry);
+                        transaction.set(db.collection("loginProfile").document(entrantAId).collection("eventsJoined").document(eventId), eventJoinedEntryChosen);
+                        transaction.set(db.collection("events").document(eventId).collection("waitingList").document(entrantBId), waitingListEntry);
+                        transaction.set(db.collection("loginProfile").document(entrantBId).collection("eventsJoined").document(eventId), eventJoinedEntryWaitlisted);
+
+                        return null;
+                    }).addOnFailureListener(e -> Log.e(TAG, "Failed to add entrant", e));
 
                     latch.countDown();
                 }).addOnFailureListener(e -> {
@@ -117,39 +141,16 @@ public class LotteryProcessTest {
                 });
     }
 
-    /**
-     * Adds entrant to event waiting list using a Firestore transaction. Updates the event's waiting
-     * list sub-collection and the entrant's events.
-     * @param entrantId ID of the entrant joining the waiting list.
-     */
-    private void addToWaitlist(String entrantId) {
-        db.runTransaction((Transaction.Function<Void>) transaction -> {
-            // prepare data that will be added to event's waiting list
-            Map<String, Object> waitingListEntry = new HashMap<>();
-            waitingListEntry.put("userId", entrantId);
-
-            // prepare data that will be added to a user's joined events
-            Map<String, Object> eventJoinedEntry = new HashMap<>();
-            eventJoinedEntry.put("eventId", eventId);
-            eventJoinedEntry.put("status", "Waitlisted");
-
-            // execute transaction to update all documents
-            transaction.set(db.collection("events").document(eventId).collection("waitingList").document(entrantId), waitingListEntry);
-            transaction.set(db.collection("loginProfile").document(entrantId).collection("eventsJoined").document(eventId), eventJoinedEntry);
-
-            return null;
-        }).addOnFailureListener(e -> Log.e(TAG, "Failed to add entrant", e));
-    }
-
     @After
     public void tearDown() {
         db.runTransaction((Transaction.Function<Void>) transaction -> {
             // delete documents created for test
+            transaction.delete(db.collection("events").document(eventId).collection("chosenEntrants").document(entrantAId));
+            transaction.delete(db.collection("events").document(eventId).collection("chosenEntrants").document(entrantBId));
             transaction.delete(db.collection("events").document(eventId));
             transaction.update(db.collection("loginProfile").document(organizerId), "myEvents", FieldValue.arrayRemove(eventId));
             transaction.delete(db.collection("loginProfile").document(entrantAId).collection("eventsJoined").document(eventId));
             transaction.delete(db.collection("loginProfile").document(entrantBId).collection("eventsJoined").document(eventId));
-            transaction.delete(db.collection("loginProfile").document(entrantCId).collection("eventsJoined").document(eventId));
 
             return null;
         }).addOnFailureListener(e -> Log.e(TAG, "Failed to delete event", e));
@@ -230,74 +231,8 @@ public class LotteryProcessTest {
         }
     }
 
-    private void addEntrantToRelevantList(String entrantName, String entrantId, List<String> winnerIds, List<String> loserIds) {
-        try {
-            onView(withText(entrantName)).check(matches(isDisplayed()));
-            winnerIds.add(entrantId);
-        } catch (Exception e) {
-            loserIds.add(entrantId);
-        }
-    }
-
     @Test
-    public void viewAndNotifyWaitlistedEntrantsTest() throws InterruptedException {
-        // navigate to organizer login page
-        onView(withId(R.id.sign_in_as_organizer_button)).perform(click());
-        Thread.sleep(2000);
-        login();
-
-        // navigate to organizer's events screen
-        onView(withId(R.id.events_item))
-                .check(matches(isDisplayed()))
-                .perform(click());
-        Thread.sleep(5000);
-
-        // navigate to event screen
-        onView(withText(eventName))
-                .check(matches(isDisplayed()))
-                .perform(click());
-        Thread.sleep(2000);
-
-        // view waiting list
-        onView(withId(R.id.waiting_list_button))
-                .perform(scrollTo())
-                .check(matches(isDisplayed()))
-                .perform(click());
-        Thread.sleep(5000);
-
-        onView(withText("Test Entrant A")).check(matches(isDisplayed()));
-        onView(withText("Test Entrant B")).check(matches(isDisplayed()));
-        onView(withText("Test Entrant C")).check(matches(isDisplayed()));
-
-        // create and send notification
-        String notifDesc = createUniqueString();
-        onView(withId(R.id.create_notification_fab)).perform(click());
-        onView(withId(R.id.edit_notif_title))
-                .inRoot(isDialog())
-                .check(matches(isDisplayed()))
-                .perform(ViewActions.typeText("Testing US 02.07.01"), hideKeyboard());
-        Thread.sleep(1000);
-        onView(withId(R.id.edit_notif_desc))
-                .inRoot(isDialog())
-                .check(matches(isDisplayed()))
-                .perform(ViewActions.typeText(notifDesc), hideKeyboard());
-        Thread.sleep(1000);
-        onView(withText("Confirm"))
-                .inRoot(isDialog())
-                .perform(click());
-
-        // check if notification was sent
-        ArrayList<String> entrantIds = new ArrayList<>();
-        entrantIds.add(entrantAId);
-        entrantIds.add(entrantBId);
-        entrantIds.add(entrantCId);
-        checkNotifSent(entrantIds, notifDesc);
-
-        pressBack();
-    }
-
-    @Test
-    public void lotteryProcessTest() throws InterruptedException {
+    public void sampleReplacementEntrantTest() throws InterruptedException {
         // navigate to organizer login page
         onView(withId(R.id.sign_in_as_organizer_button)).perform(click());
         Thread.sleep(2000);
@@ -315,8 +250,9 @@ public class LotteryProcessTest {
                 .perform(click());
         Thread.sleep(2000);
 
-        // view empty list of chosen entrants then go back
-        onView(withId(R.id.chosen_entrant_button))
+        // view empty list of cancelled entrants then go back
+        onView(withId(R.id.cancelled_entrant_button))
+                .perform(scrollTo())
                 .check(matches(isDisplayed()))
                 .perform(click());
         Thread.sleep(1000);
@@ -325,28 +261,35 @@ public class LotteryProcessTest {
         pressBack();
         Thread.sleep(1000);
 
-        // start the lottery
-        onView(withId(R.id.sample_entrants))
-                .check(matches(isDisplayed()))
-                .perform(click());
-        Thread.sleep(10000);
-
-        // view entrant in chosen entrants list
+        // navigate to list of chosen entrants and cancel entrant
         onView(withId(R.id.chosen_entrant_button))
                 .check(matches(isDisplayed()))
                 .perform(click());
         Thread.sleep(5000);
 
-        onView(withId(R.id.button_cancelEntrant)).check(matches(isDisplayed()));
+        onView(withId(R.id.button_cancelEntrant))
+                .check(matches(isDisplayed()))
+                .perform(click());
+        Thread.sleep(5000);
 
-        // check if winners and losers were notified of lottery results
-        ArrayList<String> winnerIds = new ArrayList<>();
-        ArrayList<String> loserIds = new ArrayList<>();
-        addEntrantToRelevantList("Test Entrant A", entrantAId, winnerIds, loserIds);
-        addEntrantToRelevantList("Test Entrant B", entrantBId, winnerIds, loserIds);
-        addEntrantToRelevantList("Test Entrant C", entrantCId, winnerIds, loserIds);
-        checkNotifSent(winnerIds, String.format("You have been chosen to sign up for %s! Go to 'My Waiting Lists' to accept your invitation.", eventName));
-        checkNotifSent(loserIds, String.format("We regret to inform you that you have not been chosen to sign up for %s. Thank you for your interest.", eventName));
+        // sample new entrant
+        onView(withId(R.id.button_sampleNewEntrant))
+                .check(matches(isDisplayed()))
+                .perform(click());
+        Thread.sleep(5000);
+
+        onView(withText("Test Entrant B")).check(matches(isDisplayed()));
+        pressBack();
+        Thread.sleep(1000);
+
+        // view entrant in cancelled entrants list
+        onView(withId(R.id.cancelled_entrant_button))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+                .perform(click());
+        Thread.sleep(5000);
+
+        onView(withText("Test Entrant A")).check(matches(isDisplayed()));
 
         // create and send notification
         String notifDesc = createUniqueString();
@@ -354,7 +297,7 @@ public class LotteryProcessTest {
         onView(withId(R.id.edit_notif_title))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()))
-                .perform(ViewActions.typeText("Testing US 02.07.02"), hideKeyboard());
+                .perform(ViewActions.typeText("Testing US 02.07.03"), hideKeyboard());
         Thread.sleep(1000);
         onView(withId(R.id.edit_notif_desc))
                 .inRoot(isDialog())
@@ -366,9 +309,10 @@ public class LotteryProcessTest {
                 .perform(click());
 
         // check if notification was sent
-        checkNotifSent(winnerIds, notifDesc);
+        ArrayList<String> entrantIds = new ArrayList<>();
+        entrantIds.add(entrantAId);
+        checkNotifSent(entrantIds, notifDesc);
 
         pressBack();
-        Thread.sleep(5000);
     }
 }

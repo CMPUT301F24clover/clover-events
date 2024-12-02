@@ -2,7 +2,6 @@ package com.example.luckyevent.organizer.displayEntrantsScreen;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.SampleOneEntrantService;
+import com.example.luckyevent.organizer.SampleReplacementService;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,7 +32,6 @@ import java.util.ArrayList;
  * @since 1
  */
 public class ChosenEntrantListAdapter extends ArrayAdapter<Entrant> {
-    private final String TAG = "ChosenEntrantListAdapter";
     private ArrayList<Entrant> chosenEntrants;
     private Context context;
     private FirebaseFirestore db;
@@ -84,31 +82,35 @@ public class ChosenEntrantListAdapter extends ArrayAdapter<Entrant> {
             // cancel entrant that did not sign up
             cancelEntrantButton.setOnClickListener(v -> {
                 db.runTransaction((Transaction.Function<Void>) transaction -> {
-                    Log.d(TAG, "db transaction");
                     transaction.update(chosenEntrantsRef.document(entrant.getEntrantId()), "invitationStatus", "Cancelled");
                     transaction.update(chosenEntrantsRef.document(entrant.getEntrantId()), "findReplacement", true);
                     transaction.update(db.collection("loginProfile").document(entrant.getEntrantId()).collection("eventsJoined").document(eventId), "status", "Cancelled");
                     return null;
-                }).addOnSuccessListener(aVoid -> Toast.makeText(context, "Entrant cancelled.", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(context, eventId, Toast.LENGTH_SHORT).show());
+                }).addOnSuccessListener(aVoid -> {
+                    sampleNewEntrantButton.setVisibility(View.VISIBLE);
+                    Toast.makeText(context, "Entrant cancelled", Toast.LENGTH_SHORT).show();
+                }).addOnFailureListener(e -> Toast.makeText(context, eventId, Toast.LENGTH_SHORT).show());
             });
+
         } else if (invitationStatus.equals("Enrolled")) {
             textViewContent.setTextColor(ContextCompat.getColor(context, R.color.green));
             cancelEntrantButton.setVisibility(View.GONE);
             sampleNewEntrantButton.setVisibility(View.GONE);
+
         } else {
             textViewContent.setTextColor(ContextCompat.getColor(context, R.color.red));
             cancelEntrantButton.setVisibility(View.GONE);
 
+            // check if cancelled/declined entrant has already been replaced
             chosenEntrantsRef.document(entrant.getEntrantId()).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
                     if (doc.exists()) {
                         if (doc.contains("findReplacement") && Boolean.TRUE.equals(doc.getBoolean("findReplacement"))) {
+                            // sample replacement entrant
                             sampleNewEntrantButton.setOnClickListener(v -> {
-                                // fix LotteryService class
                                 Toast.makeText(context, "Sampling new entrant... ", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(context, SampleOneEntrantService.class);
+                                Intent intent = new Intent(context, SampleReplacementService.class);
                                 intent.putExtra("eventId", eventId);
                                 intent.putExtra("userId", entrant.getEntrantId());
                                 context.startService(intent);
