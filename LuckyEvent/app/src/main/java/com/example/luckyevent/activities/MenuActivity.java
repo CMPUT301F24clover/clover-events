@@ -149,4 +149,36 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
                 .addToBackStack(null)
                 .commit();
     }
+    /**
+     * Navigates to the DisplayWaitingListsFragment when the waiting_list_item is clicked
+     */
+    @Override
+    public void onNavigateToWaitingList() {
+        bottomNavigationView.setSelectedItemId(R.id.waiting_list_item);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.MenuFragment, new DisplayWaitingListsFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+    /**
+     * Navigates to the DisplayNotificationsFragment when the notification_item is clicked
+     */
+    @Override
+    public void onNavigateToNotifications() {
+        bottomNavigationView.setSelectedItemId(R.id.notification_item);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.MenuFragment, new DisplayNotificationsFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+    /**
+     * Navigates to the ViewProfileActivity when the profile_item is clicked
+     */
+    @Override
+    public void onNavigateToProfile() {
+        findProfile();
+
+    }
+
+
 }
