@@ -87,7 +87,7 @@ public class ReceiveAndDisplayNotificationTest {
     public ActivityScenarioRule<LoginActivity> activityScenarioRule = new ActivityScenarioRule<>(LoginActivity.class);
 
     @Test
-    public void displayEntrantNotificationsTest() throws InterruptedException {
+    public void displayEntrantNotificationsTest() throws InterruptedException {     
         login();
 
         // navigate to user notifications screen

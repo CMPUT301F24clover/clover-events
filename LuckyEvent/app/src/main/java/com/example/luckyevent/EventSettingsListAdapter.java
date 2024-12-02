@@ -17,6 +17,14 @@ import com.example.luckyevent.fragments.EventSettingDetailsFragment;
 
 import java.util.ArrayList;
 
+/**
+ * A class implementing the list adapter for a list of event settings.
+ *
+ * @author Seyi
+ * @see EventSetting
+ * @version 1
+ * @since 1
+ */
 public class EventSettingsListAdapter extends ArrayAdapter<EventSetting> {
     private ArrayList<EventSetting> eventSettingList;
     private FragmentActivity fragmentActivity; // Added reference to the FragmentActivity
@@ -36,6 +44,7 @@ public class EventSettingsListAdapter extends ArrayAdapter<EventSetting> {
 
         EventSetting eventSetting = eventSettingList.get(position);
         if (eventSetting != null) {
+            // Initialize the UI elements
             TextView eventNameTextView = convertView.findViewById(R.id.event_title);
             eventNameTextView.setText(eventSetting.getEventName());
 
@@ -49,6 +58,7 @@ public class EventSettingsListAdapter extends ArrayAdapter<EventSetting> {
             bundle.putString("eventId", eventSetting.getEventId());
 
             LinearLayout eventSettingLayout = convertView.findViewById(R.id.event_setting_layout);
+            // When an event setting is clicked, navigate to it's details
             eventSettingLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
