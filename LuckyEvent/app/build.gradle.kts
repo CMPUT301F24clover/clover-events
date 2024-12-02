@@ -36,6 +36,8 @@ android {
 dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
+    implementation(libs.fragment.testing)
+    implementation(libs.espresso.contrib)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.core)
     implementation("com.github.bumptech.glide:glide:4.12.0")
