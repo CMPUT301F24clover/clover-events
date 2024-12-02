@@ -1,23 +1,18 @@
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
-
 }
-
 android {
     namespace = "com.example.luckyevent"
     compileSdk = 34
-
     defaultConfig {
         applicationId = "com.example.luckyevent"
         minSdk = 34
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -39,8 +34,6 @@ dependencies {
     }
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
-    implementation(libs.fragment.testing)
-    implementation(libs.espresso.contrib)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.core)
     implementation("com.github.bumptech.glide:glide:4.12.0")
@@ -68,7 +61,6 @@ dependencies {
     androidTestImplementation("androidx.test:core:1.6.1")
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.test:rules:1.6.1")
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
