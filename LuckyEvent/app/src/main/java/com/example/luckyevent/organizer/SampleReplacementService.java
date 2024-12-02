@@ -1,4 +1,4 @@
-package com.example.luckyevent;
+package com.example.luckyevent.organizer;
 
 import android.app.Service;
 import android.content.Intent;

@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.SampleReplacementService;
+import com.example.luckyevent.organizer.SampleReplacementService;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -32,7 +32,6 @@ import java.util.ArrayList;
  * @since 1
  */
 public class ChosenEntrantListAdapter extends ArrayAdapter<Entrant> {
-    private final String TAG = "ChosenEntrantListAdapter";
     private ArrayList<Entrant> chosenEntrants;
     private Context context;
     private FirebaseFirestore db;
