@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,7 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
 import com.example.luckyevent.UserSession;
+import com.example.luckyevent.admin.AdminMenuActivity;
 import com.example.luckyevent.firebase.FirebaseDB;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -29,26 +29,30 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * @see UserSession
  * @see FirebaseDB
 
- * @version 1
+ * @version 2
  * @since 1
  */
+
 public class LoginActivity extends AppCompatActivity {
-    private EditText username;
-    private EditText password;
+    private TextInputEditText username;
+    private TextInputEditText password;
     private FirebaseDB firebaseDB;
     private FirebaseFirestore db;
     private TextView registerText;
     private TextView organizerText;
     private androidx.appcompat.widget.AppCompatButton signInButton;
     private androidx.appcompat.widget.AppCompatButton signUpButton;
+    private androidx.appcompat.widget.AppCompatButton organizerSignInButton;
+    private androidx.appcompat.widget.AppCompatButton continueAsGuestButton;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
-        setContentView(R.layout.activity_login);
-        username = findViewById(R.id.usernameInput);
-        password = findViewById(R.id.passwordInput);
+        setContentView(R.layout.main_login_new);
+        username = findViewById(R.id.username_editText);
+        password = findViewById(R.id.password_editText);
         firebaseDB = new FirebaseDB(this);
 
         /* commented this out since the log out button isn't implemented
@@ -68,12 +72,12 @@ public class LoginActivity extends AppCompatActivity {
         */
 
 
-        signInButton = findViewById(R.id.SignInButton);
+        signInButton = findViewById(R.id.sign_in_button);
 
 
         signInButton.setOnClickListener(new View.OnClickListener() {
             /**
-             *When clicked, the activity uses FireBaseDB's SignIn function to sign in the user using the
+             * When clicked, the activity uses FireBaseDB's SignIn function to sign in the user using the
              * fields provided. It navigates to the MenuActivity if it is successful in signing the user
              */
             @Override
@@ -95,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
                     firebaseDB.signIn(userInput, passwordInput, new FirebaseDB.SignInCallback() {
                         @Override
                         public void onSuccess() {
-                            //gets the currently signed in user
+                            // Gets the user id of the currently signed in user and stores it for future reference
                             FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                             String userId = firebaseUser.getUid();
                             Log.d("LoginActivity", "User ID: " + userId);
@@ -106,15 +110,51 @@ public class LoginActivity extends AppCompatActivity {
                                     .get()
                                     .addOnCompleteListener(task -> {
                                         if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                                            // Gets the user details out of the target document and stores it for future refenrce
                                             DocumentSnapshot document = task.getResult().getDocuments().get(0);
                                             String firstName = document.getString("firstName");
+                                            String userName = document.getString("userName");
+                                            String role  = document.getString("role");
+                                            Boolean notificationsDisabled = document.getBoolean("notificationsDisabled");
+
+                                            // Handles the accounts that have been created before the 
+                                            if (notificationsDisabled == null){
+                                                notificationsDisabled = false;
+                                            }
+
                                             Log.d("LoginActivity", "firstName: " + firstName);
                                             UserSession.getInstance().setFirstName(firstName);
+                                            UserSession.getInstance().setUserName(userName);
+                                            UserSession.getInstance().setNotificationDisabled(notificationsDisabled);
+
+                                            // Retrieves the user's profile picture if the user is an entrant
+                                            if (role.equals("entrant")) {
+                                                db.collection("profileImages")
+                                                        .document(document.getString("userId"))
+                                                        .get()
+                                                        .addOnCompleteListener(task1 -> {
+                                                            if (task1.isSuccessful() && task1.getResult() != null) {
+                                                                // Retrieves the image url from the target document and stores it for future refence
+                                                                DocumentSnapshot imageDocument = task1.getResult();
+                                                                String imageUrl = imageDocument.getString("imageUrl");
+                                                                UserSession.getInstance().setProfileUri(imageUrl);
+                                                            } else {
+                                                                Log.e("LoginActivity", "User does not have a profile pictue");
+                                                            }
+                                                        });
 
 
-                                            Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
-                                            startActivity(intent);
-                                            finish();
+                                                Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
+                                                startActivity(intent);
+                                                finish();
+
+                                            }
+
+                                            else if(role.equals("admin")){
+                                                Intent intent = new Intent(LoginActivity.this, AdminMenuActivity.class);
+                                                startActivity(intent);
+                                                finish();
+                                            }
 
                                         } else {
                                             Log.e("LoginActivity", "Failed to retrieve user profile data.");
@@ -136,10 +176,10 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-        signUpButton = findViewById(R.id.SignUpButton);
+        signUpButton = findViewById(R.id.sign_up_button);
         signUpButton.setOnClickListener(new View.OnClickListener(){
             /**
-             *Navigates to the EntrantSignUp Activity when clicked
+             * Navigates to the EntrantSignUp Activity when clicked
              */
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, EntrantSignUpActivity.class);
@@ -149,10 +189,10 @@ public class LoginActivity extends AppCompatActivity {
 
         });
 
-        registerText = findViewById(R.id.RegisterText);
-        registerText.setOnClickListener(new View.OnClickListener() {
+        continueAsGuestButton = findViewById(R.id.continue_as_guest_button);
+        continueAsGuestButton.setOnClickListener(new View.OnClickListener() {
             /**
-             *Navigates to the RegisterDeviceActivity when clicked
+             * Navigates to the RegisterDeviceActivity when clicked
              */
             @Override
             public void onClick(View v) {
@@ -162,10 +202,10 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        organizerText = findViewById(R.id.OrganizerText);
-        organizerText.setOnClickListener(new View.OnClickListener() {
+        organizerSignInButton = findViewById(R.id.sign_in_as_organizer_button);
+        organizerSignInButton.setOnClickListener(new View.OnClickListener() {
             /**
-             *Navigates to the OrganizerSignInActivity when clicked
+             * Navigates to the OrganizerSignInActivity when clicked
              */
             @Override
             public void onClick(View v) {

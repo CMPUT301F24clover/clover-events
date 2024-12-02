@@ -1,6 +1,8 @@
 package com.example.luckyevent;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -16,27 +18,30 @@ import org.junit.Test;
 
 import java.util.Random;
 
+/**
+ * Tests the user's ability to create and edit their profile.
+ * User stories being tested: US 01.02.01, US 01.02.02
+ */
 public class EditProfileTest {
 
     @Rule
     public ActivityScenarioRule<LoginActivity> signUpActivityActivityScenarioRule = new ActivityScenarioRule<>(LoginActivity.class);
 
-
     public void signupToRegisterProfile(String userName, String pass, String firstName, String lastName){
         // click the signup button
-        onView(withId(R.id.SignUpButton)).perform(ViewActions.click());
+        onView(withId(R.id.sign_up_button)).perform(ViewActions.click());
         // find the SignUpUsernameInput meaning where in the sign up page
-        onView(withId(R.id.SignUpUsernameInput)).check(matches(isDisplayed()));
+        onView(withId(R.id.username_editText)).check(matches(isDisplayed()));
         // sign up and input signup fields
-        onView(withId(R.id.SignUpUsernameInput)).perform(ViewActions.typeText(userName));
-        onView(withId(R.id.SignUpPasswordInput)).perform(ViewActions.typeText(pass));
-        onView(withId(R.id.SignUpFirstNameInput)).perform(ViewActions.typeText(firstName));
-        onView(withId(R.id.SignUpLastNameInput)).perform(ViewActions.typeText(lastName));
+        onView(withId(R.id.username_editText)).perform(replaceText(userName), closeSoftKeyboard());
+        onView(withId(R.id.password_editText)).perform(replaceText(pass), closeSoftKeyboard());
+        onView(withId(R.id.firstname_editText)).perform(replaceText(firstName), closeSoftKeyboard());
+        onView(withId(R.id.lastname_editText)).perform(replaceText(lastName), closeSoftKeyboard());
 
         //click signup
-        onView(withId(R.id.SignUpButton)).perform(ViewActions.click());
+        onView(withId(R.id.create_account_button)).perform(ViewActions.click());
         try {
-            Thread.sleep(2000);
+            Thread.sleep(5000);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -63,7 +68,7 @@ public class EditProfileTest {
         }
         // register the profile with the given random name and the unique gmail
         onView(withId(R.id.nameEditText)).perform(ViewActions.click(), ViewActions.typeText(name));
-        onView(withId(R.id.emailEditText)).perform(ViewActions.click(), ViewActions.typeText(userName + "@gmail.com"));
+        onView(withId(R.id.emailEditText)).perform(replaceText(userName + "@gmail.com"), closeSoftKeyboard());
         onView(withId(R.id.RegisterButton)).perform(ViewActions.click());
         try {
             Thread.sleep(2000);
@@ -100,7 +105,7 @@ public class EditProfileTest {
         // enter the edit fields and click save
         onView(withId(R.id.nameEditText)).perform(ViewActions.click(), ViewActions.clearText(),ViewActions.typeText("bob billy"));
         onView(withId(R.id.emailEditText)).perform(ViewActions.click(),ViewActions.clearText(), ViewActions.typeText("testing" + randomNum+ "@gmail.com"));
-        onView(withId(R.id.phoneEditText)).perform(ViewActions.click(),ViewActions.clearText(), ViewActions.typeText("780-567-0000"));
+        onView(withId(R.id.phoneEditText)).perform(replaceText("780-567-0000"), closeSoftKeyboard());
         onView(withId(R.id.saveButton)).perform(ViewActions.click());
         try {
             Thread.sleep(2000);
@@ -130,7 +135,7 @@ public class EditProfileTest {
         // leave the name field empty and click save
         onView(withId(R.id.nameEditText)).perform(ViewActions.click(), ViewActions.clearText(),ViewActions.typeText(""));
         onView(withId(R.id.emailEditText)).perform(ViewActions.click(),ViewActions.clearText(), ViewActions.typeText("testing" + randomNum+ "@gmail.com"));
-        onView(withId(R.id.phoneEditText)).perform(ViewActions.click(),ViewActions.clearText(), ViewActions.typeText("780-567-0000"));
+        onView(withId(R.id.phoneEditText)).perform(replaceText("780-567-0000"), closeSoftKeyboard());
         onView(withId(R.id.saveButton)).perform(ViewActions.click());
         try {
             Thread.sleep(2000);
@@ -158,7 +163,7 @@ public class EditProfileTest {
         // leave the email field empty and click save
         onView(withId(R.id.nameEditText)).perform(ViewActions.click(), ViewActions.clearText(),ViewActions.typeText("polar bears"));
         onView(withId(R.id.emailEditText)).perform(ViewActions.click(),ViewActions.clearText(), ViewActions.typeText(""));
-        onView(withId(R.id.phoneEditText)).perform(ViewActions.click(),ViewActions.clearText(), ViewActions.typeText("780-567-0000"));
+        onView(withId(R.id.phoneEditText)).perform(replaceText("780-567-0000"), closeSoftKeyboard());
         onView(withId(R.id.saveButton)).perform(ViewActions.click());
         try {
             Thread.sleep(2000);

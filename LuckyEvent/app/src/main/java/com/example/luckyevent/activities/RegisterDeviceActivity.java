@@ -1,7 +1,6 @@
 package com.example.luckyevent.activities;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,8 +9,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.luckyevent.Notification;
-import com.example.luckyevent.NotificationListAdapter;
 import com.example.luckyevent.R;
 import com.example.luckyevent.UserSession;
 import com.example.luckyevent.firebase.FirebaseDB;
@@ -34,12 +31,12 @@ public class RegisterDeviceActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.screen_template_device_registration);
+        setContentView(R.layout.device_registration);
         registerButton = findViewById(R.id.RegisterButton);
         gobackButton = findViewById(R.id.previousIcon);
         firebaseDB = new FirebaseDB(this);
 
-        /**
+        /*
          * Registers the users device device when clicked. This is done with the help of the deviceSignIn
          * function from the FireBaseDB class. The class uses the device id to sign in if the id is in the database, otherwise
          * a new account is created. Successfully registering the device navigates to the next activity (MenuActivity)
@@ -57,7 +54,7 @@ public class RegisterDeviceActivity extends AppCompatActivity {
 
                         Intent intent = new Intent(RegisterDeviceActivity.this, MenuActivity.class);
                         startActivity(intent);
-                        finish(); // Optional
+                        finish();
                     }
 
                     @Override
@@ -68,7 +65,7 @@ public class RegisterDeviceActivity extends AppCompatActivity {
             }
         });
 
-        /**
+        /*
          * Goes back to the previous activity when clicked (RegisterDeviceActivity)
          */
         gobackButton.setOnClickListener(new View.OnClickListener() {

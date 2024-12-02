@@ -7,9 +7,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.fragments.DisplayNotificationsFragment;
-import com.example.luckyevent.fragments.HomePageFragment;
-import com.example.luckyevent.fragments.ScanQrFragment;
+import com.example.luckyevent.UserSession;
+import com.example.luckyevent.entrant.displayNotifsScreen.DisplayNotificationsFragment;
+import com.example.luckyevent.entrant.DisplayJoinedEventsFragment;
+import com.example.luckyevent.entrant.HomePageFragment;
+import com.example.luckyevent.entrant.ScanQrFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,8 +42,8 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
         bottomNavigationView = findViewById(R.id.bottomNavigationViewEntrant);
         db = FirebaseFirestore.getInstance();
 
-        /**
-         *When an element of the this bottomNavigationView is clicked, it navigates to it csorresponding
+        /*
+         * When an element of the this bottomNavigationView is clicked, it navigates to it corresponding
          * fragment
          */
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -65,6 +67,14 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
                 return true;
             }
 
+            else if (item.getItemId() == R.id.waiting_list_item) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.MenuFragment, new DisplayJoinedEventsFragment())
+                        .commit();
+                return true;
+            }
+
             else if (item.getItemId() == R.id.notification_item) {
                 getSupportFragmentManager()
                         .beginTransaction()
@@ -84,7 +94,7 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
                 .commit();
     }
     /**
-     *Uses the user id to find the profile id of a user. This profile id is passed onto the ViewProfileActivity
+     * Uses the user id to find the profile id of a user. This profile id is passed onto the ViewProfileActivity
      * before it is navigated to
      */
     private void findProfile() {
@@ -100,6 +110,11 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
                         if (task.isSuccessful() && task.getResult() != null){
                             DocumentSnapshot doc = task.getResult();
                             if (doc.exists()){
+                                // Initialize notification preference in UserSession
+                                Boolean notificationDisabled = doc.getBoolean("notificationsDisabled");
+                                UserSession.getInstance().setNotificationDisabled(
+                                        notificationDisabled!= null ? notificationDisabled : false
+                                );
                                 Boolean hasUserProfile = doc.getBoolean("hasUserProfile");
                                 if (Boolean.TRUE.equals(hasUserProfile)){
                                     Intent intent = new Intent(MenuActivity.this,ViewProfileActivity.class);
@@ -124,7 +139,7 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
     }
 
     /**
-     *Navigates to the ScanQrFragment when the camera_item is clicked
+     * Navigates to the ScanQrFragment when the camera_item is clicked
      */
     @Override
     public void onNavigateToScanQr() {
@@ -134,4 +149,36 @@ public class MenuActivity extends AppCompatActivity implements HomePageFragment.
                 .addToBackStack(null)
                 .commit();
     }
+    /**
+     * Navigates to the DisplayWaitingListsFragment when the waiting_list_item is clicked
+     */
+    @Override
+    public void onNavigateToWaitingList() {
+        bottomNavigationView.setSelectedItemId(R.id.waiting_list_item);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.MenuFragment, new DisplayJoinedEventsFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+    /**
+     * Navigates to the DisplayNotificationsFragment when the notification_item is clicked
+     */
+    @Override
+    public void onNavigateToNotifications() {
+        bottomNavigationView.setSelectedItemId(R.id.notification_item);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.MenuFragment, new DisplayNotificationsFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+    /**
+     * Navigates to the ViewProfileActivity when the profile_item is clicked
+     */
+    @Override
+    public void onNavigateToProfile() {
+        findProfile();
+
+    }
+
+
 }

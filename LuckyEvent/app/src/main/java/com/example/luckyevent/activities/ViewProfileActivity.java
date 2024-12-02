@@ -2,15 +2,24 @@ package com.example.luckyevent.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.luckyevent.R;
+import com.example.luckyevent.UserSession;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implements the view profile functionality. displays the users information, such as name, email, and phone number.
@@ -23,6 +32,11 @@ public class ViewProfileActivity extends AppCompatActivity {
     private ProfileController profileController;
     private ProfileSetup profileSetup;
     private Button logOutButton;
+    private ImageView profile;
+    private String imageUrl;
+    private CheckBox enableNotificationsCheckBox;
+    private FirebaseFirestore db;
+    private String TAG  = "ViewProfileActivity";
 
     /**
      * Loads the profile information, implements logout, edit and back button functionality
@@ -33,6 +47,15 @@ public class ViewProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_profile);
 
+        db = FirebaseFirestore.getInstance();
+
+        profile = findViewById(R.id.imageView);
+        imageUrl = UserSession.getInstance().getProfileUri();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Picasso.get().load(imageUrl).into(profile);
+        }
+
+        enableNotificationsCheckBox = findViewById(R.id.checkBox);
         nameText = findViewById(R.id.nameField);
         emailText = findViewById(R.id.emailField);
         phoneText = findViewById(R.id.phoneField);
@@ -83,5 +106,37 @@ public class ViewProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        Boolean isNotificationDisabled = UserSession.getInstance().isNotificationDisabled();
+        enableNotificationsCheckBox.setChecked(!Boolean.TRUE.equals(isNotificationDisabled));
+
+
+        // When clicked disable or enable the notification for the current user
+        // The initial state of this is stored in firestore
+        enableNotificationsCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean currentState = Boolean.TRUE.equals(UserSession.getInstance().isNotificationDisabled());
+                Map<String, Object> map = new HashMap<>();
+                map.put("notificationsDisabled", !currentState);
+
+                db.collection("loginProfile")
+                        .document(UserSession.getInstance().getUserId())
+                        .update(map)
+                        .addOnCompleteListener(dbTask -> {
+                            if (dbTask.isSuccessful()) {
+                                enableNotificationsCheckBox.setChecked(currentState);
+                                UserSession.getInstance().setNotificationDisabled(!currentState);
+                            } else {
+                                // Revert checkbox state on failure
+                                enableNotificationsCheckBox.setChecked(!currentState);
+                                Log.e(TAG, "onClick: Failed to update notifications state");
+                            }
+                        });
+            }
+        });
+
+
+
     }
 }

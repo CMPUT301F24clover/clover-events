@@ -8,9 +8,12 @@
 
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -31,25 +34,21 @@
 
         <activity android:name=".activities.EntrantEventDetailsActivity"
             android:exported="false"/>
-        <activity android:name=".activities.GenerateQrActivity"/>
-        <activity android:name=".activities.HomePageActivity" />
         <activity android:name=".activities.EntrantSignUpActivity" />
         <activity android:name=".activities.RegisterDeviceActivity" />
         <activity android:name=".activities.OrganizerSignInActivity" />
         <activity android:name=".activities.OrganizerSignUpActivity"/>
-        <activity android:name=".activities.EntrantJoinWaitlistActivity"/>
         <activity android:name=".activities.MenuActivity"/>
-        <activity android:name=".activities.ProfileView" />
         <activity android:name=".activities.EditProfileActivity" />
         <activity android:name=".activities.ViewProfileActivity" />
         <activity android:name=".activities.RegisterProfileActivity" />
-
-        <activity android:name = ".activities.OrganizerMenuActivity"
+        <activity android:name=".activities.EditProfilePictureActivity"/>
+        <activity android:name=".activities.OrganizerMenuActivity"
             android:exported="false"/>
-        <activity android:name = ".activities.OrganizerHomePageActivity"/>
-        <service android:name=".LotteryService" />
-        <service android:name=".QRDownloadService" />
-        <service android:name=".NotificationService" />
+        <activity android:name=".admin.AdminMenuActivity"/>
+        <service android:name=".organizer.conductLottery.LotteryService" />
+        <service android:name=".organizer.sendNotification.NotificationService" />
+        <service android:name=".SampleOneEntrantService" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
