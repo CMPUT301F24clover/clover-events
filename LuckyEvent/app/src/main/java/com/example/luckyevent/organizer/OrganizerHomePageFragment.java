@@ -1,4 +1,4 @@
-package com.example.luckyevent.fragments;
+package com.example.luckyevent.organizer;
 
 import android.content.Context;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package com.example.luckyevent;
+package com.example.luckyevent.organizer.conductLottery;
 
 import android.app.Service;
 import android.content.Intent;
@@ -6,6 +6,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.luckyevent.organizer.sendNotification.NotificationService;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -18,7 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Conducts the lottery: samples from the waiting list to get a list of winners and losers.
+ * Conducts the lottery: samples from the waiting list to get a list of winners and losers and
+ * notifies all participants.
  *
  * @author Mmelve
  * @see Lottery

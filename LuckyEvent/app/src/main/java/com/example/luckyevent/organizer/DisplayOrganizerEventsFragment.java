@@ -1,4 +1,4 @@
-package com.example.luckyevent.fragments;
+package com.example.luckyevent.organizer;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -6,17 +6,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
-import com.example.luckyevent.Event;
-import com.example.luckyevent.EventListAdapter;
+import com.example.luckyevent.fragments.EventDetailsFragment;
+import com.example.luckyevent.shared.Event;
+import com.example.luckyevent.shared.EventListAdapter;
 import com.example.luckyevent.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,22 +28,28 @@ import java.util.Collections;
 
 /**
  * DisplayOrganizerEventsFragment displays a list of events created by the current organizer.
- *
  * Features:
  * - Displays all events associated with the logged-in organizer
  * - Events are sorted by creation date
  * - Provides navigation to detailed view of each event
  * - Handles empty state display
- * @author Mmelve, Tola
- *
  * The fragment integrates with Firebase Firestore to fetch event data and
  * maintains a sorted list of events for display.
+ *
+ * @author Mmelve, Tola
+ * @see Event
+ * @see EventListAdapter
+ * @version 2
+ * @since 1
  */
 public class DisplayOrganizerEventsFragment extends Fragment {
     // Lists to store event data
     private ArrayList<String> eventIdsList;        // Stores event IDs from user profile
     private ArrayList<Event> events;               // Stores complete event objects
     private EventListAdapter listAdapter;          // Adapter for ListView display
+
+    // UI elements
+    private TextView textView;
 
     // Firebase references
     private FirebaseFirestore db;                  // Firestore database instance
@@ -78,14 +83,11 @@ public class DisplayOrganizerEventsFragment extends Fragment {
         }
         toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
 
+        textView = view.findViewById(R.id.text_emptyList);
+        textView.setVisibility(View.GONE);
+
         // Initialize Firebase connection and load data
         initializeFirebase();
-
-        // Show empty state if no events exist
-        if (events.isEmpty()) {
-            TextView textView = view.findViewById(R.id.text_emptyList);
-            textView.setText("No events");
-        }
 
         return view;
     }
@@ -132,11 +134,12 @@ public class DisplayOrganizerEventsFragment extends Fragment {
                 DocumentSnapshot snapshot = task.getResult();
                 if (snapshot.exists()) {
                     eventIdsList = (ArrayList<String>) snapshot.get("myEvents");
-                    if (eventIdsList != null) {
+                    if (eventIdsList != null && !eventIdsList.isEmpty()) {
                         getEventDetails();
                     } else {
-                        Toast.makeText(getContext(), "myEvents list does not exist.",
-                                Toast.LENGTH_SHORT).show();
+                        // Show empty state if no events exist
+                        textView.setVisibility(View.VISIBLE);
+                        textView.setText("No events");
                     }
                 }
             }

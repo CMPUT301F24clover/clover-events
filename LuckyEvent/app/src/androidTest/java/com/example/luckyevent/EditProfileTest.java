@@ -18,11 +18,14 @@ import org.junit.Test;
 
 import java.util.Random;
 
+/**
+ * Tests the user's ability to create and edit their profile.
+ * User stories being tested: US 01.02.01, US 01.02.02
+ */
 public class EditProfileTest {
 
     @Rule
     public ActivityScenarioRule<LoginActivity> signUpActivityActivityScenarioRule = new ActivityScenarioRule<>(LoginActivity.class);
-
 
     public void signupToRegisterProfile(String userName, String pass, String firstName, String lastName){
         // click the signup button

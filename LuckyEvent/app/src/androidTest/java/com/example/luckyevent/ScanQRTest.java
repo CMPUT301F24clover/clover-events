@@ -18,9 +18,9 @@ import org.junit.runner.RunWith;
 
 /**
  * ScanQRTest tests the navigation to the scan QR screen and the event details screen.
- * it also test if the user can join and leave the waiting list of geolocation required event.
- * User stories being tested: US 01.01.01, US 01.01.02, US 01.06.01, US 01.06.02 and US 01.08.01
- * This test requires manual scanning as there is no-way to pass a hash
+ * It also tests if the user can join and leave the waiting list.
+ * User stories being tested: US 01.01.01, US 01.01.02, US 01.06.01, US 01.06.02, and US 01.08.01
+ * This test requires manual scanning as there is no-way to pass a hash.
  * @author Tola
  */
 
