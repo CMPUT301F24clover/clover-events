@@ -1,105 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#D3E1F1">
 
+    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#007AFF"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="@font/inter_bold"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/toolbar"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
-
+    <!-- LinearLayout for Total Events -->
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/eventsLayout"
         android:layout_width="350dp"
         android:layout_height="80dp"
         android:layout_marginTop="30dp"
         android:background="@drawable/round_layout"
         android:elevation="4dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="horizontal"
+        android:padding="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
 
+        <TextView
+            android:id="@+id/labelTotalEvents"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Total Events"
+            android:textSize="18sp"
+            android:textColor="#000000"
+            android:gravity="start" />
+
+        <TextView
+            android:id="@+id/countTotalEvents"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="18sp"
+            android:textColor="#FF0000"
+            android:gravity="end" />
     </LinearLayout>
 
+    <!-- LinearLayout for Total Profiles -->
     <LinearLayout
-        android:id="@+id/linearLayout4"
+        android:id="@+id/profilesLayout"
         android:layout_width="350dp"
         android:layout_height="80dp"
         android:layout_marginTop="24dp"
         android:background="@drawable/round_layout"
         android:elevation="4dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
+        android:orientation="horizontal"
+        android:padding="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/eventsLayout">
 
+        <TextView
+            android:id="@+id/labelTotalProfiles"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Total Profiles"
+            android:textSize="18sp"
+            android:textColor="#000000"
+            android:gravity="start" />
+
+        <TextView
+            android:id="@+id/countTotalProfiles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="18sp"
+            android:textColor="#FF0000"
+            android:gravity="end" />
     </LinearLayout>
 
+    <!-- LinearLayout for Total Organizations -->
     <LinearLayout
-        android:id="@+id/linearLayout5"
+        android:id="@+id/organizationsLayout"
         android:layout_width="350dp"
         android:layout_height="80dp"
         android:layout_marginTop="24dp"
         android:background="@drawable/round_layout"
         android:elevation="4dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
+        android:orientation="horizontal"
+        android:padding="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profilesLayout">
 
+        <TextView
+            android:id="@+id/labelTotalOrganizations"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Total Organizations"
+            android:textSize="18sp"
+            android:textColor="#000000"
+            android:gravity="start" />
+
+        <TextView
+            android:id="@+id/countTotalOrganizations"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="18sp"
+            android:textColor="#FF0000"
+            android:gravity="end" />
     </LinearLayout>
 
+    <!-- LinearLayout for Total Images -->
     <LinearLayout
+        android:id="@+id/imagesLayout"
         android:layout_width="350dp"
         android:layout_height="80dp"
         android:layout_marginTop="24dp"
         android:background="@drawable/round_layout"
         android:elevation="4dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
+        android:orientation="horizontal"
+        android:padding="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
-
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:backgroundTint="@color/white"
-        android:contentDescription="Log Out button"
-        android:scaleType="fitCenter"
-        android:src="@drawable/log_out_icon"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/log_out_icon" />
+        app:layout_constraintTop_toBottomOf="@id/organizationsLayout">
+
+        <TextView
+            android:id="@+id/labelTotalImages"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Total Images"
+            android:textSize="18sp"
+            android:textColor="#000000"
+            android:gravity="start" />
+
+        <TextView
+            android:id="@+id/countTotalImages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="18sp"
+            android:textColor="#FF0000"
+            android:gravity="end" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
