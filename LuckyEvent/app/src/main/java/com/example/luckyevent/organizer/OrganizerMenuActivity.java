@@ -9,7 +9,7 @@ import com.example.luckyevent.organizer.displayHomePage.OrganizerSession;
 import com.example.luckyevent.R;
 import com.example.luckyevent.organizer.eventCreation.CreateEventFragment;
 import com.example.luckyevent.organizer.facility.CreateFacilityFragment;
-import com.example.luckyevent.organizer.facility.DisplayFacilityFragment;
+import com.example.luckyevent.fragments.DisplayFacilityFragment;
 import com.example.luckyevent.organizer.eventDetails.DisplayOrganizerEventsFragment;
 import com.example.luckyevent.organizer.eventSettings.EventSettingsFragment;
 import com.example.luckyevent.organizer.displayHomePage.OrganizerHomePageFragment;
