@@ -12,7 +12,6 @@
           </Target>
         </DropdownSelection>
         <DialogSelection />
-      </SelectionState>
       <SelectionState runConfigName="EntrantProfilePictureTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>

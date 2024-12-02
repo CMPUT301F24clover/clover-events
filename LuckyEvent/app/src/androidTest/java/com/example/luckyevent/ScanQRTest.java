@@ -5,15 +5,10 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 
-import androidx.test.espresso.IdlingRegistry;
-import androidx.test.espresso.IdlingResource;
-import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.matcher.RootMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.filters.LargeTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.espresso.intent.Intents;
 
 import com.example.luckyevent.activities.LoginActivity;
 
@@ -23,9 +18,9 @@ import org.junit.runner.RunWith;
 
 /**
  * ScanQRTest tests the navigation to the scan QR screen and the event details screen.
- * it also test if the user can join and leave the waiting list.
- * User stories being tested: US 01.01.01, US 01.01.02, US 01.06.01, US 01.06.02
- * This test requires manual scanning as there is no-way to pass a hash
+ * It also tests if the user can join and leave the waiting list.
+ * User stories being tested: US 01.01.01, US 01.01.02, US 01.06.01, US 01.06.02, and US 01.08.01
+ * This test requires manual scanning as there is no-way to pass a hash.
  * @author Tola
  */
 
@@ -93,6 +88,12 @@ public class ScanQRTest {
 
             // Wait for activity transition
             Thread.sleep(2000);
+            // Handle the alert dialog - click "Join"
+            onView(withText("Join"))
+                    .inRoot(isDialog())
+                    .perform(ViewActions.click());
+
+            Thread.sleep(3000);
 
             // Check if leave waitlist button is visible
             onView(withId(R.id.button_leave)).check(matches(isDisplayed()));

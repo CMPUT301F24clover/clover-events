@@ -2,6 +2,8 @@ package com.example.luckyevent;
 
 import static org.junit.Assert.assertEquals;
 
+import com.example.luckyevent.entrant.displayNotifsScreen.Notification;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;

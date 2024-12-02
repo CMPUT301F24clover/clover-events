@@ -72,7 +72,7 @@
             android:padding="8dp">
 
             <Button
-                android:id="@+id/eventsButton"
+                android:id="@+id/waitinglistButton"
                 style="@style/HomeScreenButton"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
@@ -81,7 +81,7 @@
                 android:layout_columnWeight="1"
                 android:backgroundTint="#38CE5E"
                 android:drawableTop="@drawable/calendar_icon"
-                android:text="Events" />
+                android:text="Waiting Lists" />
 
             <Button
                 android:id="@+id/scanQrButton"

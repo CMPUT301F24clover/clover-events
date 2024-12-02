@@ -17,7 +17,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.fragments.ScanQrFragment;
+import com.example.luckyevent.entrant.ScanQrFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -302,7 +302,7 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
 
         // Extract event details from document
         String eventName = document.getString("eventName");
-        String date = document.getString("date");
+        String dateTime = document.getString("dateAndTime");
         String description = document.getString("description");
         currentWaitList = document.getLong("currentWaitList");
         waitListSize = document.getLong("waitListSize");
@@ -310,7 +310,7 @@ public class EntrantEventDetailsActivity extends AppCompatActivity {
 
         // Update UI elements with event information
         eventTitleView.setText(eventName);
-        dateTimeView.setText(date);
+        dateTimeView.setText(dateTime);
         descriptionView.setText(description);
         capacityView.setText(String.format("Waiting List: %d/%d", currentWaitList, waitListSize));
     }

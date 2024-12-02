@@ -56,13 +56,12 @@ public class OrganizerSignUpTest {
         navigateToSignUp();
         // Check if we have successfully navigated to the organizer sign up page
         onView(withId(R.id.username_editText)).check(matches(isDisplayed()));
-
+      
         //Try to signup with a valid username and an invalid password
         onView(withId(R.id.username_editText)).perform(replaceText("JerryGo21"), closeSoftKeyboard());
         onView(withId(R.id.password_editText)).perform(replaceText("clover"), closeSoftKeyboard());
         onView(withId(R.id.sign_in_button)).perform(ViewActions.click());
 
-        // Check if we are still in the organizer sign up page
         onView(withId(R.id.username_editText)).check(matches(isDisplayed()));
     }
 
@@ -70,7 +69,7 @@ public class OrganizerSignUpTest {
     @Test
      public void testTakenUsername(){
         navigateToSignUp();
-
+       
         //Try to signup with a username that is already taken
         onView(withId(R.id.username_editText)).perform(replaceText("JerryDpe"), closeSoftKeyboard());
         onView(withId(R.id.password_editText)).perform(replaceText("clover1"), closeSoftKeyboard());
