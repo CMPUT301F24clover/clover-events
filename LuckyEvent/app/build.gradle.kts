@@ -56,6 +56,8 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
     implementation("com.google.firebase:firebase-firestore:24.5.0")
+    testImplementation("org.mockito:mockito-core:5.5.0")
+    androidTestImplementation("org.mockito:mockito-android:5.5.0")
     implementation("com.google.code.gson:gson:2.10.1")
     testImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.test:core:1.6.1")
