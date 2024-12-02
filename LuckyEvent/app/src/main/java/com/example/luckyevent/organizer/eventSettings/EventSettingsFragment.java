@@ -99,7 +99,7 @@ public class EventSettingsFragment extends Fragment {
                         String eventDateTime = document.getString("dateAndTime");
                         String eventDescription = document.getString("description");
 
-                        if(eventDateTime == null || eventName == null ||  eventDescription == null){
+                        if(eventName == null ||  eventDescription == null){
                             Log.e(TAG, "Failed to fetch event details: ", task.getException());
                         }
 

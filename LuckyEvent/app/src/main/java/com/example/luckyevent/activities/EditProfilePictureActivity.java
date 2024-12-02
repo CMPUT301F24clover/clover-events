@@ -41,6 +41,7 @@ public class EditProfilePictureActivity extends AppCompatActivity {
     private Button removeProfilePictureButton;
     private String imageUrl;
     private Uri imageUri;
+    private String lastName;
     private ImageButton backButton;
     private static final int selectAmount = 1;
     private FirebaseDB firebaseDB;
@@ -57,6 +58,7 @@ public class EditProfilePictureActivity extends AppCompatActivity {
         setContentView(R.layout.edit_profile_picture);
 
         documentID = getIntent().getStringExtra("profileID");
+        lastName = getIntent().getStringExtra("lastName");
 
         // Loads the retrieved image url into the screen's image view
         firebaseDB = new FirebaseDB(this);
@@ -86,7 +88,9 @@ public class EditProfilePictureActivity extends AppCompatActivity {
         removeProfilePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String initials = UserSession.getInstance().getUserName().isEmpty() ? "" : String.valueOf(UserSession.getInstance().getUserName().charAt(0));
+                String initials = (UserSession.getInstance().getUserName() != null && !UserSession.getInstance().getUserName().isEmpty())
+                        ? String.valueOf(UserSession.getInstance().getUserName().charAt(0))
+                        :String.valueOf(lastName.charAt(0));
                 generateDefaultProfileImage(initials, new DefaultProfileImageCallback() {
                     @Override
                     public void onImageGenerated(Uri generatedUri) {
@@ -177,6 +181,7 @@ public class EditProfilePictureActivity extends AppCompatActivity {
      * The users id is used as the document name when storing the image url on firestore and firebase storage
     */
     public void updateProfPic(){
+        Log.e("EditProfilePictureActivity", "updateProfPic: userId = " +UserSession.getInstance().getUserId());
         firebaseDB.updateProfilePicture(imageUri, UserSession.getInstance().getUserId(), new FirebaseDB.UpdateProfPicCallBack() {
             @Override
             public void onUpdateSuccess() {
