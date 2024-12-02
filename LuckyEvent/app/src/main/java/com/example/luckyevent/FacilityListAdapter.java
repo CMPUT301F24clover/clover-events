@@ -63,7 +63,7 @@ public class FacilityListAdapter extends ArrayAdapter<Facility> {
             facilityNameTextView.setText(facility.getName());
             facilityAddressTextView.setText(facility.getAddress());
 
-            // Remove button functionality
+            // remove button functionality
             removeFacility.setOnClickListener(view -> {
                 db.collection("facilities")
                         .whereEqualTo("organizerId", facility.getOrganizerId())
@@ -107,25 +107,5 @@ public class FacilityListAdapter extends ArrayAdapter<Facility> {
     }
 
 
-    /**
-     * filters the facilties by name for searching and updates the facilities shown in the display
-     * @param query // input from the search
-     */
-    public void filterByName(String query) {
-        Log.d(TAG, "Filtering facilities with query: " + query);
-        Log.d(TAG, "Original list size: " + originalList.size());
-        displayList.clear();
-        if (query.isEmpty()) {
-            displayList.addAll(originalList);
-        } else {
-            // filter the results based on the search and make it not case sensitive
-            for (Facility facility : originalList) {
-                if (facility.getName().toLowerCase().contains(query.toLowerCase())) {
-                    displayList.add(facility); // display the results
-                }
-            }
-        }
-        notifyDataSetChanged(); // notify the adapter
-    }
 }
 

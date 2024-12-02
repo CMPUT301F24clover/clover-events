@@ -7,6 +7,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
+import com.example.luckyevent.fragments.AdminBrowseEvents;
+import com.example.luckyevent.fragments.AdminBrowseFacilities;
 import com.example.luckyevent.fragments.AdminHomePageFragment;
 import com.example.luckyevent.fragments.AdminProfilesFragment;
 import com.example.luckyevent.fragments.CreateEventFragment;
@@ -49,6 +51,18 @@ public class AdminMenuActivity extends AppCompatActivity {
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.adminMenuFragment, new AdminProfilesFragment())
+                        .commit();
+            }
+            else if (item.getItemId() == R.id.event_item){
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.adminMenuFragment, new AdminBrowseEvents())
+                        .commit();
+            }
+            else if (item.getItemId() == R.id.facility_item){
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.adminMenuFragment, new AdminBrowseFacilities())
                         .commit();
             }
             return true;

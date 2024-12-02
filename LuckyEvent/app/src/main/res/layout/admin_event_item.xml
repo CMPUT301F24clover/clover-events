@@ -10,14 +10,20 @@
         android:id="@+id/eventName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Faciltiy Name"
+        android:text="Event Name"
         android:textSize="15dp"/>
 
     <TextView
         android:id="@+id/eventDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Faciltiy Description"
+        android:text="Event Description"
+        android:textSize="15dp"/>
+    <TextView
+        android:id="@+id/eventQr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
         android:textSize="15dp"/>
 
     <Button
