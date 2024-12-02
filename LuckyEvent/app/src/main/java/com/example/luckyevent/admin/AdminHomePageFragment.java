@@ -1,9 +1,11 @@
 package com.example.luckyevent.admin;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,6 +13,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckyevent.R;
+import com.example.luckyevent.organizer.loginSection.OrganizerSignInActivity;
+import com.example.luckyevent.shared.LoginActivity;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class AdminHomePageFragment extends Fragment {
@@ -18,6 +23,7 @@ public class AdminHomePageFragment extends Fragment {
     private FirebaseFirestore db;
 
     private TextView countTotalEvents, countTotalProfiles, countTotalOrganizations, countTotalImages;
+    private MaterialButton logOutButton;
 
     @Nullable
     @Override
@@ -33,6 +39,16 @@ public class AdminHomePageFragment extends Fragment {
         countTotalProfiles = rootView.findViewById(R.id.countTotalProfiles);
         countTotalOrganizations = rootView.findViewById(R.id.countTotalOrganizations);
         countTotalImages = rootView.findViewById(R.id.countTotalImages);
+        logOutButton = rootView.findViewById(R.id.log_out_button);
+
+        logOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                startActivity(intent);
+                getActivity().finish();
+            }
+        });
 
         // Load statistics from Firebase
         loadStatistics();
