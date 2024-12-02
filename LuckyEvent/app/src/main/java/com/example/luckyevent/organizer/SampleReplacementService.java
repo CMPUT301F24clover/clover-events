@@ -19,6 +19,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Samples one new entrant from the waiting list and notifies them that they have been chosen.
+ *
+ * @author Mmelve
+ * @see Lottery
+ * @see NotificationService
+ * @version 1
+ * @since 1
+ */
 public class SampleReplacementService extends Service {
     private static final String TAG = "SampleReplacementService";
     private String eventId;
