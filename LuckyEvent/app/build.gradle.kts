@@ -34,6 +34,9 @@ android {
 }
 
 dependencies {
+    implementation("com.google.firebase:firebase-firestore:24.5.0") {
+        exclude(group = "com.google.protobuf", module = "protobuf-lite")
+    }
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
     testImplementation(libs.junit.jupiter)
