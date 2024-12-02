@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.espresso.contrib)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.core)
+
     implementation("com.github.bumptech.glide:glide:4.12.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
     implementation ("com.squareup.picasso:picasso:2.8")
