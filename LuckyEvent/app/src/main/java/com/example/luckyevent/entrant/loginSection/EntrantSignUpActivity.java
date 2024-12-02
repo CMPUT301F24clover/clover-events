@@ -1,4 +1,4 @@
-package com.example.luckyevent.activities;
+package com.example.luckyevent.entrant.loginSection;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.luckyevent.entrant.MenuActivity;
+import com.example.luckyevent.entrant.UserSession;
+import com.example.luckyevent.shared.LoginActivity;
 import com.example.luckyevent.admin.AdminMenuActivity;
 import com.squareup.picasso.Picasso;
 
@@ -20,7 +23,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.UserSession;
 import com.example.luckyevent.firebase.FirebaseDB;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,7 +37,7 @@ import java.io.IOException;
  * The user's details and profile picture is stored via firestore and firebase storage
  *
  * @author Seyi
- * @see FirebaseDB,UserSession
+ * @see FirebaseDB, UserSession
  * @version 2
  * @since 1
  */

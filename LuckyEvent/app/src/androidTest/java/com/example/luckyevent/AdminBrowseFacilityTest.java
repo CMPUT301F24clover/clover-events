@@ -12,7 +12,7 @@ import static org.hamcrest.CoreMatchers.not;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
-import com.example.luckyevent.activities.LoginActivity;
+import com.example.luckyevent.shared.LoginActivity;
 
 import org.junit.Rule;
 import org.junit.Test;

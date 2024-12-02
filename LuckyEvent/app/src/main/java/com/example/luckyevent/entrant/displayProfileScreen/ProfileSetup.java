@@ -1,4 +1,4 @@
-package com.example.luckyevent.activities;
+package com.example.luckyevent.entrant.displayProfileScreen;
 
 /**
  * @author Amna

@@ -1,4 +1,4 @@
-package com.example.luckyevent;
+package com.example.luckyevent.admin;
 
 /**
  * A class representing a user's profile in the app.

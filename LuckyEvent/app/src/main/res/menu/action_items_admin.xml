@@ -20,6 +20,11 @@
         android:icon="@drawable/facility"
         android:title="Facilities" />
 
+    <item
+        android:id="@+id/images_item"
+        android:icon="@drawable/image_icon"
+        android:title="Images" />
+
 
 
 

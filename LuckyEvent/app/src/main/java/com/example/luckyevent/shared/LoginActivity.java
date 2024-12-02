@@ -1,4 +1,4 @@
-package com.example.luckyevent.activities;
+package com.example.luckyevent.shared;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,9 +11,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.UserSession;
+import com.example.luckyevent.entrant.loginSection.RegisterDeviceActivity;
+import com.example.luckyevent.entrant.loginSection.EntrantSignUpActivity;
+import com.example.luckyevent.entrant.MenuActivity;
+import com.example.luckyevent.entrant.UserSession;
 import com.example.luckyevent.admin.AdminMenuActivity;
 import com.example.luckyevent.firebase.FirebaseDB;
+import com.example.luckyevent.organizer.loginSection.OrganizerSignInActivity;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

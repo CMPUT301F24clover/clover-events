@@ -13,14 +13,11 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
-import com.example.luckyevent.activities.LoginActivity;
-import com.example.luckyevent.activities.MenuActivity;
+import com.example.luckyevent.shared.LoginActivity;
 
 import org.junit.Rule;
 import org.junit.Test;

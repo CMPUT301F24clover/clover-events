@@ -22,6 +22,8 @@ junitJupiter = "5.8.1"
 core = "1.6.1"
 playServicesMaps = "19.0.0"
 playServicesLocation = "21.3.0"
+fragmentTesting = "1.8.5"
+espressoContrib = "3.6.1"
 
 [libraries]
 firebase-storage = { module = "com.google.firebase:firebase-storage", version.ref = "firebaseStorage" }
@@ -46,6 +48,8 @@ junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.r
 core = { group = "androidx.test", name = "core", version.ref = "core" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+fragment-testing = { group = "androidx.fragment", name = "fragment-testing", version.ref = "fragmentTesting" }
+espresso-contrib = { group = "androidx.test.espresso", name = "espresso-contrib", version.ref = "espressoContrib" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
