@@ -1,16 +1,10 @@
-package com.example.luckyevent.activities;
+package com.example.luckyevent.admin;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.fragments.AdminBrowseEvents;
-import com.example.luckyevent.fragments.AdminBrowseFacilities;
-import com.example.luckyevent.fragments.AdminHomePageFragment;
-import com.example.luckyevent.fragments.AdminProfilesFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 /**

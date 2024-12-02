@@ -1,4 +1,4 @@
-package com.example.luckyevent.fragments;
+package com.example.luckyevent.organizer.eventDetails;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;

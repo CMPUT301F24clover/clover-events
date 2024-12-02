@@ -1,4 +1,4 @@
-package com.example.luckyevent.organizer;
+package com.example.luckyevent.organizer.eventDetails;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-import com.example.luckyevent.fragments.EventDetailsFragment;
 import com.example.luckyevent.shared.Event;
 import com.example.luckyevent.shared.EventListAdapter;
 import com.example.luckyevent.R;

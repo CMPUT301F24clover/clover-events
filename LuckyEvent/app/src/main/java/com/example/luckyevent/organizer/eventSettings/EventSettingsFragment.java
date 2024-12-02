@@ -1,25 +1,18 @@
-package com.example.luckyevent.fragments;
+package com.example.luckyevent.organizer.eventSettings;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ListView;
-import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.AdapterListUpdateCallback;
 
-import com.example.luckyevent.EventSetting;
-import com.example.luckyevent.EventSettingsListAdapter;
-import com.example.luckyevent.Profile;
-import com.example.luckyevent.ProfileListAdapter;
 import com.example.luckyevent.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,7 +20,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Displays all the events owned by the owner into a single list.

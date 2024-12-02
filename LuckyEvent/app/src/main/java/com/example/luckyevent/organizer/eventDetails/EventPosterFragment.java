@@ -1,4 +1,4 @@
-package com.example.luckyevent.fragments;
+package com.example.luckyevent.organizer.eventDetails;
 
 import static android.app.Activity.RESULT_OK;
 

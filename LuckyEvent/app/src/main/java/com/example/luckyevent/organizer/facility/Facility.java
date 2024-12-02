@@ -1,4 +1,4 @@
-package com.example.luckyevent;
+package com.example.luckyevent.organizer.facility;
 
 public class Facility {
     private String name;
