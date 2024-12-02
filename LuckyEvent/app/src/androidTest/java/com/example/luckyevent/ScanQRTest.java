@@ -5,15 +5,10 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 
-import androidx.test.espresso.IdlingRegistry;
-import androidx.test.espresso.IdlingResource;
-import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.matcher.RootMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.filters.LargeTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.espresso.intent.Intents;
 
 import com.example.luckyevent.activities.LoginActivity;
 
