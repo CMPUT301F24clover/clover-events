@@ -4,7 +4,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.luckyevent.QRDownloadService;
 import com.example.luckyevent.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
@@ -53,7 +51,7 @@ import java.util.Map;
  *
  * @author Aagam, Tola, Amna
  * @see ScanQrFragment
- * @see QRDownloadService
+ * @see QrDisplayFragment
  * @version 2
  * @since 1
  */

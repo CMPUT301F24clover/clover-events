@@ -50,7 +50,6 @@
         <activity android:name=".activities.AdminMenuActivity"/>
         <activity android:name = ".activities.OrganizerHomePageActivity"/>
         <service android:name=".LotteryService" />
-        <service android:name=".QRDownloadService" />
         <service android:name=".NotificationService" />
         <service android:name=".SampleOneEntrantService" />
         <meta-data

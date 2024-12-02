@@ -2,6 +2,10 @@ package com.example.luckyevent;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.replaceText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
@@ -30,70 +34,45 @@ public class LoginTest {
     public ActivityScenarioRule<LoginActivity> scenario = new ActivityScenarioRule<>(LoginActivity.class);
 
     @Test
-    public void testSignIn() {
+    public void testEmptyUsernamePasswordFields() {
+        // Test if we are able to sign in without username and password fields
+        onView(withId(R.id.sign_in_button)).perform(click());
+        onView(withId(R.id.welcome_textView)).check(matches(isDisplayed()));
 
-        onView(withId(R.id.SignInButton)).perform(click());
+        // Type in a username that doesn't exist and try to sign in
+        onView(withId(R.id.username_editText)).perform(replaceText("test123"), closeSoftKeyboard());
+        onView(withId(R.id.sign_in_button)).perform(click());
+        onView(withId(R.id.welcome_textView)).check(matches(isDisplayed()));
 
-        /* //This is not working as expected.
-        //It was supposed to check the toasts created
+        // Type in a username that exists but enter no password
+        onView(withId(R.id.username_editText)).perform(replaceText("JohnDoe"), closeSoftKeyboard());
+        onView(withId(R.id.sign_in_button)).perform(click());
+        onView(withId(R.id.welcome_textView)).check(matches(isDisplayed()));
+    }
 
-        onView(withText("Sign-in failed: Username not found"))
-                .inRoot(withDecorView(not(isRoot())))
-                .check(matches(isDisplayed()));
+    @Test
+    public void testInvalidFields() throws InterruptedException{
+        // Try signing with a username that is in the system but with the wrong password
+        onView(withId(R.id.username_editText)).perform(replaceText("JohnDoe"), closeSoftKeyboard());
+        onView(withId(R.id.password_editText)).perform(replaceText("654321"), closeSoftKeyboard());
+        onView(withId(R.id.sign_in_button)).perform(click());
+        onView(withId(R.id.welcome_textView)).check(matches(isDisplayed()));
 
-         */
-        //checks if it is still in the login activity the sign in wasn't successfull
-        ActivityScenario<LoginActivity> scenario = ActivityScenario.launch(LoginActivity.class);
-        scenario.onActivity(activity -> {
-            assertTrue(activity instanceof LoginActivity);
-        });
-
-        //type in a username that doesn't exist and try to sign in
-        onView(withId(R.id.usernameInput)).perform(ViewActions.typeText("test123"));
-        onView(withId(R.id.SignInButton)).perform(click());
-        scenario = ActivityScenario.launch(LoginActivity.class);
-        scenario.onActivity(activity -> {
-            assertTrue(activity instanceof LoginActivity);
-        });
-
-        //type in a username that exists but enter no password
-        onView(withId(R.id.usernameInput)).perform(ViewActions.typeText("JohnDoe"));
-        onView(withId(R.id.SignInButton)).perform(click());
-        scenario = ActivityScenario.launch(LoginActivity.class);
-        scenario.onActivity(activity -> {
-            assertTrue(activity instanceof LoginActivity);
-        });
-
-        //try signing with a username that is in the system but with the wrong password
-        onView(withId(R.id.usernameInput)).perform(ViewActions.typeText("JohnDoe"));
-        onView(withId(R.id.passwordInput)).perform(ViewActions.typeText("654321"));
-        onView(withId(R.id.SignInButton)).perform(click());
-        scenario = ActivityScenario.launch(LoginActivity.class);
-        scenario.onActivity(activity -> {
-            assertTrue(activity instanceof LoginActivity);
-        });
-
-        //try signing with an organizer's account
-        onView(withId(R.id.usernameInput)).perform(ViewActions.typeText("JennyDoe"));
-        onView(withId(R.id.passwordInput)).perform(ViewActions.typeText("123456"));
-        onView(withId(R.id.SignInButton)).perform(click());
-        scenario = ActivityScenario.launch(LoginActivity.class);
-        scenario.onActivity(activity -> {
-            assertTrue(activity instanceof LoginActivity);
-        });
+        // Try signing with an organizer's account
+        onView(withId(R.id.username_editText)).perform(replaceText("JerryDpe"), closeSoftKeyboard());
+        onView(withId(R.id.password_editText)).perform(replaceText("123456"), closeSoftKeyboard());
+        onView(withId(R.id.sign_in_button)).perform(click());
+        onView(withId(R.id.welcome_textView)).check(matches(isDisplayed()));
 
         //enter the correct username and password and verify navigation to the menu activity
-        onView(withId(R.id.usernameInput)).perform(ViewActions.typeText("JohnDoe"));
-        onView(withId(R.id.passwordInput)).perform(ViewActions.typeText("123456"));
-        onView(withId(R.id.SignInButton)).perform(click());
-        ActivityScenario<MenuActivity> menuScenario = ActivityScenario.launch(MenuActivity.class);
-        menuScenario.onActivity(activity -> {
-            assertTrue(activity instanceof MenuActivity);
-        });
-
+        onView(withId(R.id.username_editText)).perform(replaceText("JohnDoe"), closeSoftKeyboard());
+        onView(withId(R.id.password_editText)).perform(replaceText("123456"), closeSoftKeyboard());
+        onView(withId(R.id.sign_in_button)).perform(click());
+        Thread.sleep(5000);
+        onView(withId(R.id.mainContentCard)).check(matches(isDisplayed()));
     }
 
-    }
+}
 
 
 

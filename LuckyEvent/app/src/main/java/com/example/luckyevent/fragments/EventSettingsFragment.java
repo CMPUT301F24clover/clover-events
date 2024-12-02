@@ -11,6 +11,8 @@ import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.AdapterListUpdateCallback;
 
@@ -40,6 +42,18 @@ public class EventSettingsFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
 
         View rootView = inflater.inflate(R.layout.event_settings, container, false);
+
+        // Set Toolbar title
+        Toolbar toolbar = rootView.findViewById(R.id.topBar);
+        toolbar.setTitle("Event Settings");
+        toolbar.setNavigationIcon(R.drawable.arrow_back);
+        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
+        // Enable the back button
+        if (((AppCompatActivity) requireActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
 
         ListView listView = rootView.findViewById(R.id.event_settings_list);
         adapter = new EventSettingsListAdapter(getActivity(), getActivity(), eventList);
@@ -76,15 +90,15 @@ public class EventSettingsFragment extends Fragment {
                     if (task.isSuccessful() && task.getResult() != null) {
                         DocumentSnapshot document = task.getResult();
                         String eventName = document.getString("eventName");
-                        String eventDate = document.getString("date");
+                        String eventDateTime = document.getString("dateAndTime");
                         String eventDescription = document.getString("description");
 
-                        if(eventDate == null || eventName == null ||  eventDescription == null){
+                        if(eventDateTime == null || eventName == null ||  eventDescription == null){
                             Log.e(TAG, "Failed to fetch event details: ", task.getException());
                         }
 
                         else{
-                            EventSetting eventSetting = new EventSetting(eventId, eventName, eventDate, eventDescription);
+                            EventSetting eventSetting = new EventSetting(eventId, eventName, eventDateTime, eventDescription);
                             eventList.add(eventSetting);
                             adapter.notifyDataSetChanged();
                         }

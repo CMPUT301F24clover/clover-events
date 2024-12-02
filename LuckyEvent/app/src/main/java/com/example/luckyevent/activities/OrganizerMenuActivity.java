@@ -27,6 +27,8 @@ import com.example.luckyevent.fragments.OrganizerHomePageFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomnavigation.LabelVisibilityMode;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -68,6 +70,7 @@ public class OrganizerMenuActivity extends AppCompatActivity implements Organize
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.OrganizerMenuFragment, new OrganizerHomePageFragment())
+                        .addToBackStack(null)
                         .commit();
                 return true;
             }
@@ -76,6 +79,7 @@ public class OrganizerMenuActivity extends AppCompatActivity implements Organize
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.OrganizerMenuFragment, new DisplayOrganizerEventsFragment())
+                        .addToBackStack(null)
                         .commit();
                 return true;
             }
@@ -105,12 +109,14 @@ public class OrganizerMenuActivity extends AppCompatActivity implements Organize
                         }
                     }
                 });
+                return true;
             }
 
             else if (item.getItemId() == R.id.settings_item) {
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.OrganizerMenuFragment, new EventSettingsFragment())
+                        .addToBackStack(null)
                         .commit();
                 return true;
             }
@@ -141,10 +147,6 @@ public class OrganizerMenuActivity extends AppCompatActivity implements Organize
     @Override
     public void onNavigateToMyEvents() {
         bottomNavigationView.setSelectedItemId(R.id.events_item);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.OrganizerMenuFragment, new DisplayOrganizerEventsFragment())
-                .commit();
     }
 
     /**
@@ -154,31 +156,6 @@ public class OrganizerMenuActivity extends AppCompatActivity implements Organize
     @Override
     public void onNavigateToMyFacility() {
         bottomNavigationView.setSelectedItemId(R.id.profile_item);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String userID = user.getUid();
-        DocumentReference facilityIDRef = firestore.collection("loginProfile").document(userID);
-        facilityIDRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document != null && document.contains("myFacility")) {
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.OrganizerMenuFragment, new DisplayFacilityFragment())
-                                .addToBackStack(null)
-                                .commit();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "No existing facility found. Please Create a new Facility.", Toast.LENGTH_SHORT).show();
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.OrganizerMenuFragment, new CreateFacilityFragment())
-                                .addToBackStack(null)
-                                .commit();
-                    }
-                }
-            }
-        });
     }
 
     @Override
