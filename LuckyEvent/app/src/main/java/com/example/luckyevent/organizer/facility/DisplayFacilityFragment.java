@@ -1,5 +1,6 @@
 package com.example.luckyevent.organizer.facility;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.luckyevent.R;
 import com.example.luckyevent.organizer.OrganizerMenuActivity;
+import com.example.luckyevent.organizer.loginSection.OrganizerSignInActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -88,6 +90,15 @@ public class DisplayFacilityFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 navigateToEditFacilityFragment(facilityID);
+            }
+        });
+
+        Button logOutButton = view.findViewById(R.id.organizerLogOutButton);
+        logOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), OrganizerSignInActivity.class);
+                startActivity(intent);
             }
         });
 
