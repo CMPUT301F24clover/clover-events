@@ -19,6 +19,7 @@ import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.luckyevent.activities.LoginActivity;
 import com.example.luckyevent.organizer.sendNotification.NotificationService;
@@ -26,6 +27,7 @@ import com.example.luckyevent.organizer.sendNotification.NotificationService;
 import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,12 +36,13 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Tests if a user can view and receive notifications. Uses the following classes:
+ * Tests if the user can view and receive notifications. Uses the following classes:
  * NotificationService and DisplayNotificationsFragment.
- *
- * IMPORTANT: test passes only if emulator is fast enough
  */
+@RunWith(AndroidJUnit4.class)
 public class ReceiveAndDisplayNotificationTest {
+    @Rule
+    public ActivityScenarioRule<LoginActivity> activityScenarioRule = new ActivityScenarioRule<>(LoginActivity.class);
 
     /**
      * Logs into the application.
@@ -54,6 +57,29 @@ public class ReceiveAndDisplayNotificationTest {
         Thread.sleep(1000);
         onView(withId(R.id.sign_in_button)).perform(click());
         Thread.sleep(5000);
+    }
+
+    /**
+     * Hides the keyboard immediately after typing.
+     */
+    private static ViewAction hideKeyboard() {
+        return new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return ViewMatchers.isAssignableFrom(View.class);
+            }
+
+            @Override
+            public String getDescription() {
+                return null;
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        };
     }
 
     /**
@@ -83,9 +109,6 @@ public class ReceiveAndDisplayNotificationTest {
         ApplicationProvider.getApplicationContext().startService(intent);
     }
 
-    @Rule
-    public ActivityScenarioRule<LoginActivity> activityScenarioRule = new ActivityScenarioRule<>(LoginActivity.class);
-
     @Test
     public void displayEntrantNotificationsTest() throws InterruptedException {
         login();
@@ -106,28 +129,5 @@ public class ReceiveAndDisplayNotificationTest {
 
         // delete notification
         onView(withId(R.id.image_trash)).perform(click());
-    }
-
-    /**
-     * Hides the keyboard immediately after typing.
-     */
-    private static ViewAction hideKeyboard() {
-        return new ViewAction() {
-            @Override
-            public Matcher<View> getConstraints() {
-                return ViewMatchers.isAssignableFrom(View.class);
-            }
-
-            @Override
-            public String getDescription() {
-                return null;
-            }
-
-            @Override
-            public void perform(UiController uiController, View view) {
-                InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
-        };
     }
 }

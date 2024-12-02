@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SampleOneEntrantService extends Service {
-    private static final String TAG = "SampleOneEntrantService";
+public class SampleReplacementService extends Service {
+    private static final String TAG = "SampleReplacementService";
     private String eventId;
     private String eventName;
     private String userId;
