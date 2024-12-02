@@ -113,7 +113,7 @@ public class EventSettingsFragment extends Fragment {
 
                         else{
                             // Once the event is successfully retrieved we add it into the adapter
-                            EventSetting eventSetting = new EventSetting(eventId, eventName, eventDate, eventDescription);
+                            EventSetting eventSetting = new EventSetting(eventId, eventName, eventDateTime, eventDescription);
 
                             eventList.add(eventSetting);
                             adapter.notifyDataSetChanged();
