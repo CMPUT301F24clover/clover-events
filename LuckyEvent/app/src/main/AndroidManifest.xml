@@ -24,6 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LuckyEvent"
         tools:targetApi="31">
+
         <activity android:name=".shared.LoginActivity"
             android:exported="true">
             <intent-filter>
@@ -46,6 +47,10 @@
         <activity android:name=".organizer.OrganizerMenuActivity"
             android:exported="false"/>
         <activity android:name=".admin.AdminMenuActivity"/>
+
+        <!-- Add the BrowseImagesActivity declaration -->
+        <activity android:name=".activities.BrowseImagesActivity" android:exported="true"/>
+
         <service android:name=".organizer.conductLottery.LotteryService" />
         <service android:name=".organizer.sendNotification.NotificationService" />
         <service android:name=".organizer.SampleReplacementService" />

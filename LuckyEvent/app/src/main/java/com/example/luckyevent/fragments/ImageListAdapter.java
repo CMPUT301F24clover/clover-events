@@ -1,6 +1,7 @@
 package com.example.luckyevent.fragments;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +42,15 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
         String imageUrl = imageInfo.get("url");
         String description = imageInfo.get("description");
 
-        Glide.with(context).load(imageUrl).into(holder.imageView);
+        // Log the image URL for debugging
+        Log.d("ImageListAdapter", "Image URL: " + imageUrl);
+
+        // Load the image with Glide, including placeholder and error handling
+        Glide.with(context)
+                .load(imageUrl)
+                .placeholder(R.drawable.demo_profile)  // Add a placeholder image in drawable
+                .error(R.drawable.demo_profile)              // Add an error image in drawable
+                .into(holder.imageView);
 
         holder.descriptionText.setText(description);
 
