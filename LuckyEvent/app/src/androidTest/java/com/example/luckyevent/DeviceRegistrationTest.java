@@ -12,7 +12,7 @@ import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
-import com.example.luckyevent.activities.LoginActivity;
+import com.example.luckyevent.shared.LoginActivity;
 
 import junit.framework.AssertionFailedError;
 

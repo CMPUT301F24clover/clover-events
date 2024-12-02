@@ -13,8 +13,7 @@ import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.example.luckyevent.activities.EntrantSignUpActivity;
-import com.example.luckyevent.activities.LoginActivity;
+import com.example.luckyevent.shared.LoginActivity;
 
 import org.junit.Rule;
 import org.junit.Test;

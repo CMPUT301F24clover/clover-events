@@ -14,8 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.UserSession;
-import com.example.luckyevent.activities.MenuActivity;
 
 /**
  * Displays a welcome message, brief details of upcoming events and it also gives the entrant the ability

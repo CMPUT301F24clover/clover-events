@@ -1,4 +1,4 @@
-package com.example.luckyevent.activities;
+package com.example.luckyevent.entrant.displayProfileScreen;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,11 +15,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.UserSession;
+import com.example.luckyevent.entrant.UserSession;
 import com.example.luckyevent.firebase.FirebaseDB;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.auth.User;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;

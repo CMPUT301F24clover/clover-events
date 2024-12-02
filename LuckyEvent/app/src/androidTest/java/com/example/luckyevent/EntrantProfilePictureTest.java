@@ -21,7 +21,7 @@ import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
-import com.example.luckyevent.activities.LoginActivity;
+import com.example.luckyevent.shared.LoginActivity;
 
 import org.junit.Before;
 import org.junit.Rule;

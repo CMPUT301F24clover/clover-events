@@ -1,4 +1,4 @@
-package com.example.luckyevent;
+package com.example.luckyevent.entrant;
 
 /**
  * A class used to store the details of the currently signed in entrant

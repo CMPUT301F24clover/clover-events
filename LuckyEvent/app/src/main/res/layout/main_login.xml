@@ -10,7 +10,7 @@
     android:elevation="4dp"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".activities.LoginActivity">
+    tools:context=".shared.LoginActivity">
     <TextView
         android:id="@+id/rmk761e4yfi"
         android:textColor="#FFFFFF"

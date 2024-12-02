@@ -11,7 +11,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 
-import com.example.luckyevent.activities.OrganizerMenuActivity;
+import com.example.luckyevent.organizer.OrganizerMenuActivity;
 
 import org.junit.Rule;
 import org.junit.Test;

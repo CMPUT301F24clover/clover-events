@@ -1,4 +1,4 @@
-package com.example.luckyevent.activities;
+package com.example.luckyevent.entrant.displayProfileScreen;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.UserSession;
+import com.example.luckyevent.entrant.UserSession;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
@@ -88,7 +88,7 @@ public class EditProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //when they click the back button it brings the user back to the profile view page
-                Intent intent = new Intent(EditProfileActivity.this,ViewProfileActivity.class);
+                Intent intent = new Intent(EditProfileActivity.this, ViewProfileActivity.class);
                 startActivity(intent);
             }
         });

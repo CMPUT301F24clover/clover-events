@@ -1,4 +1,4 @@
-package com.example.luckyevent.activities;
+package com.example.luckyevent.organizer.loginSection;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,8 +13,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luckyevent.R;
-import com.example.luckyevent.OrganizerSession;
-import com.example.luckyevent.UserSession;
+import com.example.luckyevent.shared.LoginActivity;
+import com.example.luckyevent.organizer.OrganizerMenuActivity;
+import com.example.luckyevent.organizer.displayHomePage.OrganizerSession;
+import com.example.luckyevent.entrant.UserSession;
 import com.example.luckyevent.firebase.FirebaseDB;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
